@@ -13,14 +13,14 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
-    public JwtAuthenticationEntryPoint() {
-    }
 
+    @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        this.resolver.resolveException(request, response, (Object)null, authException);
+        resolver.resolveException(request, response, null, authException);
     }
 }

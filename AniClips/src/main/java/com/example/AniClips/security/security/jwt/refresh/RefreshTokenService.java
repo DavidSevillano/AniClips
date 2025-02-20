@@ -3,31 +3,62 @@ package com.example.AniClips.security.security.jwt.refresh;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.example.AniClips.security.security.jwt.access.JwtService;
+import com.example.AniClips.security.user.dto.UserResponse;
 import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.repo.UserRepository;
+import com.example.AniClips.security.user.repo.UsuarioRepository;
 import lombok.Generated;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(
-        readOnly = true
-)
+@RequiredArgsConstructor
 public class RefreshTokenService {
+
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final JwtService jwtService;
+
     @Value("${jwt.refresh.duration}")
     private int durationInMinutes;
 
-    @Transactional
-    public RefreshToken create(Usuario usuario) {
-        return (RefreshToken)this.refreshTokenRepository.save(RefreshToken.builder().user(usuario).token(UUID.randomUUID().toString()).expireAt(Instant.now().plusSeconds((long)(this.durationInMinutes * 60))).build());
+    public RefreshToken create(Usuario user) {
+        refreshTokenRepository.deleteByUser(user);
+        return refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .user(user)
+                        //.user(u)
+                        //.token(UUID.randomUUID().toString())
+                        .expireAt(Instant.now().plusSeconds(durationInMinutes*60))
+                        .build()
+        );
     }
 
-    @Generated
-    public RefreshTokenService(final RefreshTokenRepository refreshTokenRepository, final UserRepository userRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userRepository = userRepository;
+    public RefreshToken verify(RefreshToken refreshToken) {
+        if (refreshToken.getExpireAt().compareTo(Instant.now()) < 0) {
+            refreshTokenRepository.delete(refreshToken);
+            throw new RefreshTokenException("Token de refresco caducado. Por favor, vuelva a loguearse");
+        }
+
+        return refreshToken;
+
     }
+
+    public UserResponse refreshToken(String token) {
+
+        return refreshTokenRepository.findById(UUID.fromString(token))
+                .map(this::verify)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String accessToken = jwtService.generateAccessToken(user);
+                    RefreshToken refreshedToken = this.create(user);
+                    return UserResponse.of(user, accessToken, refreshedToken.getToken());
+                })
+                .orElseThrow(() -> new RefreshTokenException("No se ha podido refrescar el token. Por favor, vuelva a loguearse"));
+
+    }
+
+
 }

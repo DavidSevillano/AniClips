@@ -22,41 +22,69 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
+
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
+
     @Value("${jwt.secret}")
     private String jwtSecret;
+
     @Value("${jwt.duration}")
     private long jwtLifeInMinutes;
-    private JwtParser jwtParser;
-    private SecretKey secretKey;
 
-    public JwtService() {
-    }
+    private JwtParser jwtParser;
+
+    private SecretKey secretKey;
 
     @PostConstruct
     public void init() {
-        this.secretKey = Keys.hmacShaKeyFor(this.jwtSecret.getBytes());
-        this.jwtParser = Jwts.parser().verifyWith(this.secretKey).build();
+
+        secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+
+        jwtParser = Jwts.parser()
+                .verifyWith(secretKey)
+                .build();
+
     }
 
-    public String generateAccessToken(Usuario usuario) {
-        Date tokeExpirationDate = Date.from(LocalDateTime.now().plusMinutes(this.jwtLifeInMinutes).atZone(ZoneId.systemDefault()).toInstant());
-        return ((JwtBuilder)((JwtBuilder.BuilderHeader)Jwts.builder().header().type("JWT")).and()).subject(usuario.getId().toString()).issuedAt(new Date()).expiration(tokeExpirationDate).signWith(this.secretKey).compact();
+    public String generateAccessToken(Usuario user) {
+
+        Date tokeExpirationDate =
+                Date.from(
+                        LocalDateTime
+                                .now()
+                                .plusMinutes(jwtLifeInMinutes)
+                                .atZone(ZoneId.systemDefault())
+                                .toInstant()
+                );
+
+        return Jwts.builder()
+                .header().type(TOKEN_TYPE)
+                .and()
+                .subject(user.getId().toString())
+                .issuedAt(new Date())
+                .expiration(tokeExpirationDate)
+                .signWith(secretKey)
+                .compact();
+
+
     }
 
     public UUID getUserIdFromAccessToken(String token) {
-        String sub = ((Claims)this.jwtParser.parseClaimsJws(token).getBody()).getSubject();
+        String sub = jwtParser.parseClaimsJws(token).getBody().getSubject();
         return UUID.fromString(sub);
     }
 
+
     public boolean validateAccessToken(String token) {
+
         try {
-            this.jwtParser.parseClaimsJws(token);
+            jwtParser.parseClaimsJws(token);
             return true;
-        } catch (MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException | SignatureException ex) {
-            throw new JwtException(((RuntimeException)ex).getMessage());
+        } catch(SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+            throw new JwtException(ex.getMessage());
         }
+
     }
 }

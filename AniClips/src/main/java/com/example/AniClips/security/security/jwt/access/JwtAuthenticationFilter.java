@@ -2,15 +2,12 @@ package com.example.AniClips.security.security.jwt.access;
 
 import com.example.AniClips.security.security.exceptionhandling.JwtException;
 import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.repo.UserRepository;
+import com.example.AniClips.security.user.repo.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
-import lombok.Generated;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,44 +18,74 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
+
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final UserRepository userRepository;
+
+    //private final UserService userService;
+    private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
+
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = this.getJwtAccessTokenFromRequest(request);
 
+        String token = getJwtAccessTokenFromRequest(request);
+
+        // Validar el token
+        // Si es válido, autenticar al usuario
         try {
-            if (StringUtils.hasText(token) && this.jwtService.validateAccessToken(token)) {
-                UUID id = this.jwtService.getUserIdFromAccessToken(token);
-                Optional<Usuario> result = this.userRepository.findById(id);
+            if (StringUtils.hasText(token) && jwtService.validateAccessToken(token)) {
+
+                // Obtener el sub del token, que es el ID del usuario
+                // Buscar el usuario por id
+                // Colocar el usuario autenticado en el contexto de seguridad
+
+                UUID id = jwtService.getUserIdFromAccessToken(token);
+
+                Optional<Usuario> result = usuarioRepository.findById(id);
+
                 if (result.isPresent()) {
-                    Usuario usuario = (Usuario)result.get();
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(usuario, (Object)null, usuario.getAuthorities());
+                    Usuario user = result.get();
+                    UsernamePasswordAuthenticationToken
+                            authenticationToken = new UsernamePasswordAuthenticationToken(
+                            user,
+                            null,
+                            user.getAuthorities()
+                    );
+
                     authenticationToken.setDetails(new WebAuthenticationDetails(request));
+
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+
                 }
+
+
             }
         } catch (JwtException ex) {
-            this.resolver.resolveException(request, response, (Object)null, ex);
+            resolver.resolveException(request, response, null, ex);
         }
 
+
         filterChain.doFilter(request, response);
+
     }
 
     private String getJwtAccessTokenFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        return StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ") ? bearerToken.substring("Bearer ".length()) : null;
-    }
+        String bearerToken = request.getHeader(JwtService.TOKEN_HEADER);
+        // Bearer asfkñaldsjfslk.asñklfdjadlsñfajs.asñkjdfaksdñlfjal
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JwtService.TOKEN_PREFIX)) {
+            return bearerToken.substring(JwtService.TOKEN_PREFIX.length());
+        }
 
-    @Generated
-    public JwtAuthenticationFilter(final UserRepository userRepository, final JwtService jwtService) {
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
+        return null;
     }
 }
-

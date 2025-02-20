@@ -18,10 +18,8 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
-    public JwtAccessDeniedHandler() {
-    }
-
+    @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        this.resolver.resolveException(request, response, (Object)null, accessDeniedException);
+        resolver.resolveException(request, response, null, accessDeniedException);
     }
 }

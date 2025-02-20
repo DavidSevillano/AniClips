@@ -4,6 +4,7 @@ import com.example.AniClips.security.security.exceptionhandling.JwtAccessDeniedH
 import com.example.AniClips.security.security.exceptionhandling.JwtAuthenticationEntryPoint;
 import com.example.AniClips.security.security.jwt.access.JwtAuthenticationFilter;
 import lombok.Generated;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,8 +22,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
+@RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
+
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -31,36 +34,57 @@ public class SecurityConfig {
 
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = (AuthenticationManagerBuilder)http.getSharedObject(AuthenticationManagerBuilder.class);
-        AuthenticationManager authenticationManager = (AuthenticationManager)authenticationManagerBuilder.authenticationProvider(this.authenticationProvider()).build();
+
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+
+        AuthenticationManager authenticationManager =
+                authenticationManagerBuilder.authenticationProvider(authenticationProvider())
+                        .build();
+
         return authenticationManager;
     }
 
     @Bean
     DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider p = new DaoAuthenticationProvider();
-        p.setUserDetailsService(this.userDetailsService);
-        p.setPasswordEncoder(this.passwordEncoder);
+
+        p.setUserDetailsService(userDetailsService);
+        p.setPasswordEncoder(passwordEncoder);
         return p;
+
     }
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable());
+
+        http.csrf(csrf -> csrf.disable());
         http.cors(Customizer.withDefaults());
-        http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.exceptionHandling((excepz) -> excepz.authenticationEntryPoint(this.authenticationEntryPoint).accessDeniedHandler(this.accessDeniedHandler));
-        http.authorizeHttpRequests((authz) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)authz.requestMatchers(HttpMethod.POST, new String[]{"/auth/register", "/auth/login"})).permitAll().requestMatchers(new String[]{"/me/admin"})).hasRole("ADMIN").anyRequest()).authenticated());
-        http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return (SecurityFilterChain)http.build();
+        http.sessionManagement((session) -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.exceptionHandling(excepz -> excepz
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+        );
+        http.authorizeHttpRequests(authz -> authz
+                .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/activate/account/", "/error").permitAll()
+                .requestMatchers("/me/admin").hasRole("ADMIN")
+                .requestMatchers("/h2-console/**").permitAll()
+                .anyRequest().authenticated());
+
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+        http.headers(headers ->
+                headers.frameOptions(frameOptions -> frameOptions.disable()));
+
+        return http.build();
     }
 
-    @Generated
-    public SecurityConfig(final PasswordEncoder passwordEncoder, final UserDetailsService userDetailsService, final JwtAuthenticationFilter jwtAuthenticationFilter, final JwtAuthenticationEntryPoint authenticationEntryPoint, final JwtAccessDeniedHandler accessDeniedHandler) {
-        this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
+
+
+
+
 }

@@ -1,22 +1,23 @@
 package com.example.AniClips.security.user.service;
 
-import com.example.AniClips.security.user.repo.UserRepository;
+import com.example.AniClips.security.user.repo.UsuarioRepository;
 import lombok.Generated;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service("userDetailsService")
+@RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
-    private final UserRepository userRepository;
 
+    private final UsuarioRepository usuarioRepository;
+
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return (UserDetails)this.userRepository.findFirstByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-    }
-
-    @Generated
-    public CustomUserDetailService(final UserRepository userRepository) {
-        this.userRepository = userRepository;
+        return usuarioRepository.findFirstByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 }
