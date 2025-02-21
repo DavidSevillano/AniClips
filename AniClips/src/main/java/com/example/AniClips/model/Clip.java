@@ -6,9 +6,7 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,7 +25,7 @@ public class Clip {
 
     private String descripcion;
 
-    private String url;
+    private String urlVideo;
 
     private LocalDate fecha;
 
@@ -41,7 +39,7 @@ public class Clip {
     @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
-    private List<MeGusta> meGusta = new ArrayList<>();
+    private Set<MeGusta> meGustas = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "usuario_id",
@@ -51,22 +49,22 @@ public class Clip {
     @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
-    private List<Valoracion> valoracion = new ArrayList<>();
+    private Set<Valoracion> valoraciones = new HashSet<>();
 
     @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
-    private List<Comentario> comentario = new ArrayList<>();
+    private Set<Comentario> comentarios = new HashSet<>();
 
     // Métodos helpers de MeGusta
 
     public void addMeGusta(MeGusta m) {
         m.setClip(this);
-        this.getMeGusta().add(m);
+        this.getMeGustas().add(m);
     }
 
     public void removeMeGusta(MeGusta m) {
-        this.getMeGusta().remove(m);
+        this.getMeGustas().remove(m);
         m.setClip(null);
     }
 
@@ -74,11 +72,11 @@ public class Clip {
 
     public void addValoracion(Valoracion v) {
         v.setClip(this);
-        this.getValoracion().add(v);
+        this.getValoraciones().add(v);
     }
 
     public void removeValoracion(Valoracion v) {
-        this.getValoracion().remove(v);
+        this.getValoraciones().remove(v);
         v.setClip(null);
     }
 
@@ -86,11 +84,11 @@ public class Clip {
 
     public void addComentario(Comentario c) {
         c.setClip(this);
-        this.getComentario().add(c);
+        this.getComentarios().add(c);
     }
 
     public void removeComentario(Valoracion c) {
-        this.getComentario().remove(c);
+        this.getComentarios().remove(c);
         c.setClip(null);
     }
 
