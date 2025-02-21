@@ -18,7 +18,7 @@ import java.util.Objects;
 public class Comentario {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate fecha;

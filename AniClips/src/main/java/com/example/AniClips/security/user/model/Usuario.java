@@ -11,7 +11,6 @@ import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
@@ -20,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="user_entity")
+@Table(name = "usuario")
 public class Usuario implements UserDetails {
 
     @Id
@@ -66,8 +65,7 @@ public class Usuario implements UserDetails {
     @ToString.Exclude
     private List<Comentario> comentario = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "perfil_id")
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Perfil perfil;
 
     @ManyToMany

@@ -16,14 +16,15 @@ import java.util.Objects;
 public class Perfil {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private byte[] avatar;
+    private String avatar;
 
     private String descripcion;
 
-    @OneToOne(mappedBy = "perfil", fetch = FetchType.EAGER)
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     @Override
