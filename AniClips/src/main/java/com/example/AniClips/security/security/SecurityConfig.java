@@ -69,7 +69,7 @@ public class SecurityConfig {
         );
         http.authorizeHttpRequests(authz -> authz
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/activate/account/", "/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/clip/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/clip/**", "/comentario/**").permitAll()
                 .anyRequest().authenticated());
 
 
