@@ -1,6 +1,7 @@
 package com.example.AniClips.service;
 
 import com.example.AniClips.dto.Valoracion.EditValoracionDto;
+import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Comentario;
 import com.example.AniClips.model.Valoracion;
@@ -21,7 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ComentarioService {
 
+
     private final ComentarioRepository comentarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ClipRepository clipRepository;
 
     @Transactional(readOnly = true)
     public List<Comentario> findAll() {
@@ -30,6 +34,25 @@ public class ComentarioService {
             throw new EntityNotFoundException();
         }
         return result;
+    }
+
+    @Transactional
+    public Comentario save(EditComentarioDto dto) {
+
+        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        Clip clip = clipRepository.findById(dto.clipId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        Comentario comentario = Comentario.builder()
+                .usuario(usuario)
+                .clip(clip)
+                .fecha(LocalDate.now())
+                .texto(dto.texto())
+                .build();
+
+        return comentarioRepository.save(comentario);
     }
 
 }

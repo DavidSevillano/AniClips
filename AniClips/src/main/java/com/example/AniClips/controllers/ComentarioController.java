@@ -1,7 +1,11 @@
 package com.example.AniClips.controllers;
 
+import com.example.AniClips.dto.Valoracion.EditValoracionDto;
 import com.example.AniClips.dto.clip.GetClipDto;
+import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.dto.comentario.GetComentarioDto;
+import com.example.AniClips.model.Comentario;
+import com.example.AniClips.model.Valoracion;
 import com.example.AniClips.service.ClipService;
 import com.example.AniClips.service.ComentarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,9 +17,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -80,5 +84,32 @@ public class ComentarioController {
                 .stream()
                 .map(GetComentarioDto::of)
                 .toList();
+    }
+
+    @Operation(summary = "Añade un comentario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Comentario añadid",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = EditComentarioDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            {
+                                                "id": 4,
+                                                "fecha": "2025-02-22",
+                                                "texto": "De locos"
+                                            }
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningun comentario",
+                    content = @Content),
+    })
+    @PostMapping
+    public ResponseEntity<Comentario> create(@RequestBody EditComentarioDto nuevo) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        comentarioService.save(nuevo));
     }
 }
