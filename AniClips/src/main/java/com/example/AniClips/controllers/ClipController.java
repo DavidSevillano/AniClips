@@ -1,6 +1,7 @@
 package com.example.AniClips.controllers;
 
 import com.example.AniClips.dto.clip.GetClipDto;
+import com.example.AniClips.dto.clip.GetClipMiniaturaDto;
 import com.example.AniClips.service.ClipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -25,7 +26,7 @@ public class ClipController {
 
     private final ClipService clipService;
 
-    @Operation(summary = "Obtiene todos los titulos")
+    @Operation(summary = "Obtiene todos los clips")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Se han encontrado clips",
@@ -95,6 +96,46 @@ public class ClipController {
         return clipService.findAll()
                 .stream()
                 .map(GetClipDto::of)
+                .toList();
+    }
+
+    @Operation(summary = "Obtiene todos los clips")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se han encontrado clips",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetClipMiniaturaDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            [
+                                                {
+                                                    "duracion": 120,
+                                                    "miniatura": "https://example.com/naruto-vs-pain.jpg",
+                                                    "nombreAnime": "Naruto Shippuden"
+                                                },
+                                                {
+                                                    "duracion": 150,
+                                                    "miniatura": "https://example.com/goku-ssj.jpg",
+                                                    "nombreAnime": "Dragon Ball Z"
+                                                },
+                                                {
+                                                    "duracion": 140,
+                                                    "miniatura": "https://example.com/eren-vs-reiner",
+                                                    "nombreAnime": "Attack on Titan"
+                                                }
+                                            ]
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningún clip",
+                    content = @Content),
+    })
+    @GetMapping("/miniatura")
+    public List<GetClipMiniaturaDto> getAllMiniatura() {
+        return clipService.findAll()
+                .stream()
+                .map(GetClipMiniaturaDto::of)
                 .toList();
     }
 }

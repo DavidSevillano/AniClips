@@ -23,4 +23,5 @@ public class ClipService {
         }
         return result;
     }
+
 }

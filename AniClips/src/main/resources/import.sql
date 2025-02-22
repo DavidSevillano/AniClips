@@ -12,9 +12,9 @@ VALUES
 
 INSERT INTO clip (nombre_anime, descripcion, url_video, fecha, visitas, duracion, miniatura, usuario_id)
 VALUES
-  ('Naruto Shippuden', 'Naruto vs Pain', 'https://example.com/naruto-vs-pain', '2023-01-15', 5000, 120, 0, '11111111-1111-1111-1111-111111111111'),
-  ('Dragon Ball Z', 'Goku se transforma en Super Saiyan', 'https://example.com/goku-ssj', '2023-02-20', 10000, 150, 0, '22222222-2222-2222-2222-222222222222'),
-  ('Attack on Titan', 'Eren vs Reiner', 'https://example.com/eren-vs-reiner', '2023-03-10', 8000, 140, 0, '33333333-3333-3333-3333-333333333333');
+  ('Naruto Shippuden', 'Naruto vs Pain', 'https://example.com/naruto-vs-pain', '2023-01-15', 5000, 120, 'https://example.com/naruto-vs-pain.jpg', '11111111-1111-1111-1111-111111111111'),
+  ('Dragon Ball Z', 'Goku se transforma en Super Saiyan', 'https://example.com/goku-ssj', '2023-02-20', 10000, 150, 'https://example.com/goku-ssj.jpg', '22222222-2222-2222-2222-222222222222'),
+  ('Attack on Titan', 'Eren vs Reiner', 'https://example.com/eren-vs-reiner', '2023-03-10', 8000, 140, 'https://example.com/eren-vs-reiner', '33333333-3333-3333-3333-333333333333');
 
 INSERT INTO comentario (fecha, texto, usuario_id, clip_id)
 VALUES
