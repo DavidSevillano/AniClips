@@ -4,6 +4,7 @@ import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.clip.GetClipMiniaturaDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.service.ClipService;
+import com.example.AniClips.util.SearchCriteria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,12 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -213,4 +214,51 @@ public class ClipController {
 
         return GetClipDto.of(clip);
 
-    }}
+    }
+
+    @Operation(summary = "Obtiene todos los clips por nombre")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se han encontrado clips por nombre",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetClipMiniaturaDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            [
+                                                  {
+                                                      "duracion": 140,
+                                                      "miniatura": "https://example.com/eren-vs-reiner",
+                                                      "nombreAnime": "Attack on Titan"
+                                                  },
+                                                  {
+                                                      "duracion": 240,
+                                                      "miniatura": "https://example.com/eren-vs-bertorto",
+                                                      "nombreAnime": "Attack on Titan"
+                                                  }
+                                              ]
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningún clip",
+                    content = @Content),
+    })
+    @GetMapping("/buscar/")
+    public List<GetClipMiniaturaDto> buscar(@RequestParam(value="search", required = true) String search) {
+        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+        if (search != null) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(.+?),");
+            Matcher matcher = pattern.matcher(search + ",");
+            while (matcher.find()) {
+                params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+            }
+        }
+        return clipService.search(params)
+                .stream()
+                .map(GetClipMiniaturaDto::of)
+                .toList();
+    }
+
+}
+
+
