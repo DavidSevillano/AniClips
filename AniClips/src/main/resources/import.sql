@@ -4,35 +4,37 @@ VALUES
   ('22222222-2222-2222-2222-222222222222', 'goku', 'goku@saiyan.com', 'hashed_password', true, NULL, NOW()),
   ('33333333-3333-3333-3333-333333333333', 'eren', 'eren@paradis.com', 'hashed_password', true, NULL, NOW());
 
-INSERT INTO perfil (id, avatar, descripcion, usuario_id)
+INSERT INTO perfil (avatar, descripcion, usuario_id)
 VALUES
-  (1, 'https://example.com/naruto', 'Soy Naruto Uzumaki, futuro Hokage!', '11111111-1111-1111-1111-111111111111'),
-  (2, 'https://example.com/goku', '¡El más fuerte del universo!', '22222222-2222-2222-2222-222222222222'),
-  (3, 'https://example.com/eren', 'Por la libertad de la humanidad.', '33333333-3333-3333-3333-333333333333');
+  ('https://example.com/naruto', 'Soy Naruto Uzumaki, futuro Hokage!', '11111111-1111-1111-1111-111111111111'),
+  ('https://example.com/goku', '¡El más fuerte del universo!', '22222222-2222-2222-2222-222222222222'),
+  ('https://example.com/eren', 'Por la libertad de la humanidad.', '33333333-3333-3333-3333-333333333333');
 
-INSERT INTO clip (id, nombre_anime, descripcion, url_video, fecha, visitas, duracion, miniatura, usuario_id)
+INSERT INTO clip (nombre_anime, descripcion, url_video, fecha, visitas, duracion, miniatura, usuario_id)
 VALUES
-  (1, 'Naruto Shippuden', 'Naruto vs Pain', 'https://example.com/naruto-vs-pain', '2023-01-15', 5000, 120, 0, '11111111-1111-1111-1111-111111111111'),
-  (2, 'Dragon Ball Z', 'Goku se transforma en Super Saiyan', 'https://example.com/goku-ssj', '2023-02-20', 10000, 150, 0, '22222222-2222-2222-2222-222222222222'),
-  (3, 'Attack on Titan', 'Eren vs Reiner', 'https://example.com/eren-vs-reiner', '2023-03-10', 8000, 140, 0, '33333333-3333-3333-3333-333333333333');
+  ('Naruto Shippuden', 'Naruto vs Pain', 'https://example.com/naruto-vs-pain', '2023-01-15', 5000, 120, 0, '11111111-1111-1111-1111-111111111111'),
+  ('Dragon Ball Z', 'Goku se transforma en Super Saiyan', 'https://example.com/goku-ssj', '2023-02-20', 10000, 150, 0, '22222222-2222-2222-2222-222222222222'),
+  ('Attack on Titan', 'Eren vs Reiner', 'https://example.com/eren-vs-reiner', '2023-03-10', 8000, 140, 0, '33333333-3333-3333-3333-333333333333');
 
-INSERT INTO comentario (id, fecha, texto, usuario_id, clip_id)
+INSERT INTO comentario (fecha, texto, usuario_id, clip_id)
 VALUES
-  (1, '2023-01-16', '¡Esta batalla fue épica!', '22222222-2222-2222-2222-222222222222', 1),
-  (2, '2023-02-21', '¡Siempre me emociona esta escena!', '33333333-3333-3333-3333-333333333333', 2),
-  (3, '2023-03-11', 'No hay mejor pelea en AOT.', '11111111-1111-1111-1111-111111111111', 3);
+  ('2023-01-16', '¡Esta batalla fue épica!', '22222222-2222-2222-2222-222222222222', 1),
+  ('2023-02-21', '¡Siempre me emociona esta escena!', '33333333-3333-3333-3333-333333333333', 2),
+  ('2023-03-11', 'No hay mejor pelea en AOT.', '11111111-1111-1111-1111-111111111111', 3);
 
-INSERT INTO me_gusta (id, fecha, usuario_id, clip_id)
+INSERT INTO me_gusta (fecha, usuario_id, clip_id)
 VALUES
-  (1, '2023-01-16', '22222222-2222-2222-2222-222222222222', 1),
-  (2, '2023-02-21', '33333333-3333-3333-3333-333333333333', 2),
-  (3, '2023-03-11', '11111111-1111-1111-1111-111111111111', 3);
+  ('2023-01-16', '22222222-2222-2222-2222-222222222222', 1),
+  ('2023-02-21', '33333333-3333-3333-3333-333333333333', 2),
+  ('2023-03-11', '11111111-1111-1111-1111-111111111111', 3);
 
-INSERT INTO valoracion (id, puntuacion, fecha, usuario_id, clip_id)
+
+
+INSERT INTO valoracion (puntuacion, fecha, usuario_id, clip_id)
 VALUES
-  (1, 9.5, '2023-01-16', '22222222-2222-2222-2222-222222222222', 1),
-  (2, 10.0, '2023-02-21', '33333333-3333-3333-3333-333333333333', 2),
-  (3, 8.5, '2023-03-11', '11111111-1111-1111-1111-111111111111', 3);
+  (9.5, '2023-01-16', '22222222-2222-2222-2222-222222222222', 1),
+  (10.0, '2023-02-21', '33333333-3333-3333-3333-333333333333', 2),
+  (8.5, '2023-03-11', '11111111-1111-1111-1111-111111111111', 3);
 
 INSERT INTO seguidores (usuario_id, seguido_id)
 VALUES
