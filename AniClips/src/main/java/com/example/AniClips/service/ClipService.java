@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,17 @@ public class ClipService {
             throw new EntityNotFoundException();
         }
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public Clip findById(Long id) {
+        Optional<Clip> clip = clipRepository.findByIdDetalles(id);
+
+        if (clip.isPresent()) {
+            return clip.get();
+        } else {
+            throw new EntityNotFoundException();
+        }
     }
 
 }
