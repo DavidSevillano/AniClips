@@ -216,10 +216,10 @@ public class ClipController {
 
     }
 
-    @Operation(summary = "Obtiene todos los clips por nombre")
+    @Operation(summary = "Obtiene todos los clips por nombre o filtro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Se han encontrado clips por nombre",
+                    description = "Se han encontrado clips por nombre o filtro",
                     content = { @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = GetClipMiniaturaDto.class)),
                             examples = {@ExampleObject(
