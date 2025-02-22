@@ -23,6 +23,8 @@ public class Clip {
 
     private String nombreAnime;
 
+    private String genero;
+
     private String descripcion;
 
     private String urlVideo;
