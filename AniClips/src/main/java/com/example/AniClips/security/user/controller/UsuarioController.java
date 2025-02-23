@@ -4,14 +4,13 @@ import com.example.AniClips.security.security.jwt.access.JwtService;
 import com.example.AniClips.security.security.jwt.refresh.RefreshToken;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenRequest;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenService;
-import com.example.AniClips.security.user.dto.ActivateAccountRequest;
-import com.example.AniClips.security.user.dto.CreateUserRequest;
-import com.example.AniClips.security.user.dto.LoginRequest;
-import com.example.AniClips.security.user.dto.UserResponse;
+import com.example.AniClips.security.user.dto.signupLogin.ActivateAccountRequest;
+import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
+import com.example.AniClips.security.user.dto.signupLogin.LoginRequest;
+import com.example.AniClips.security.user.dto.signupLogin.UserResponse;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.service.UsuarioService;
 import com.example.AniClips.security.util.SendGridMailSender;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor

@@ -5,13 +5,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.UUID;
 
-import com.example.AniClips.security.user.dto.CreateUserRequest;
+import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
 import com.example.AniClips.security.user.error.ActivationExpiredException;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.model.UserRole;
 import com.example.AniClips.security.user.repo.UsuarioRepository;
 import com.example.AniClips.security.util.SendGridMailSender;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

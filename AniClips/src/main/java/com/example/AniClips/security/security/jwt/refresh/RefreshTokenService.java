@@ -4,14 +4,12 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.example.AniClips.security.security.jwt.access.JwtService;
-import com.example.AniClips.security.user.dto.UserResponse;
+import com.example.AniClips.security.user.dto.signupLogin.UserResponse;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.repo.UsuarioRepository;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

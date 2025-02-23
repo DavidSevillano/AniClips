@@ -1,6 +1,7 @@
 package com.example.AniClips.model;
 
 import com.example.AniClips.security.user.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -46,6 +47,7 @@ public class Clip {
     @ManyToOne
     @JoinColumn(name = "usuario_id",
             foreignKey = @ForeignKey(name = "fk_usuario_clip"))
+    @JsonIgnore
     private Usuario usuario;
 
     @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
