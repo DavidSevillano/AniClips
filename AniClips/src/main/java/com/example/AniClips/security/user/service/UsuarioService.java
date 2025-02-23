@@ -1,22 +1,27 @@
 package com.example.AniClips.security.user.service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.UUID;
 
-import com.example.AniClips.security.user.dto.CreateUserRequest;
+import com.example.AniClips.dto.clip.EditClipDto;
+import com.example.AniClips.model.Clip;
+import com.example.AniClips.security.user.dto.EditSeguidoDto;
+import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
 import com.example.AniClips.security.user.error.ActivationExpiredException;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.model.UserRole;
 import com.example.AniClips.security.user.repo.UsuarioRepository;
 import com.example.AniClips.security.util.SendGridMailSender;
-import lombok.Generated;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -65,6 +70,22 @@ public class UsuarioService {
                     return usuarioRepository.save(user);
                 })
                 .orElseThrow(() -> new ActivationExpiredException("El código de activación no existe o ha caducado"));
+    }
+
+    @Transactional
+    public Usuario seguir(EditSeguidoDto editSeguidoDto) {
+
+        Usuario seguidor = usuarioRepository.findById(editSeguidoDto.seguidorId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        Usuario seguido = usuarioRepository.findById(editSeguidoDto.seguidoId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        seguidor.addSeguido(seguido);
+
+        usuarioRepository.flush();
+
+        return seguido;
     }
 
 

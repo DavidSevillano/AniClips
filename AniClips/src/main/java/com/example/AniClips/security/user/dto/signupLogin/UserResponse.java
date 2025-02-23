@@ -1,8 +1,8 @@
-package com.example.AniClips.security.user.dto;
+package com.example.AniClips.security.user.dto.signupLogin;
 
 import com.example.AniClips.security.user.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.util.UUID;
 
 public record UserResponse(

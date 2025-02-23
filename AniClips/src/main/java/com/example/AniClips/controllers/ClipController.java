@@ -1,8 +1,14 @@
 package com.example.AniClips.controllers;
 
+import com.example.AniClips.dto.clip.EditClipDto;
 import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.clip.GetClipMiniaturaDto;
+import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.model.Clip;
+import com.example.AniClips.model.Comentario;
+import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
+import com.example.AniClips.security.user.dto.signupLogin.UserResponse;
+import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.service.ClipService;
 import com.example.AniClips.util.SearchCriteria;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +19,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,6 +33,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/clip/")
 @Tag(name = "clips", description = "Controlador clip")
 public class ClipController {
@@ -257,6 +268,42 @@ public class ClipController {
                 .stream()
                 .map(GetClipMiniaturaDto::of)
                 .toList();
+    }
+
+    @Operation(summary = "Añade un clip")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Clip añadido",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = EditClipDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            {
+                                                 "id": 7,
+                                                 "nombreAnime": "Kimetsu no Yaiba",
+                                                 "genero": "Shonen",
+                                                 "descripcion": "piumpium",
+                                                 "urlVideo": "www.clip.mp4",
+                                                 "fecha": "2025-02-23",
+                                                 "visitas": 0,
+                                                 "duracion": 0,
+                                                 "miniatura": "www.miniatura.jpg",
+                                                 "meGustas": [],
+                                                 "valoraciones": [],
+                                                 "comentarios": []
+                                             }
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningun clip",
+                    content = @Content),
+    })
+    @PostMapping
+    public ResponseEntity<Clip> create(@Valid @RequestBody EditClipDto nuevo) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        clipService.save(nuevo));
     }
 
 }
