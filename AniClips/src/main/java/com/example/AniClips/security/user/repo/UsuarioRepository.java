@@ -10,4 +10,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     Optional<Usuario> findFirstByUsername(String username);
 
     Optional<Usuario> findByActivationToken(String activationToken);
+
+    boolean existsByUsername(String username);
+
 }

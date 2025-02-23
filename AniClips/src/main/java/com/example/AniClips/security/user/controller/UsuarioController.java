@@ -11,6 +11,7 @@ import com.example.AniClips.security.user.dto.signupLogin.UserResponse;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.service.UsuarioService;
 import com.example.AniClips.security.util.SendGridMailSender;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class UsuarioController {
 
 
     @PostMapping("/auth/register")
-    public ResponseEntity<UserResponse> register(@RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody CreateUserRequest createUserRequest) {
         Usuario user = usuarioService.createUser(createUserRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
