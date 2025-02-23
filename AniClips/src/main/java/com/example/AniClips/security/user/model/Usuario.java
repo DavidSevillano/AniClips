@@ -1,6 +1,9 @@
 package com.example.AniClips.security.user.model;
 
 import com.example.AniClips.model.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -68,7 +71,8 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Perfil perfil;
 
-    @ManyToMany
+    @JsonIgnore
+    @ManyToMany()
     @JoinTable(
             name = "seguidores",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -76,6 +80,7 @@ public class Usuario implements UserDetails {
     )
     private Set<Usuario> seguidos = new HashSet<>();
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "seguidos")
     private Set<Usuario> seguidores = new HashSet<>();
 
@@ -86,5 +91,14 @@ public class Usuario implements UserDetails {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
+
+    // Métodos helpers de Seguidos
+
+    public void addSeguido(Usuario u) {
+        u.getSeguidores().add(this);
+        this.getSeguidos().add(u);
+    }
+
 }
+
 

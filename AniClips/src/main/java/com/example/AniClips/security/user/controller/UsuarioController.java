@@ -1,9 +1,12 @@
 package com.example.AniClips.security.user.controller;
 
+import com.example.AniClips.dto.clip.EditClipDto;
 import com.example.AniClips.security.security.jwt.access.JwtService;
 import com.example.AniClips.security.security.jwt.refresh.RefreshToken;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenRequest;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenService;
+import com.example.AniClips.security.user.dto.EditSeguidoDto;
+import com.example.AniClips.security.user.dto.GetUsuarioClipDto;
 import com.example.AniClips.security.user.dto.signupLogin.ActivateAccountRequest;
 import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
 import com.example.AniClips.security.user.dto.signupLogin.LoginRequest;
@@ -11,6 +14,13 @@ import com.example.AniClips.security.user.dto.signupLogin.UserResponse;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.service.UsuarioService;
 import com.example.AniClips.security.util.SendGridMailSender;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -85,16 +95,36 @@ public class UsuarioController {
                 .body(UserResponse.of(usuarioService.activateAccount(token)));
     }
 
+    @Operation(summary = "Sigue a un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Usuario seguido",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetUsuarioClipDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            {
+                                                "Username": "naruto",
+                                                "getPerfilAvatarDto": {
+                                                    "avatar": "https://example.com/naruto"
+                                                }
+                                            }
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningun usuario",
+                    content = @Content),
+    })
+    @PostMapping("/seguir/")
+    public ResponseEntity<GetUsuarioClipDto> seguirUsuario(@RequestBody EditSeguidoDto seguidoDto) {
+        Usuario usuario = usuarioService.seguir(seguidoDto);
 
+        GetUsuarioClipDto getUsuarioClipDto = GetUsuarioClipDto.of(usuario);
 
-    @GetMapping("/me")
-    public UserResponse me(@AuthenticationPrincipal Usuario user) {
-        return UserResponse.of(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(getUsuarioClipDto);
     }
-
-    @GetMapping("/me/admin")
-    public Usuario adminMe(@AuthenticationPrincipal Usuario user) {
-        return user;
-    }
-
 }
+
+
+
