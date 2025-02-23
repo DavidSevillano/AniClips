@@ -1,6 +1,6 @@
 package com.example.AniClips.dto.clip;
 
-import com.example.AniClips.dto.usuario.GetUsuarioClipDto;
+import com.example.AniClips.security.user.dto.GetUsuarioClipDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Valoracion;
 

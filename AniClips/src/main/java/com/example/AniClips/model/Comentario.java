@@ -1,6 +1,7 @@
 package com.example.AniClips.model;
 
 import com.example.AniClips.security.user.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -28,11 +29,13 @@ public class Comentario {
     @ManyToOne
     @JoinColumn(name = "usuario_id",
             foreignKey = @ForeignKey(name = "fk_usuario_comentario"))
+    @JsonIgnore
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "clip_id",
             foreignKey = @ForeignKey(name = "fk_clip_comentario"))
+    @JsonIgnore
     private Clip clip;
 
     @Override

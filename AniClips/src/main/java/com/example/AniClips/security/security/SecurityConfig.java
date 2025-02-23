@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler)
         );
         http.authorizeHttpRequests(authz -> authz
-                .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/activate/account/", "/error").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login","/auth/refresh/token", "/activate/account/", "/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/clip/**").permitAll()
                 .anyRequest().authenticated());
 

@@ -1,4 +1,4 @@
-package com.example.AniClips.dto.usuario;
+package com.example.AniClips.security.user.dto;
 
 import com.example.AniClips.dto.perfil.GetPerfilAvatarDto;
 import com.example.AniClips.security.user.model.Usuario;

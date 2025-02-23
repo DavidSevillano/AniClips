@@ -23,6 +23,8 @@ public class Clip {
 
     private String nombreAnime;
 
+    private String genero;
+
     private String descripcion;
 
     private String urlVideo;
@@ -33,7 +35,7 @@ public class Clip {
 
     private int duracion;
 
-    private byte miniatura;
+    private String miniatura;
 
 
     @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
