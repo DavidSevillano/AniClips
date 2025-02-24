@@ -1,6 +1,6 @@
-package com.example.AniClips.security.user.dto.signupLogin;
+package com.example.AniClips.dto.user.signupLogin;
 
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.UUID;

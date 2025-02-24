@@ -1,19 +1,16 @@
-package com.example.AniClips.security.user.service;
+package com.example.AniClips.service;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.UUID;
 
-import com.example.AniClips.dto.clip.EditClipDto;
-import com.example.AniClips.model.Clip;
-import com.example.AniClips.security.user.dto.EditSeguidoDto;
-import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
-import com.example.AniClips.security.user.error.ActivationExpiredException;
-import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.model.UserRole;
-import com.example.AniClips.security.user.repo.UsuarioRepository;
+import com.example.AniClips.dto.user.EditSeguidoDto;
+import com.example.AniClips.dto.user.signupLogin.CreateUserRequest;
+import com.example.AniClips.error.ActivationExpiredException;
+import com.example.AniClips.model.Usuario;
+import com.example.AniClips.model.UserRole;
+import com.example.AniClips.repo.UsuarioRepository;
 import com.example.AniClips.security.util.SendGridMailSender;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -75,13 +72,15 @@ public class UsuarioService {
     @Transactional
     public Usuario seguir(Usuario usuario, EditSeguidoDto editSeguidoDto) {
 
+        Usuario seguidor = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
         Usuario seguido = usuarioRepository.findById(editSeguidoDto.seguidoId())
                 .orElseThrow(() -> new EntityNotFoundException());
 
+        seguidor.addSeguido(seguido);
 
-        usuario.addSeguido(seguido);
-
-        usuarioRepository.flush();
+        usuarioRepository.save(seguidor);
 
         return seguido;
     }

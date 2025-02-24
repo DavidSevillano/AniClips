@@ -1,4 +1,4 @@
-package com.example.AniClips.security.user.dto.signupLogin;
+package com.example.AniClips.dto.user.signupLogin;
 
 public record ActivateAccountRequest(
         String token

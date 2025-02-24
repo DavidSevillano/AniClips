@@ -1,6 +1,6 @@
 package com.example.AniClips.security.security.exceptionhandling;
 
-import com.example.AniClips.security.user.error.ActivationExpiredException;
+import com.example.AniClips.error.ActivationExpiredException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

@@ -1,7 +1,7 @@
-package com.example.AniClips.security.user.dto;
+package com.example.AniClips.dto.user;
 
 import com.example.AniClips.dto.perfil.GetPerfilAvatarDto;
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 
 public record GetUsuarioClipDto(
         String Username,

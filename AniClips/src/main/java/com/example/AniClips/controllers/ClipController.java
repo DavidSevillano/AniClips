@@ -4,7 +4,7 @@ import com.example.AniClips.dto.clip.EditClipDto;
 import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.clip.GetClipMiniaturaDto;
 import com.example.AniClips.model.Clip;
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.ClipService;
 import com.example.AniClips.util.SearchCriteria;
 import io.swagger.v3.oas.annotations.Operation;

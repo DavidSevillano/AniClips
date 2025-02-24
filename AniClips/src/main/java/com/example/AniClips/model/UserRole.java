@@ -1,4 +1,4 @@
-package com.example.AniClips.security.user.model;
+package com.example.AniClips.model;
 
 public enum UserRole {
     ADMIN,

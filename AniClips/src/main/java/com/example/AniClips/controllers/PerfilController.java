@@ -3,7 +3,7 @@ package com.example.AniClips.controllers;
 import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
 import com.example.AniClips.dto.perfil.GetPerfilDto;
 import com.example.AniClips.model.Perfil;
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.PerfilService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

@@ -1,20 +1,17 @@
-package com.example.AniClips.security.user.controller;
+package com.example.AniClips.controllers;
 
-import com.example.AniClips.dto.clip.EditClipDto;
-import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
-import com.example.AniClips.model.Perfil;
 import com.example.AniClips.security.security.jwt.access.JwtService;
 import com.example.AniClips.security.security.jwt.refresh.RefreshToken;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenRequest;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenService;
-import com.example.AniClips.security.user.dto.EditSeguidoDto;
-import com.example.AniClips.security.user.dto.GetUsuarioClipDto;
-import com.example.AniClips.security.user.dto.signupLogin.ActivateAccountRequest;
-import com.example.AniClips.security.user.dto.signupLogin.CreateUserRequest;
-import com.example.AniClips.security.user.dto.signupLogin.LoginRequest;
-import com.example.AniClips.security.user.dto.signupLogin.UserResponse;
-import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.service.UsuarioService;
+import com.example.AniClips.dto.user.EditSeguidoDto;
+import com.example.AniClips.dto.user.GetUsuarioClipDto;
+import com.example.AniClips.dto.user.signupLogin.ActivateAccountRequest;
+import com.example.AniClips.dto.user.signupLogin.CreateUserRequest;
+import com.example.AniClips.dto.user.signupLogin.LoginRequest;
+import com.example.AniClips.dto.user.signupLogin.UserResponse;
+import com.example.AniClips.model.Usuario;
+import com.example.AniClips.service.UsuarioService;
 import com.example.AniClips.security.util.SendGridMailSender;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,7 +29,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -119,9 +115,13 @@ public class UsuarioController {
                     content = @Content),
     })
     @PostMapping("/seguir/")
-    public ResponseEntity<Usuario> seguirUsuario(@AuthenticationPrincipal Usuario usuario, @RequestBody EditSeguidoDto seguidoDto) {
+    public ResponseEntity<GetUsuarioClipDto> seguirUsuario(@AuthenticationPrincipal Usuario usuario, @RequestBody EditSeguidoDto seguidoDto) {
+
+        Usuario seguido = usuarioService.seguir(usuario, seguidoDto);
+
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                usuarioService.seguir(usuario, seguidoDto));
+                GetUsuarioClipDto.of(seguido));
     }
 
 }

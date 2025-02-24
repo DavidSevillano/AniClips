@@ -1,9 +1,6 @@
-package com.example.AniClips.security.user.model;
+package com.example.AniClips.model;
 
-import com.example.AniClips.model.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -72,7 +69,7 @@ public class Usuario implements UserDetails {
     private Perfil perfil;
 
     @JsonIgnore
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(
             name = "seguidores",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -95,8 +92,8 @@ public class Usuario implements UserDetails {
     // Métodos helpers de Seguidos
 
     public void addSeguido(Usuario u) {
-        u.getSeguidores().add(this);
-        this.getSeguidos().add(u);
+            u.getSeguidores().add(this);
+            this.getSeguidos().add(u);
     }
 
 }

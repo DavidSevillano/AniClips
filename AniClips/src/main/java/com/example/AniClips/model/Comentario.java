@@ -1,6 +1,5 @@
 package com.example.AniClips.model;
 
-import com.example.AniClips.security.user.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.example.AniClips.security.user.dto;
+package com.example.AniClips.dto.user;
 
 import java.util.UUID;
 

@@ -3,7 +3,7 @@ package com.example.AniClips.controllers;
 import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.dto.comentario.GetComentarioDto;
 import com.example.AniClips.model.Comentario;
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.ComentarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

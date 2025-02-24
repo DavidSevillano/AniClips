@@ -1,7 +1,6 @@
-package com.example.AniClips.security.user.service;
+package com.example.AniClips.service;
 
-import com.example.AniClips.security.user.repo.UsuarioRepository;
-import lombok.Generated;
+import com.example.AniClips.repo.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

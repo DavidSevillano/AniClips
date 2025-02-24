@@ -1,6 +1,6 @@
-package com.example.AniClips.security.user.repo;
+package com.example.AniClips.repo;
 
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package com.example.AniClips.controllers;
 
 import com.example.AniClips.model.MeGusta;
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.MeGustaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

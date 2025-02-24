@@ -2,13 +2,11 @@ package com.example.AniClips.service;
 
 import com.example.AniClips.dto.Valoracion.EditValoracionDto;
 import com.example.AniClips.model.Clip;
-import com.example.AniClips.model.MeGusta;
 import com.example.AniClips.model.Valoracion;
 import com.example.AniClips.repo.ClipRepository;
-import com.example.AniClips.repo.MeGustaRepository;
 import com.example.AniClips.repo.ValoracionRepository;
-import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.repo.UsuarioRepository;
+import com.example.AniClips.model.Usuario;
+import com.example.AniClips.repo.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
