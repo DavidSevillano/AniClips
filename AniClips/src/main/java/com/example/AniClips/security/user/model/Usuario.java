@@ -99,6 +99,10 @@ public class Usuario implements UserDetails {
         this.getSeguidos().add(u);
     }
 
+    public void removeSeguido(Usuario u) {
+        this.getSeguidos().remove(u);
+        u.getSeguidores().remove(this);
+    }
 }
 
 

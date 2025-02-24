@@ -88,6 +88,16 @@ public class UsuarioService {
         return seguido;
     }
 
+    public void dejarDeSeguir(UUID seguidoId) {
 
+        Usuario seguidor = usuarioRepository.findById(seguidoId)
+                .orElseThrow(() -> new EntityNotFoundException());
 
+        Usuario seguido = usuarioRepository.findById(seguidoId)
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        seguidor.removeSeguido(seguido);
+
+        usuarioRepository.flush();
+    }
 }

@@ -30,10 +30,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -123,6 +122,12 @@ public class UsuarioController {
         GetUsuarioClipDto getUsuarioClipDto = GetUsuarioClipDto.of(usuario);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(getUsuarioClipDto);
+    }
+
+    @DeleteMapping("/dejar-de-seguir/{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id){
+        usuarioService.dejarDeSeguir(id);
+        return ResponseEntity.noContent().build();
     }
 }
 
