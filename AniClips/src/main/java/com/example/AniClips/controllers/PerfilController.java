@@ -65,13 +65,12 @@ public class PerfilController {
             @ApiResponse(responseCode = "200",
                     description = "Descripcion editada",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilDescripcionDto.class)),
                             examples = {@ExampleObject(
                                     value = """
                                             {
-                                                 "avatar": "https://example.com/naruto",
-                                                 "descripcion": "nueva descripcion"
-                                             }
+                                                "descripcion": "nueva descripcion"
+                                            }
                                             """
                             )}
                     )}),
@@ -80,10 +79,11 @@ public class PerfilController {
                     content = @Content),
     })
     @PutMapping("/descripcion/edit")
-    public GetPerfilDto editDescripcion(@AuthenticationPrincipal Usuario usuario, @RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto) {
+    public GetPerfilDescripcionDto editDescripcion(@AuthenticationPrincipal Usuario usuario,
+                                                   @RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto) {
         Perfil perfil = perfilService.editDescripcion(usuario, editPerfilDescripcionDto);
 
-        return GetPerfilDto.of(perfil);
+        return GetPerfilDescripcionDto.of(perfil);
     }
 
     @Operation(summary = "Añade una foto de perfil")
