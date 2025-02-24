@@ -3,6 +3,8 @@ package com.example.AniClips.controllers;
 import com.example.AniClips.dto.clip.EditClipDto;
 import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.clip.GetClipMiniaturaDto;
+import com.example.AniClips.files.service.StorageService;
+import com.example.AniClips.files.utils.TikaMimeTypeDetector;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.ClipService;
@@ -17,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,6 +39,9 @@ import java.util.regex.Pattern;
 public class ClipController {
 
     private final ClipService clipService;
+    private final StorageService storageService;
+    private final TikaMimeTypeDetector mimeTypeDetector;
+
 
     @Operation(summary = "Obtiene todos los clips")
     @ApiResponses(value = {
@@ -272,23 +278,23 @@ public class ClipController {
             @ApiResponse(responseCode = "201",
                     description = "Clip añadido",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = EditClipDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = Clip.class)),
                             examples = {@ExampleObject(
                                     value = """
                                             {
-                                                 "id": 7,
-                                                 "nombreAnime": "Kimetsu no Yaiba",
-                                                 "genero": "Shonen",
-                                                 "descripcion": "piumpium",
-                                                 "urlVideo": "www.clip.mp4",
-                                                 "fecha": "2025-02-23",
-                                                 "visitas": 0,
-                                                 "duracion": 0,
-                                                 "miniatura": "www.miniatura.jpg",
-                                                 "meGustas": [],
-                                                 "valoraciones": [],
-                                                 "comentarios": []
-                                             }
+                                                  "id": 7,
+                                                  "nombreAnime": "Kimetsu no Yaiba",
+                                                  "genero": "Shonen",
+                                                  "descripcion": "piumpium",
+                                                  "urlVideo": "http://localhost:8080/clip/download/Ejemplo_173859.mp4",
+                                                  "fecha": "2025-02-24",
+                                                  "visitas": 0,
+                                                  "duracion": 0,
+                                                  "miniatura": "http://localhost:8080/clip/download/ejemplo_173874.jpg",
+                                                  "meGustas": [],
+                                                  "valoraciones": [],
+                                                  "comentarios": []
+                                              }
                                             """
                             )}
                     )}),
@@ -297,11 +303,22 @@ public class ClipController {
                     content = @Content),
     })
     @PostMapping
-    public ResponseEntity<Clip> create(@AuthenticationPrincipal Usuario usuario, @Valid @RequestBody EditClipDto nuevo) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(
-                        clipService.save(usuario, nuevo));
+    public ResponseEntity<Clip> create(@AuthenticationPrincipal Usuario usuario,
+                                       @Valid @ModelAttribute EditClipDto nuevo) {
+        Clip clip = clipService.save(usuario, nuevo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(clip);
     }
+
+    @GetMapping("/download/{id:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String id) {
+        Resource resource = storageService.loadAsResource(id);
+        String mimeType = mimeTypeDetector.getMimeType(resource);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("Content-Type", mimeType)
+                .body(resource);
+    }
+
 
 }
 
