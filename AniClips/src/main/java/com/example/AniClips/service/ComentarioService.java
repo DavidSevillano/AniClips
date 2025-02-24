@@ -1,13 +1,10 @@
 package com.example.AniClips.service;
 
-import com.example.AniClips.dto.Valoracion.EditValoracionDto;
 import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Comentario;
-import com.example.AniClips.model.Valoracion;
 import com.example.AniClips.repo.ClipRepository;
 import com.example.AniClips.repo.ComentarioRepository;
-import com.example.AniClips.repo.ValoracionRepository;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.security.user.repo.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,12 +34,9 @@ public class ComentarioService {
     }
 
     @Transactional
-    public Comentario save(EditComentarioDto dto) {
+    public Comentario save(Usuario usuario, EditComentarioDto dto) {
 
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException());
-
-        Clip clip = clipRepository.findById(dto.clipId())
+        Clip clip = clipRepository.findById(dto.ClipId())
                 .orElseThrow(() -> new EntityNotFoundException());
 
         Comentario comentario = Comentario.builder()

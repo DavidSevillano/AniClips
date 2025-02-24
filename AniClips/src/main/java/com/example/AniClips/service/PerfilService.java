@@ -1,6 +1,5 @@
 package com.example.AniClips.service;
 
-import com.example.AniClips.dto.meGusta.EditMeGustaDto;
 import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.MeGusta;

@@ -1,10 +1,7 @@
 package com.example.AniClips.dto.comentario;
 
-import java.util.UUID;
-
-public record EditComentarioDto(
-        UUID usuarioId,
-        Long clipId,
+public record EditComentarioDto (
+        Long ClipId,
         String texto
-) {
+){
 }

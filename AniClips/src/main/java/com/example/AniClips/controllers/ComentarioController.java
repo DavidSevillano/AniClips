@@ -1,12 +1,9 @@
 package com.example.AniClips.controllers;
 
-import com.example.AniClips.dto.Valoracion.EditValoracionDto;
-import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.dto.comentario.GetComentarioDto;
 import com.example.AniClips.model.Comentario;
-import com.example.AniClips.model.Valoracion;
-import com.example.AniClips.service.ClipService;
+import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.service.ComentarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -19,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -107,9 +105,9 @@ public class ComentarioController {
                     content = @Content),
     })
     @PostMapping
-    public ResponseEntity<Comentario> create(@RequestBody EditComentarioDto nuevo) {
+    public ResponseEntity<Comentario> create(@AuthenticationPrincipal Usuario usuario, @RequestBody EditComentarioDto editComentarioDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        comentarioService.save(nuevo));
+                        comentarioService.save(usuario, editComentarioDto));
     }
 }

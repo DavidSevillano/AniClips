@@ -1,6 +1,5 @@
 package com.example.AniClips.service;
 
-import com.example.AniClips.dto.meGusta.EditMeGustaDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.MeGusta;
 import com.example.AniClips.repo.ClipRepository;
@@ -19,16 +18,12 @@ import java.time.LocalDate;
 public class MeGustaService {
 
     private final MeGustaRepository meGustaRepository;
-    private final UsuarioRepository usuarioRepository;
     private final ClipRepository clipRepository;
 
     @Transactional
-    public MeGusta save(EditMeGustaDto dto) {
+    public MeGusta save(Usuario usuario, Long clipId) {
 
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException());
-
-        Clip clip = clipRepository.findById(dto.clipId())
+        Clip clip = clipRepository.findById(clipId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
         MeGusta meGusta = MeGusta.builder()
