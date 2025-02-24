@@ -20,7 +20,6 @@ public class MeGustaService {
     private final MeGustaRepository meGustaRepository;
     private final ClipRepository clipRepository;
 
-    @Transactional
     public MeGusta save(Usuario usuario, Long clipId) {
 
         Clip clip = clipRepository.findById(clipId)

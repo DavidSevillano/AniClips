@@ -22,10 +22,7 @@ public class PerfilService {
     private final UsuarioRepository usuarioRepository;
 
     @Transactional
-    public Perfil save(EditPerfilDescripcionDto dto) {
-
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException());
+    public Perfil save(Usuario usuario, EditPerfilDescripcionDto dto) {
 
         Perfil perfil = Perfil.builder()
                 .descripcion(dto.descripcion())

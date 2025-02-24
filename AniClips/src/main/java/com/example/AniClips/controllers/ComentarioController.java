@@ -87,7 +87,7 @@ public class ComentarioController {
     @Operation(summary = "Añade un comentario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
-                    description = "Comentario añadid",
+                    description = "Comentario añadido",
                     content = { @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = EditComentarioDto.class)),
                             examples = {@ExampleObject(

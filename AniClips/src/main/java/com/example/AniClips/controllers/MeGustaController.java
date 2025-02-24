@@ -45,10 +45,10 @@ public class MeGustaController {
                     content = @Content),
     })
     @PostMapping("/{id}")
-    public ResponseEntity<MeGusta> create(@AuthenticationPrincipal Usuario usuario, @PathVariable Long ClipId) {
+    public ResponseEntity<MeGusta> create(@AuthenticationPrincipal Usuario usuario, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        meGustaService.save(usuario, ClipId));
+                        meGustaService.save(usuario, id));
     }
 
 }

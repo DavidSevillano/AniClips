@@ -33,10 +33,9 @@ public class ComentarioService {
         return result;
     }
 
-    @Transactional
     public Comentario save(Usuario usuario, EditComentarioDto dto) {
 
-        Clip clip = clipRepository.findById(dto.ClipId())
+        Clip clip = clipRepository.findById(dto.clipId())
                 .orElseThrow(() -> new EntityNotFoundException());
 
         Comentario comentario = Comentario.builder()

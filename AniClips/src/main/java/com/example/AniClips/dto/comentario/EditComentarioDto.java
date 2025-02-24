@@ -1,7 +1,7 @@
 package com.example.AniClips.dto.comentario;
 
 public record EditComentarioDto (
-        Long ClipId,
+        Long clipId,
         String texto
 ){
 }
