@@ -73,15 +73,13 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario seguir(EditSeguidoDto editSeguidoDto) {
-
-        Usuario seguidor = usuarioRepository.findById(editSeguidoDto.seguidorId())
-                .orElseThrow(() -> new EntityNotFoundException());
+    public Usuario seguir(Usuario usuario, EditSeguidoDto editSeguidoDto) {
 
         Usuario seguido = usuarioRepository.findById(editSeguidoDto.seguidoId())
                 .orElseThrow(() -> new EntityNotFoundException());
 
-        seguidor.addSeguido(seguido);
+
+        usuario.addSeguido(seguido);
 
         usuarioRepository.flush();
 

@@ -4,6 +4,7 @@ import com.example.AniClips.dto.clip.EditClipDto;
 import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.clip.GetClipMiniaturaDto;
 import com.example.AniClips.model.Clip;
+import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.service.ClipService;
 import com.example.AniClips.util.SearchCriteria;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -295,10 +297,10 @@ public class ClipController {
                     content = @Content),
     })
     @PostMapping
-    public ResponseEntity<Clip> create(@Valid @RequestBody EditClipDto nuevo) {
+    public ResponseEntity<Clip> create(@AuthenticationPrincipal Usuario usuario, @Valid @RequestBody EditClipDto nuevo) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        clipService.save(nuevo));
+                        clipService.save(usuario, nuevo));
     }
 
 }

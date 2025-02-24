@@ -59,10 +59,7 @@ public class ClipService {
     }
 
     @Transactional
-    public Clip save(EditClipDto editClipDto) {
-
-        Usuario usuario = usuarioRepository.findById(editClipDto.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException());
+    public Clip save(Usuario usuario, EditClipDto editClipDto) {
 
         Clip clip = Clip.builder()
                 .urlVideo(editClipDto.urlClip())

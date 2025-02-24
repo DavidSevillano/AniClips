@@ -20,9 +20,6 @@ public record EditClipDto (
         @ValidMiniaturaExtension
         String urlMiniatura,
 
-        String descripcion,
-
-        @NotNull(message = "El id del usuario no puede estar vacío")
-        UUID usuarioId
+        String descripcion
 ){
 }

@@ -1,7 +1,7 @@
 package com.example.AniClips.controllers;
 
 import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
-import com.example.AniClips.model.MeGusta;
+import com.example.AniClips.dto.perfil.GetPerfilDto;
 import com.example.AniClips.model.Perfil;
 import com.example.AniClips.security.user.model.Usuario;
 import com.example.AniClips.service.PerfilService;
@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,5 +52,31 @@ public class PerfilController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
                         perfilService.save(usuario, nuevo));
+    }
+
+    @Operation(summary = "Edita la descripcion del perfil")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Descripcion editada",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            {
+                                                 "avatar": "https://example.com/naruto",
+                                                 "descripcion": "nueva descripcion"
+                                             }
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado el perfil ",
+                    content = @Content),
+    })
+    @PutMapping()
+    public GetPerfilDto edit(@AuthenticationPrincipal Usuario usuario, @RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto) {
+        Perfil perfil = perfilService.edit(usuario, editPerfilDescripcionDto);
+
+        return GetPerfilDto.of(perfil);
     }
 }

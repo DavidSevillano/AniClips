@@ -1,6 +1,8 @@
 package com.example.AniClips.security.user.controller;
 
 import com.example.AniClips.dto.clip.EditClipDto;
+import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
+import com.example.AniClips.model.Perfil;
 import com.example.AniClips.security.security.jwt.access.JwtService;
 import com.example.AniClips.security.security.jwt.refresh.RefreshToken;
 import com.example.AniClips.security.security.jwt.refresh.RefreshTokenRequest;
@@ -117,13 +119,11 @@ public class UsuarioController {
                     content = @Content),
     })
     @PostMapping("/seguir/")
-    public ResponseEntity<GetUsuarioClipDto> seguirUsuario(@RequestBody EditSeguidoDto seguidoDto) {
-        Usuario usuario = usuarioService.seguir(seguidoDto);
-
-        GetUsuarioClipDto getUsuarioClipDto = GetUsuarioClipDto.of(usuario);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(getUsuarioClipDto);
+    public ResponseEntity<Usuario> seguirUsuario(@AuthenticationPrincipal Usuario usuario, @RequestBody EditSeguidoDto seguidoDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                usuarioService.seguir(usuario, seguidoDto));
     }
+
 }
 
 
