@@ -55,7 +55,7 @@ public class PerfilController {
                 .body(
                         perfilService.save(nuevo));
     }
-
+/*
     @Operation(summary = "Edita un curso por su id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -95,11 +95,12 @@ public class PerfilController {
                     description = "No se ha encontrado el curso ",
                     content = @Content),
     })
-    
     @PutMapping("/{id}")
     public GetPerfilDto edit(@RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto, @PathVariable UUID id) {
          GetPerfilDto perfil = GetPerfilDto.of(editPerfilDescripcionDto);
 
          return perfilService.edit(perfil);
     }
+
+ */
 }
