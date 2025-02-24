@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +35,21 @@ public class PerfilService {
                 .build();
 
         return perfilRepository.save(perfil);
+    }
+
+    @Transactional
+    public Perfil edit(EditPerfilDescripcionDto perfilDescripcionDto) {
+
+        Usuario usuario = usuarioRepository.findById(perfilDescripcionDto.usuarioId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        return perfilRepository.findById(usuario.getPerfil().getId())
+                .map(old -> {
+                        old.setUsuario(usuario);
+                        old.setDescripcion(perfilDescripcionDto.descripcion());
+
+                    return perfilRepository.save(old);
+                })
+                .orElseThrow(() -> new EntityNotFoundException());
     }
 }

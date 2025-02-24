@@ -2,6 +2,7 @@ package com.example.AniClips.controllers;
 
 import com.example.AniClips.dto.meGusta.EditMeGustaDto;
 import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
+import com.example.AniClips.dto.perfil.GetPerfilDto;
 import com.example.AniClips.model.MeGusta;
 import com.example.AniClips.model.Perfil;
 import com.example.AniClips.service.PerfilService;
@@ -16,10 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,5 +52,49 @@ public class PerfilController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
                         perfilService.save(nuevo));
+    }
+
+    @Operation(summary = "Edita un curso por su id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Curso editado",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetCursoDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            [
+                                                {
+                                                    "id": 1,
+                                                    "nombre": "Segundo",
+                                                    "horasEmpresa": 350,
+                                                    "profesores": [
+                                                        {
+                                                            "id": 1,
+                                                            "nombre": "Lucia",
+                                                            "apellidos": "Sanchez Garcia",
+                                                            "email": "lucia@gmail.com",
+                                                            "telefono": 6554321
+                                                        },
+                                                        {
+                                                            "id": 51,
+                                                            "nombre": "Luis",
+                                                            "apellidos": "Gómez Torres",
+                                                            "email": "lgomez@gmail.com",
+                                                            "telefono": 678548923
+                                                        }
+                                                    ],
+                                                    "nombreTitulo": "Técnico Superior en Desarrollo de Aplicaciones Multiplataforma"
+                                                }
+                                            ]
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado el curso ",
+                    content = @Content),
+    })
+    @PutMapping("/{id}")
+    public GetPerfilDto edit(@RequestBody EditCursoCmd curso, @PathVariable Long id) {
+        return GetCursoDto.of(cursoService.edit(curso, id));
     }
 }
