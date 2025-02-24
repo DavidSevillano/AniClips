@@ -1,6 +1,7 @@
 package com.example.AniClips.controllers;
 
 import com.example.AniClips.dto.clip.EditClipDto;
+import com.example.AniClips.dto.clip.GetClipDto;
 import com.example.AniClips.dto.perfil.*;
 import com.example.AniClips.files.service.StorageService;
 import com.example.AniClips.files.utils.TikaMimeTypeDetector;
@@ -33,6 +34,50 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final StorageService storageService;
     private final TikaMimeTypeDetector mimeTypeDetector;
+
+    @Operation(summary = "Obtiene el perfil personal completo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se haencontrado el perfil personal",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilCompletoDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            {
+                                                  "username": "naruto",
+                                                  "foto": "https://example.com/naruto",
+                                                  "numeroClips": 2,
+                                                  "numeroSeguidores": 1,
+                                                  "numeroSeguidos": 1,
+                                                  "descripcion": "Soy Naruto Uzumaki, futuro Hokage!",
+                                                  "clips": [
+                                                      {
+                                                          "duracion": 120,
+                                                          "miniatura": "https://example.com/naruto-vs-pain.jpg",
+                                                          "nombreAnime": "Naruto Shippuden"
+                                                      },
+                                                      {
+                                                          "duracion": 20,
+                                                          "miniatura": "https://example.com/naruto-vs-pepe.jpg",
+                                                          "nombreAnime": "Naruto Shippuden"
+                                                      }
+                                                  ]
+                                              }
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningún perfil",
+                    content = @Content),
+    })
+    @GetMapping()
+    public GetPerfilCompletoDto getById(@AuthenticationPrincipal Usuario usuario) {
+
+        Perfil perfil = perfilService.findById(usuario);
+
+        return GetPerfilCompletoDto.of(perfil);
+
+    }
 
     @Operation(summary = "Añade una descripcion al perfil")
     @ApiResponses(value = {

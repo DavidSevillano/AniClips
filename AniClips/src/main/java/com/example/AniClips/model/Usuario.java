@@ -45,15 +45,17 @@ public class Usuario implements UserDetails {
     @Builder.Default
     private Instant createdAt = Instant.now();
 
+
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     private List<MeGusta> meGusta = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
-    private List<Clip> clip = new ArrayList<>();
+    private List<Clip> clips = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default

@@ -8,6 +8,7 @@ import com.example.AniClips.files.model.FileMetadata;
 import com.example.AniClips.files.service.StorageService;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Perfil;
+import com.example.AniClips.repo.ClipRepository;
 import com.example.AniClips.repo.PerfilRepository;
 import com.example.AniClips.model.Usuario;
 import com.example.AniClips.repo.UsuarioRepository;
@@ -19,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,17 @@ public class PerfilService {
 
     private final PerfilRepository perfilRepository;
     private final StorageService storageService;
+    private final UsuarioRepository usuarioRepository;
+    private final ClipRepository clipRepository;
+
+    @Transactional(readOnly = true)
+    public Perfil findById(Usuario usuario) {
+
+        Usuario usuario1 = usuarioRepository.findByIdAntiLazy(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        return usuario1.getPerfil();
+    }
 
     @Transactional
     public Perfil saveDescripcion(Usuario usuario, EditPerfilDescripcionDto dto) {
