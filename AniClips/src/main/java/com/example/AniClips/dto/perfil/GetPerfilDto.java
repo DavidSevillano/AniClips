@@ -14,11 +14,5 @@ public record GetPerfilDto(
         );
     }
 
-    public static GetPerfilDto of (EditPerfilDescripcionDto perfil){
-        return new GetPerfilDto(
-                perfil.usuarioId(),
-                perfil.descripcion()
-        );
-    }
 
 }

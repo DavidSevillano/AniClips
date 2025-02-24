@@ -1,9 +1,7 @@
 package com.example.AniClips.controllers;
 
-import com.example.AniClips.dto.meGusta.EditMeGustaDto;
 import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
 import com.example.AniClips.dto.perfil.GetPerfilDto;
-import com.example.AniClips.model.MeGusta;
 import com.example.AniClips.model.Perfil;
 import com.example.AniClips.service.PerfilService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,52 +53,31 @@ public class PerfilController {
                 .body(
                         perfilService.save(nuevo));
     }
-/*
-    @Operation(summary = "Edita un curso por su id")
+
+    @Operation(summary = "Edita la descripcion del perfil")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Curso editado",
+                    description = "Descripcion editada",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = GetCursoDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilDto.class)),
                             examples = {@ExampleObject(
                                     value = """
-                                            [
-                                                {
-                                                    "id": 1,
-                                                    "nombre": "Segundo",
-                                                    "horasEmpresa": 350,
-                                                    "profesores": [
-                                                        {
-                                                            "id": 1,
-                                                            "nombre": "Lucia",
-                                                            "apellidos": "Sanchez Garcia",
-                                                            "email": "lucia@gmail.com",
-                                                            "telefono": 6554321
-                                                        },
-                                                        {
-                                                            "id": 51,
-                                                            "nombre": "Luis",
-                                                            "apellidos": "Gómez Torres",
-                                                            "email": "lgomez@gmail.com",
-                                                            "telefono": 678548923
-                                                        }
-                                                    ],
-                                                    "nombreTitulo": "Técnico Superior en Desarrollo de Aplicaciones Multiplataforma"
-                                                }
-                                            ]
+                                            {
+                                                 "avatar": "https://example.com/naruto",
+                                                 "descripcion": "nueva descripcion"
+                                             }
                                             """
                             )}
                     )}),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado el curso ",
+                    description = "No se ha encontrado el perfil ",
                     content = @Content),
     })
-    @PutMapping("/{id}")
-    public GetPerfilDto edit(@RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto, @PathVariable UUID id) {
-         GetPerfilDto perfil = GetPerfilDto.of(editPerfilDescripcionDto);
+    @PutMapping()
+    public GetPerfilDto edit(@RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto) {
+        Perfil perfil = perfilService.edit(editPerfilDescripcionDto);
 
-         return perfilService.edit(perfil);
+         return GetPerfilDto.of(perfil);
     }
 
- */
 }
