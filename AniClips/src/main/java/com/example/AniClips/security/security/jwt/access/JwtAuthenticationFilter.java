@@ -1,8 +1,8 @@
 package com.example.AniClips.security.security.jwt.access;
 
 import com.example.AniClips.security.security.exceptionhandling.JwtException;
-import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.repo.UsuarioRepository;
+import com.example.AniClips.model.Usuario;
+import com.example.AniClips.repo.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

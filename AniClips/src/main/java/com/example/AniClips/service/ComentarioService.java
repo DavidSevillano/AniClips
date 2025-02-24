@@ -1,15 +1,12 @@
 package com.example.AniClips.service;
 
-import com.example.AniClips.dto.Valoracion.EditValoracionDto;
 import com.example.AniClips.dto.comentario.EditComentarioDto;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Comentario;
-import com.example.AniClips.model.Valoracion;
 import com.example.AniClips.repo.ClipRepository;
 import com.example.AniClips.repo.ComentarioRepository;
-import com.example.AniClips.repo.ValoracionRepository;
-import com.example.AniClips.security.user.model.Usuario;
-import com.example.AniClips.security.user.repo.UsuarioRepository;
+import com.example.AniClips.model.Usuario;
+import com.example.AniClips.repo.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,11 +33,7 @@ public class ComentarioService {
         return result;
     }
 
-    @Transactional
-    public Comentario save(EditComentarioDto dto) {
-
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException());
+    public Comentario save(Usuario usuario, EditComentarioDto dto) {
 
         Clip clip = clipRepository.findById(dto.clipId())
                 .orElseThrow(() -> new EntityNotFoundException());

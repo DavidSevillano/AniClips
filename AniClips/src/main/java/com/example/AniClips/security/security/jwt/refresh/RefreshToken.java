@@ -1,6 +1,6 @@
 package com.example.AniClips.security.security.jwt.refresh;
 
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +11,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 import lombok.*;
-import org.hibernate.annotations.NaturalId;
 
 @Entity
 @NoArgsConstructor
