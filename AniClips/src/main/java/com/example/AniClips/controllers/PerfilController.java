@@ -1,10 +1,7 @@
 package com.example.AniClips.controllers;
 
 import com.example.AniClips.dto.clip.EditClipDto;
-import com.example.AniClips.dto.perfil.EditPerfilAvatarDto;
-import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
-import com.example.AniClips.dto.perfil.GetPerfilAvatarDto;
-import com.example.AniClips.dto.perfil.GetPerfilDto;
+import com.example.AniClips.dto.perfil.*;
 import com.example.AniClips.files.service.StorageService;
 import com.example.AniClips.files.utils.TikaMimeTypeDetector;
 import com.example.AniClips.model.Clip;
@@ -42,12 +39,10 @@ public class PerfilController {
             @ApiResponse(responseCode = "201",
                     description = "Descripcion añadida",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = EditPerfilDescripcionDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilDescripcionDto.class)),
                             examples = {@ExampleObject(
                                     value = """
                                             {
-                                                "id": 3,
-                                                "avatar": null,
                                                 "descripcion": "nueva descripcion"
                                             }
                                             """
@@ -58,10 +53,11 @@ public class PerfilController {
                     content = @Content),
     })
     @PostMapping("/descripcion/")
-    public ResponseEntity<Perfil> createDescripcion(@AuthenticationPrincipal Usuario usuario, @RequestBody EditPerfilDescripcionDto nuevo) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(
-                        perfilService.saveDescripcion(usuario, nuevo));
+    public ResponseEntity<GetPerfilDescripcionDto> createDescripcion(@AuthenticationPrincipal Usuario usuario,
+                                                                     @RequestBody EditPerfilDescripcionDto nuevo) {
+
+        Perfil perfil = perfilService.saveDescripcion(usuario, nuevo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(GetPerfilDescripcionDto.of(perfil));
     }
 
     @Operation(summary = "Edita la descripcion del perfil")
