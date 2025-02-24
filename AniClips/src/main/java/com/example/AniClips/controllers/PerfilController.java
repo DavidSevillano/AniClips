@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/perfil/")
@@ -93,8 +95,11 @@ public class PerfilController {
                     description = "No se ha encontrado el curso ",
                     content = @Content),
     })
+    
     @PutMapping("/{id}")
-    public GetPerfilDto edit(@RequestBody EditCursoCmd curso, @PathVariable Long id) {
-        return GetCursoDto.of(cursoService.edit(curso, id));
+    public GetPerfilDto edit(@RequestBody EditPerfilDescripcionDto editPerfilDescripcionDto, @PathVariable UUID id) {
+         GetPerfilDto perfil = GetPerfilDto.of(editPerfilDescripcionDto);
+
+         return perfilService.edit(perfil);
     }
 }
