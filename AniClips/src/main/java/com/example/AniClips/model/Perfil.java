@@ -1,6 +1,7 @@
 package com.example.AniClips.model;
 
 import com.example.AniClips.security.user.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -23,6 +24,7 @@ public class Perfil {
 
     private String descripcion;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
