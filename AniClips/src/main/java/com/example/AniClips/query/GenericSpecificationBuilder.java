@@ -35,12 +35,16 @@ public abstract class GenericSpecificationBuilder<U> {
             Predicate predicate = null;
 
             if (key.equalsIgnoreCase("valoracion")) {
-                Subquery<Double> subquery = query.subquery(Double.class);
-                Root<U> subRoot = (Root<U>) subquery.from(root.getModel().getBindableJavaType());
-                Join<Object, Object> valoraciones = subRoot.join("valoraciones", JoinType.LEFT);
 
-                subquery.select(builder.coalesce(builder.avg(valoraciones.get("puntuacion")), 0.0))
-                        .where(builder.equal(subRoot.get("id"), root.get("id")));
+                //Subquery para calcular la media de las valoraciones
+                Subquery<Double> subquery = query.subquery(Double.class); //Devuelve un double
+
+                Root<U> subRoot = (Root<U>) subquery.from(root.getModel().getBindableJavaType()); //Le indicamos a la subconsulta en que entidad trabajar
+
+                Join<Object, Object> valoraciones = subRoot.join("valoraciones", JoinType.LEFT); //Accedemos a las puntuaciones de cada clip
+
+                subquery.select(builder.coalesce(builder.avg(valoraciones.get("puntuacion")), 0.0)) //Calcula el promedio y si no tiene valoraciones devuelve 0.0
+                        .where(builder.equal(subRoot.get("id"), root.get("id"))); //Asegura que la subquery calcule la mdeia de las valoraciones del clip actual
 
                 if (operation.equals(">")) {
                     predicate = builder.greaterThanOrEqualTo(subquery, Double.valueOf(value.toString()));
@@ -52,7 +56,7 @@ public abstract class GenericSpecificationBuilder<U> {
 
             }
             else if (operation.equals(">")) {
-                Class<?> fieldType = root.get(key).getJavaType();
+                Class<?> fieldType = root.get(key).getJavaType(); //Obtiene el tipo de key
 
                 if (fieldType == Integer.class) {
                     predicate = builder.greaterThanOrEqualTo(root.get(key).as(Integer.class), Integer.valueOf(value.toString()));
@@ -74,9 +78,9 @@ public abstract class GenericSpecificationBuilder<U> {
             } else if (operation.equals(":")) {
                 if (root.get(key).getJavaType() == String.class) {
                     String valor = value.toString().trim();
-                    if (valor.contains(" ")) {
+                    if (valor.contains(" ")) { //La busqueda es exacta
                         predicate = builder.equal(root.get(key), valor);
-                    } else {
+                    } else { //La busqueda es parcial
                         predicate = builder.like(builder.lower(root.get(key)), "%" + valor.toLowerCase() + "%");
                     }
                 } else {

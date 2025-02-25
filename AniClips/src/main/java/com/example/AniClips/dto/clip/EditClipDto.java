@@ -9,20 +9,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 public record EditClipDto (
-        @NotBlank(message = "El nombre del anime no puede estar vacío")
+        @NotBlank(message = "{error.nombreAnime.notBlank}")
         String nombreAnime,
 
-        @NotBlank(message = "El género no puede estar vacío")
+        @NotBlank(message = "{error.genero.notBlank}")
         String genero,
 
         String descripcion,
 
-        @NotNull(message = "El video no puede estar vacío")
+        @NotNull(message = "{error.video.notNull}")
         MultipartFile video,
 
-        @NotNull(message = "La miniatura no puede estar vacía")
+        @NotNull(message = "{error.miniatura.notNull}")
         MultipartFile miniatura
 ) {
-
 }
 
