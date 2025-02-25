@@ -1,7 +1,7 @@
 package com.example.AniClips.controllers;
 
-import com.example.AniClips.dto.meGusta.EditMeGustaDto;
 import com.example.AniClips.model.MeGusta;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.MeGustaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,10 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class MeGustaController {
             @ApiResponse(responseCode = "201",
                     description = "Me gusta añadido",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = EditMeGustaDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = MeGusta.class)),
                             examples = {@ExampleObject(
                                     value = """
                                             {
@@ -42,15 +40,12 @@ public class MeGustaController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningún clip",
-                    content = @Content),
     })
-    @PostMapping
-    public ResponseEntity<MeGusta> create(@RequestBody EditMeGustaDto nuevo) {
+    @PostMapping("/{id}")
+    public ResponseEntity<MeGusta> create(@AuthenticationPrincipal Usuario usuario, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        meGustaService.save(nuevo));
+                        meGustaService.save(usuario, id));
     }
 
 }

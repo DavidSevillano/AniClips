@@ -1,10 +1,8 @@
 package com.example.AniClips.security.security.jwt.access;
 
 import com.example.AniClips.security.security.exceptionhandling.JwtException;
-import com.example.AniClips.security.user.model.Usuario;
-import io.jsonwebtoken.Claims;
+import com.example.AniClips.model.Usuario;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;

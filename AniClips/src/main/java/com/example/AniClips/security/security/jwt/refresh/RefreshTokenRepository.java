@@ -2,7 +2,7 @@ package com.example.AniClips.security.security.jwt.refresh;
 
 import java.util.UUID;
 
-import com.example.AniClips.security.user.model.Usuario;
+import com.example.AniClips.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;

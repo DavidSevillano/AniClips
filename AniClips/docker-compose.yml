@@ -19,7 +19,7 @@ services:
            - pgdata:/var/lib/postgresql/data
 
    pgadmin:
-       image: dpage/pgadmin4
+       image: dpage/pgadmin4:8.14
        container_name: pgadmin-spring
        restart: always
        ports:
