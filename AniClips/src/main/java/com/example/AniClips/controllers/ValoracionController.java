@@ -1,10 +1,8 @@
 package com.example.AniClips.controllers;
 
 import com.example.AniClips.dto.Valoracion.EditValoracionDto;
-import com.example.AniClips.dto.meGusta.EditMeGustaDto;
-import com.example.AniClips.model.MeGusta;
 import com.example.AniClips.model.Valoracion;
-import com.example.AniClips.service.MeGustaService;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.service.ValoracionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,10 +50,10 @@ public class ValoracionController {
                     content = @Content),
     })
     @PostMapping
-    public ResponseEntity<Valoracion> create(@RequestBody EditValoracionDto nuevo) {
+    public ResponseEntity<Valoracion> create(@AuthenticationPrincipal Usuario usuario, @RequestBody EditValoracionDto nuevo) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        valoracionService.save(nuevo));
+                        valoracionService.save(usuario, nuevo));
     }
 
 }

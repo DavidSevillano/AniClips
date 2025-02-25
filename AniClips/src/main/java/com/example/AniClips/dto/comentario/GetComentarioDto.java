@@ -1,9 +1,7 @@
 package com.example.AniClips.dto.comentario;
 
-import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Comentario;
-import com.example.AniClips.model.Valoracion;
-import com.example.AniClips.security.user.dto.GetUsuarioClipDto;
+import com.example.AniClips.dto.user.GetUsuarioClipDto;
 
 import java.time.LocalDate;
 

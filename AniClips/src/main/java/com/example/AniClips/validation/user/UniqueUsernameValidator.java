@@ -1,6 +1,6 @@
 package com.example.AniClips.validation.user;
 
-import com.example.AniClips.security.user.repo.UsuarioRepository;
+import com.example.AniClips.repo.UsuarioRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
