@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record EditPerfilAvatarDto(
 
-        @NotNull(message = "la foto de perfil no puede estar vacío")
+        @NotNull(message = "{error.foto.notNull}")
         MultipartFile foto
 
 ) {
