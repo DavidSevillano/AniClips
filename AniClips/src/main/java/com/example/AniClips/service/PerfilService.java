@@ -80,6 +80,22 @@ public class PerfilService {
         return perfilRepository.save(perfil);
     }
 
+    @Transactional
+    public Perfil editAvatar(Usuario usuario, EditPerfilAvatarDto editPerfilAvatarDto) {
+
+        return perfilRepository.findById(usuario.getPerfil().getId())
+                .map(old -> {
+                    FileResponse nuevaFoto = uploadFile(editPerfilAvatarDto.foto());
+
+                    old.setAvatar(nuevaFoto.uri());
+                    old.setUsuario(usuario);
+
+                    return perfilRepository.save(old);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("No existe ningún usuario con id " + usuario.getId()));
+    }
+
+
     private FileResponse uploadFile(MultipartFile multipartFile) {
         FileMetadata fileMetadata = storageService.store(multipartFile);
 

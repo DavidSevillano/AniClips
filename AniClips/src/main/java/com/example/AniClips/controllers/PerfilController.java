@@ -150,6 +150,33 @@ public class PerfilController {
         return ResponseEntity.status(HttpStatus.CREATED).body(GetPerfilAvatarDto.of(perfil));
     }
 
+    @Operation(summary = "Edita la foto de perfil")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Foto editada",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilAvatarDto.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            {
+                                                "avatar": "http://localhost:8080/clip/download/ejemplo_069451.jpg"
+                                            }
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No existe ningun usuario con id 11111111-1111-1111-1111-111111111111",
+                    content = @Content),
+    })
+    @PutMapping("/foto/")
+    public GetPerfilAvatarDto updatePerfilAvatar(
+            @AuthenticationPrincipal Usuario usuario,
+            @Valid @ModelAttribute EditPerfilAvatarDto nuevo) {
+
+        Perfil perfil = perfilService.editAvatar(usuario, nuevo);
+        return GetPerfilAvatarDto.of(perfil);
+    }
+
     @GetMapping("/download/{id:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String id) {
         Resource resource = storageService.loadAsResource(id);
