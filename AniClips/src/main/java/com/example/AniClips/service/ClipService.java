@@ -11,11 +11,15 @@ import com.example.AniClips.model.Usuario;
 import com.example.AniClips.util.SearchCriteria;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,8 +33,8 @@ public class ClipService {
     private final StorageService storageService;
 
     @Transactional(readOnly = true)
-    public List<Clip> findAll() {
-        List<Clip> result = clipRepository.findAllDetalles();
+    public Page<Clip> findAll(org.springframework.data.domain.Pageable pageRequest) {
+        Page<Clip> result = clipRepository.findAllDetalles(pageRequest);
         if (result.isEmpty()) {
             throw new EntityNotFoundException("No se han encontrado clips");
         }
@@ -49,18 +53,18 @@ public class ClipService {
     }
 
     @Transactional(readOnly = true)
-    public List<Clip> search(List<SearchCriteria> searchCriteriaList) {
-        ClipSpecificationBuilder userSpecificationBuilder = new ClipSpecificationBuilder(searchCriteriaList);
-        Specification<Clip> where = userSpecificationBuilder.build();
+public Page<Clip> search(List<SearchCriteria> searchCriteriaList, Pageable pageable) {
+    ClipSpecificationBuilder userSpecificationBuilder = new ClipSpecificationBuilder(searchCriteriaList);
+    Specification<Clip> where = userSpecificationBuilder.build();
 
-        List<Clip> result = clipRepository.findAll(where);
+    Page<Clip> result = clipRepository.findAll(where, pageable);
 
-        if (result.isEmpty()) {
-            throw new EntityNotFoundException("No se encontraron clips con los criterios especificados.");
-        }
-
-        return result;
+    if (result.isEmpty()) {
+        throw new EntityNotFoundException("No se encontraron clips con los criterios especificados.");
     }
+
+    return result;
+}
 
     public Clip save(Usuario usuario, EditClipDto editClipDto) {
 

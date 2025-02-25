@@ -9,6 +9,8 @@ import com.example.AniClips.model.Usuario;
 import com.example.AniClips.repo.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,8 @@ public class ComentarioService {
     private final ClipRepository clipRepository;
 
     @Transactional(readOnly = true)
-    public List<Comentario> findAll() {
-        List<Comentario> result = comentarioRepository.findAll();
+    public Page<Comentario> findAll(Pageable pageable) {
+        Page<Comentario> result = comentarioRepository.findAll(pageable);
         if (result.isEmpty()) {
             throw new EntityNotFoundException("No se han encontrado comentarios");
         }

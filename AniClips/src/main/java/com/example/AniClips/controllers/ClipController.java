@@ -21,6 +21,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -51,56 +54,51 @@ public class ClipController {
                             array = @ArraySchema(schema = @Schema(implementation = GetClipDto.class)),
                             examples = {@ExampleObject(
                                     value = """
-                                            [
-                                                 {
-                                                     "descripcion": "Naruto vs Pain",
-                                                     "urlVideo": "https://example.com/naruto-vs-pain",
-                                                     "fecha": "2023-01-15",
-                                                     "visitas": 5000,
-                                                     "duracion": 120,
-                                                     "getUsuarioClipDto": {
-                                                         "Username": "naruto",
-                                                         "getPerfilAvatarDto": {
-                                                             "avatar": "https://example.com/naruto"
-                                                         }
-                                                     },
-                                                     "cantidadMeGusta": 1,
-                                                     "cantidadComentarios": 1,
-                                                     "mediaValoraciones": 9.5
-                                                 },
-                                                 {
-                                                     "descripcion": "Goku se transforma en Super Saiyan",
-                                                     "urlVideo": "https://example.com/goku-ssj",
-                                                     "fecha": "2023-02-20",
-                                                     "visitas": 10000,
-                                                     "duracion": 150,
-                                                     "getUsuarioClipDto": {
-                                                         "Username": "goku",
-                                                         "getPerfilAvatarDto": {
-                                                             "avatar": "https://example.com/goku"
-                                                         }
-                                                     },
-                                                     "cantidadMeGusta": 1,
-                                                     "cantidadComentarios": 1,
-                                                     "mediaValoraciones": 10.0
-                                                 },
-                                                 {
-                                                     "descripcion": "Eren vs Reiner",
-                                                     "urlVideo": "https://example.com/eren-vs-reiner",
-                                                     "fecha": "2023-03-10",
-                                                     "visitas": 8000,
-                                                     "duracion": 140,
-                                                     "getUsuarioClipDto": {
-                                                         "Username": "eren",
-                                                         "getPerfilAvatarDto": {
-                                                             "avatar": "https://example.com/eren"
-                                                         }
-                                                     },
-                                                     "cantidadMeGusta": 1,
-                                                     "cantidadComentarios": 1,
-                                                     "mediaValoraciones": 8.5
-                                                 }
-                                             ]
+                                            {
+                                                  "content": [
+                                                      {
+                                                          "descripcion": "Naruto vs Pain",
+                                                          "urlVideo": "https://example.com/naruto-vs-pain",
+                                                          "fecha": "2023-01-15",
+                                                          "visitas": 5000,
+                                                          "duracion": 120,
+                                                          "getUsuarioClipDto": {
+                                                              "Username": "naruto",
+                                                              "getPerfilAvatarDto": {
+                                                                  "avatar": "https://example.com/naruto"
+                                                              }
+                                                          },
+                                                          "cantidadMeGusta": 1,
+                                                          "cantidadComentarios": 1,
+                                                          "mediaValoraciones": 9.5
+                                                      }
+                                                  ],
+                                                  "pageable": {
+                                                      "pageNumber": 0,
+                                                      "pageSize": 1,
+                                                      "sort": {
+                                                          "empty": true,
+                                                          "sorted": false,
+                                                          "unsorted": true
+                                                      },
+                                                      "offset": 0,
+                                                      "paged": true,
+                                                      "unpaged": false
+                                                  },
+                                                  "last": false,
+                                                  "totalElements": 4,
+                                                  "totalPages": 4,
+                                                  "first": true,
+                                                  "size": 1,
+                                                  "number": 0,
+                                                  "sort": {
+                                                      "empty": true,
+                                                      "sorted": false,
+                                                      "unsorted": true
+                                                  },
+                                                  "numberOfElements": 1,
+                                                  "empty": false
+                                              }
                                             """
                             )}
                     )}),
@@ -109,12 +107,11 @@ public class ClipController {
                     content = @Content),
     })
     @GetMapping
-    public List<GetClipDto> getAll() {
-        return clipService.findAll()
-                .stream()
-                .map(GetClipDto::of)
-                .toList();
-    }
+    public Page<GetClipDto> getAll(@RequestParam(defaultValue = "0") int page) {
+        Pageable pageRequest = PageRequest.of(page, 1);
+        return clipService.findAll(pageRequest)
+                .map(GetClipDto::of);
+    }   
 
     @Operation(summary = "Obtiene todos los clips")
     @ApiResponses(value = {
@@ -124,23 +121,55 @@ public class ClipController {
                             array = @ArraySchema(schema = @Schema(implementation = GetClipMiniaturaDto.class)),
                             examples = {@ExampleObject(
                                     value = """
-                                            [
-                                                {
-                                                    "duracion": 120,
-                                                    "miniatura": "https://example.com/naruto-vs-pain.jpg",
-                                                    "nombreAnime": "Naruto Shippuden"
+                                            {
+                                                "content": [
+                                                    {
+                                                        "duracion": 120,
+                                                        "miniatura": "https://example.com/naruto-vs-pain.jpg",
+                                                        "nombreAnime": "Naruto Shippuden"
+                                                    },
+                                                    {
+                                                        "duracion": 150,
+                                                        "miniatura": "https://example.com/goku-ssj.jpg",
+                                                        "nombreAnime": "Dragon Ball Z"
+                                                    },
+                                                    {
+                                                        "duracion": 130,
+                                                        "miniatura": "https://example.com/luffy-vs-crocodile.jpg",
+                                                        "nombreAnime": "One Piece"
+                                                    },
+                                                    {
+                                                        "duracion": 180,
+                                                        "miniatura": "https://example.com/zoro-vs-mihawk.jpg",
+                                                        "nombreAnime": "One Piece"
+                                                    }
+                                                ],
+                                                "pageable": {
+                                                    "pageNumber": 0,
+                                                    "pageSize": 15,
+                                                    "sort": {
+                                                        "empty": true,
+                                                        "sorted": false,
+                                                        "unsorted": true
+                                                    },
+                                                    "offset": 0,
+                                                    "paged": true,
+                                                    "unpaged": false
                                                 },
-                                                {
-                                                    "duracion": 150,
-                                                    "miniatura": "https://example.com/goku-ssj.jpg",
-                                                    "nombreAnime": "Dragon Ball Z"
+                                                "last": true,
+                                                "totalElements": 4,
+                                                "totalPages": 1,
+                                                "first": true,
+                                                "size": 15,
+                                                "number": 0,
+                                                "sort": {
+                                                    "empty": true,
+                                                    "sorted": false,
+                                                    "unsorted": true
                                                 },
-                                                {
-                                                    "duracion": 140,
-                                                    "miniatura": "https://example.com/eren-vs-reiner",
-                                                    "nombreAnime": "Attack on Titan"
-                                                }
-                                            ]
+                                                "numberOfElements": 4,
+                                                "empty": false
+                                            }
                                             """
                             )}
                     )}),
@@ -149,11 +178,10 @@ public class ClipController {
                     content = @Content),
     })
     @GetMapping("/miniatura")
-    public List<GetClipMiniaturaDto> getAllMiniatura() {
-        return clipService.findAll()
-                .stream()
-                .map(GetClipMiniaturaDto::of)
-                .toList();
+    public Page<GetClipMiniaturaDto> getAllMiniatura(@RequestParam(defaultValue = "0") int page) {
+        Pageable pageRequest = PageRequest.of(page, 15);
+        return clipService.findAll(pageRequest)
+                .map(GetClipMiniaturaDto::of);
     }
 
     @Operation(summary = "Obtiene un clip por id")
@@ -204,18 +232,45 @@ public class ClipController {
                             array = @ArraySchema(schema = @Schema(implementation = GetClipMiniaturaDto.class)),
                             examples = {@ExampleObject(
                                     value = """
-                                            [
-                                                  {
-                                                      "duracion": 140,
-                                                      "miniatura": "https://example.com/eren-vs-reiner",
-                                                      "nombreAnime": "Attack on Titan"
-                                                  },
-                                                  {
-                                                      "duracion": 240,
-                                                      "miniatura": "https://example.com/eren-vs-bertorto",
-                                                      "nombreAnime": "Attack on Titan"
-                                                  }
-                                              ]
+                                            {
+                                                "content": [
+                                                    {
+                                                        "duracion": 130,
+                                                        "miniatura": "https://example.com/luffy-vs-crocodile.jpg",
+                                                        "nombreAnime": "One Piece"
+                                                    },
+                                                    {
+                                                        "duracion": 180,
+                                                        "miniatura": "https://example.com/zoro-vs-mihawk.jpg",
+                                                        "nombreAnime": "One Piece"
+                                                    }
+                                                ],
+                                                "pageable": {
+                                                    "pageNumber": 0,
+                                                    "pageSize": 15,
+                                                    "sort": {
+                                                        "empty": true,
+                                                        "sorted": false,
+                                                        "unsorted": true
+                                                    },
+                                                    "offset": 0,
+                                                    "paged": true,
+                                                    "unpaged": false
+                                                },
+                                                "last": true,
+                                                "totalElements": 2,
+                                                "totalPages": 1,
+                                                "first": true,
+                                                "size": 15,
+                                                "number": 0,
+                                                "sort": {
+                                                    "empty": true,
+                                                    "sorted": false,
+                                                    "unsorted": true
+                                                },
+                                                "numberOfElements": 2,
+                                                "empty": false
+                                            }
                                             """
                             )}
                     )}),
@@ -224,8 +279,12 @@ public class ClipController {
                     content = @Content),
     })
     @GetMapping("/buscar/")
-    public List<GetClipMiniaturaDto> buscar(@RequestParam(value="search", required = true) String search) {
-        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+    public Page<GetClipMiniaturaDto> buscar(@RequestParam(value = "search", required = true) String search,
+                                            @RequestParam(defaultValue = "0") int page) {
+
+        Pageable pageRequest = PageRequest.of(page, 15);
+
+        List<SearchCriteria> params = new ArrayList<>();
         if (search != null) {
             Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(.+?),");
             Matcher matcher = pattern.matcher(search + ",");
@@ -233,10 +292,10 @@ public class ClipController {
                 params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
             }
         }
-        return clipService.search(params)
-                .stream()
-                .map(GetClipMiniaturaDto::of)
-                .toList();
+
+        Page<Clip> result = clipService.search(params, pageRequest);
+
+        return result.map(GetClipMiniaturaDto::of);
     }
 
     @Operation(summary = "Añade un clip")
