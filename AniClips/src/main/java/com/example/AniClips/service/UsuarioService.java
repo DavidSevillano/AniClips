@@ -97,4 +97,16 @@ public class UsuarioService {
         seguidor.removeSeguido(seguido);
 
     }
+
+    @Transactional
+    public void eliminarUsario(UUID usuarioId) {
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        usuario.eliminarSeguidos();
+
+        usuarioRepository.deleteById(usuarioId);
+
+    }
 }

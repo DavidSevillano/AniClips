@@ -35,6 +35,7 @@ public class Usuario implements UserDetails {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
     private Set<UserRole> roles;
 
     @Builder.Default
@@ -101,6 +102,17 @@ public class Usuario implements UserDetails {
     public void removeSeguido(Usuario u) {
         this.getSeguidos().remove(u);
         u.getSeguidores().remove(this);
+    }
+
+    public void eliminarSeguidos() {
+        for (Usuario seguido : new HashSet<>(this.seguidos)) {
+            seguido.getSeguidores().remove(this);
+            this.seguidos.remove(seguido);
+        }
+        for (Usuario seguidor : new HashSet<>(this.seguidores)) {
+            seguidor.getSeguidos().remove(this);
+            this.seguidores.remove(seguidor);
+        }
     }
 
 }

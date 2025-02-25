@@ -138,6 +138,22 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
 
     }
+
+    @Operation(summary = "Eliminar un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Se ha dejado de seguir a un usuario",
+                    content = @Content),
+    })
+    @DeleteMapping("/usuario/{id}")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable UUID id) {
+
+        usuarioService.eliminarUsario(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
 }
 
 
