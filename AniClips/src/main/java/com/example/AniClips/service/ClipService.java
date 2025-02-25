@@ -32,7 +32,7 @@ public class ClipService {
     public List<Clip> findAll() {
         List<Clip> result = clipRepository.findAllDetalles();
         if (result.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("No se han encontrado clips");
         }
         return result;
     }
@@ -44,7 +44,7 @@ public class ClipService {
         if (clip.isPresent()) {
             return clip.get();
         } else {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("No existe ningun clip con id " + id);
         }
     }
 

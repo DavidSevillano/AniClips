@@ -45,9 +45,6 @@ public class ValoracionController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ninguna valoracion",
-                    content = @Content),
     })
     @PostMapping
     public ResponseEntity<Valoracion> create(@AuthenticationPrincipal Usuario usuario, @RequestBody EditValoracionDto nuevo) {

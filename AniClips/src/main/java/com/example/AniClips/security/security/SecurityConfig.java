@@ -73,6 +73,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/activate/account/", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/clip/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/usuario/**").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(withDefaults());
 

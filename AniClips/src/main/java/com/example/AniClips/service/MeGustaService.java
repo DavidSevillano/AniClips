@@ -21,7 +21,7 @@ public class MeGustaService {
     public MeGusta save(Usuario usuario, Long clipId) {
 
         Clip clip = clipRepository.findById(clipId)
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun clip con id " + clipId));
 
         MeGusta meGusta = MeGusta.builder()
                 .usuario(usuario)

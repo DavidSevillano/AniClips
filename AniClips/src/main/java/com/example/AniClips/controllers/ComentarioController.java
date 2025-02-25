@@ -73,7 +73,7 @@ public class ComentarioController {
                             )}
                     )}),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningún comentario",
+                    description = "No se han encontrado comentarios",
                     content = @Content),
     })
     @GetMapping
@@ -100,9 +100,6 @@ public class ComentarioController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningun comentario",
-                    content = @Content),
     })
     @PostMapping
     public ResponseEntity<Comentario> create(@AuthenticationPrincipal Usuario usuario, @RequestBody EditComentarioDto editComentarioDto) {

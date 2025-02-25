@@ -28,7 +28,7 @@ public class ComentarioService {
     public List<Comentario> findAll() {
         List<Comentario> result = comentarioRepository.findAll();
         if (result.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("No se han encontrado comentarios");
         }
         return result;
     }
@@ -36,7 +36,7 @@ public class ComentarioService {
     public Comentario save(Usuario usuario, EditComentarioDto dto) {
 
         Clip clip = clipRepository.findById(dto.clipId())
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No existe ningun clip con id " + dto.clipId()));
 
         Comentario comentario = Comentario.builder()
                 .usuario(usuario)
