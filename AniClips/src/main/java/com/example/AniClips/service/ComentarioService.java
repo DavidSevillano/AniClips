@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,16 @@ public class ComentarioService {
                 .build();
 
         return comentarioRepository.save(comentario);
+    }
+
+    @Transactional
+    public void eliminarComentario(Long comentarioId) {
+
+        Comentario comentario = comentarioRepository.findById(comentarioId)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun comentario con id " + comentarioId));
+
+        comentarioRepository.deleteById(comentarioId);
+
     }
 
 }

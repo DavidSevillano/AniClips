@@ -218,7 +218,7 @@ public class UsuarioController {
                     description = "Se ha eliminado el usuario",
                     content = @Content),
             @ApiResponse(responseCode = "404",
-                    description = "Usuario no encontrado",
+                    description = "No se ha encontrado ningun usuario con id 11111111-1111-1111-1111-111111111111",
                     content = @Content)
     })
     @DeleteMapping("/usuario/{id}")
