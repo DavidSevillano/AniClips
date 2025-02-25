@@ -38,7 +38,7 @@ public class PerfilController {
     @Operation(summary = "Obtiene el perfil personal completo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Se haencontrado el perfil personal",
+                    description = "Se ha encontrado el perfil personal",
                     content = { @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = GetPerfilCompletoDto.class)),
                             examples = {@ExampleObject(
@@ -67,7 +67,7 @@ public class PerfilController {
                             )}
                     )}),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningún perfil",
+                    description = "No existe ningun usuario con id 11111111-1111-1111-1111-111111111111",
                     content = @Content),
     })
     @GetMapping()
@@ -93,9 +93,6 @@ public class PerfilController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningún perfil",
-                    content = @Content),
     })
     @PostMapping("/descripcion/")
     public ResponseEntity<GetPerfilDescripcionDto> createDescripcion(@AuthenticationPrincipal Usuario usuario,
@@ -120,7 +117,7 @@ public class PerfilController {
                             )}
                     )}),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado el perfil ",
+                    description = "No existe ningun usuario con id 11111111-1111-1111-1111-111111111111",
                     content = @Content),
     })
     @PutMapping("/descripcion/edit")
@@ -145,9 +142,6 @@ public class PerfilController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ninguna foto de perfil",
-                    content = @Content),
     })
     @PostMapping("/foto/")
     public ResponseEntity<GetPerfilAvatarDto> createPerfil(@AuthenticationPrincipal Usuario usuario,

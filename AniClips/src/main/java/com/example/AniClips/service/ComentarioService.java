@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class ComentarioService {
     public List<Comentario> findAll() {
         List<Comentario> result = comentarioRepository.findAll();
         if (result.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("No se han encontrado comentarios");
         }
         return result;
     }
@@ -36,7 +37,7 @@ public class ComentarioService {
     public Comentario save(Usuario usuario, EditComentarioDto dto) {
 
         Clip clip = clipRepository.findById(dto.clipId())
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No existe ningun clip con id " + dto.clipId()));
 
         Comentario comentario = Comentario.builder()
                 .usuario(usuario)
@@ -46,6 +47,16 @@ public class ComentarioService {
                 .build();
 
         return comentarioRepository.save(comentario);
+    }
+
+    @Transactional
+    public void eliminarComentario(Long comentarioId) {
+
+        Comentario comentario = comentarioRepository.findById(comentarioId)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun comentario con id " + comentarioId));
+
+        comentarioRepository.deleteById(comentarioId);
+
     }
 
 }

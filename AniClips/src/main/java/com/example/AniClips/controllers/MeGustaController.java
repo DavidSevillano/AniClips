@@ -40,9 +40,6 @@ public class MeGustaController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningún clip",
-                    content = @Content),
     })
     @PostMapping("/{id}")
     public ResponseEntity<MeGusta> create(@AuthenticationPrincipal Usuario usuario, @PathVariable Long id) {

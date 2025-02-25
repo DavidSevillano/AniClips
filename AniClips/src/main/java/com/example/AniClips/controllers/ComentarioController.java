@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,7 +74,7 @@ public class ComentarioController {
                             )}
                     )}),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningún comentario",
+                    description = "No se han encontrado comentarios",
                     content = @Content),
     })
     @GetMapping
@@ -100,14 +101,29 @@ public class ComentarioController {
                                             """
                             )}
                     )}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado ningun comentario",
-                    content = @Content),
     })
     @PostMapping
     public ResponseEntity<Comentario> create(@AuthenticationPrincipal Usuario usuario, @RequestBody EditComentarioDto editComentarioDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
                         comentarioService.save(usuario, editComentarioDto));
+    }
+
+    @Operation(summary = "Eliminar un comentario de cualquier usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Se ha eliminado el comentario",
+                    content = @Content),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningun comentario con id 1",
+                    content = @Content)
+    })
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> eliminarComentario(@PathVariable Long id) {
+
+        comentarioService.eliminarComentario(id);
+
+        return ResponseEntity.noContent().build();
+
     }
 }

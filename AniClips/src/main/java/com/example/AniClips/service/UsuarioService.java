@@ -73,10 +73,10 @@ public class UsuarioService {
     public Usuario seguir(Usuario usuario, EditSeguidoDto editSeguidoDto) {
 
         Usuario seguidor = usuarioRepository.findById(usuario.getId())
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun usuario con id " + usuario.getId()));
 
         Usuario seguido = usuarioRepository.findById(editSeguidoDto.seguidoId())
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun usuario con id " + editSeguidoDto.seguidoId()));
 
         seguidor.addSeguido(seguido);
 
@@ -85,6 +85,28 @@ public class UsuarioService {
         return seguido;
     }
 
+    @Transactional
+    public void dejarDeSeguir(Usuario usuario, UUID seguidoId) {
 
+        Usuario seguidor = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun usuario con id " + usuario.getId()));
 
+        Usuario seguido = usuarioRepository.findById(seguidoId)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun usuario con id " + seguidoId));
+
+        seguidor.removeSeguido(seguido);
+
+    }
+
+    @Transactional
+    public void eliminarUsario(UUID usuarioId) {
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun usuario con id " + usuarioId));
+
+        usuario.eliminarSeguidos();
+
+        usuarioRepository.deleteById(usuarioId);
+
+    }
 }

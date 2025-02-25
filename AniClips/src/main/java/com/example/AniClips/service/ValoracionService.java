@@ -26,7 +26,7 @@ public class ValoracionService {
     public Valoracion save(Usuario usuario, EditValoracionDto dto) {
 
         Clip clip = clipRepository.findById(dto.clipId())
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningun clip con id " + dto.clipId()));
 
         Valoracion valoracion = Valoracion.builder()
                 .usuario(usuario)

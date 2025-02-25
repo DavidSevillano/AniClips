@@ -35,10 +35,13 @@ public class PerfilService {
     @Transactional(readOnly = true)
     public Perfil findById(Usuario usuario) {
 
-        Usuario usuario1 = usuarioRepository.findByIdAntiLazy(usuario.getId())
-                .orElseThrow(() -> new EntityNotFoundException());
+        Optional<Usuario> usuario1 = usuarioRepository.findByIdAntiLazy(usuario.getId());
 
-        return usuario1.getPerfil();
+        if (usuario1.isPresent()) {
+            return usuario1.get().getPerfil();
+        } else {
+            throw new EntityNotFoundException("No existe ningun usuario con id " + usuario1.get().getPerfil().getId());
+        }
     }
 
     @Transactional
@@ -62,7 +65,7 @@ public class PerfilService {
 
                     return perfilRepository.save(old);
                 })
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("No existe ningun usuario con id " + usuario.getId()));
     }
 
     public Perfil saveAvatar(Usuario usuario, EditPerfilAvatarDto editPerfilAvatarDto) {
