@@ -13,6 +13,7 @@ import com.example.AniClips.model.Perfil;
 import com.example.AniClips.model.Usuario;
 import com.example.AniClips.model.UserRole;
 import com.example.AniClips.repo.UsuarioRepository;
+import com.example.AniClips.security.security.jwt.refresh.RefreshTokenRepository;
 import com.example.AniClips.security.util.SendGridMailSender;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final SendGridMailSender mailSender;
+    private final RefreshTokenRepository refreshTokenRepository;
     //private final ResendMailSender mailSender;
 
 
@@ -112,6 +114,8 @@ public class UsuarioService {
 
         usuario.eliminarSeguidos();
 
+        refreshTokenRepository.deleteByUser(usuario);
+        
         usuarioRepository.deleteById(usuarioId);
 
     }
