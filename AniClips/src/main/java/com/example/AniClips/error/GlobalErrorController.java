@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -68,6 +69,17 @@ public class GlobalErrorController
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(result);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ProblemDetail handleUnauthorizedAccess(UnauthorizedAccessException ex) {
+        ProblemDetail result = ProblemDetail
+                .forStatusAndDetail(HttpStatus.FORBIDDEN,
+                        ex.getMessage());
+        result.setTitle("No tienes acceso");
+        result.setProperty("author", "David");
+        return result;
+
     }
 
     @Builder

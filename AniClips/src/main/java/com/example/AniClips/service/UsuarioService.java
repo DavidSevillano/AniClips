@@ -8,6 +8,8 @@ import java.util.UUID;
 import com.example.AniClips.dto.user.EditSeguidoDto;
 import com.example.AniClips.dto.user.signupLogin.CreateUserRequest;
 import com.example.AniClips.error.ActivationExpiredException;
+import com.example.AniClips.error.UnauthorizedAccessException;
+import com.example.AniClips.model.Perfil;
 import com.example.AniClips.model.Usuario;
 import com.example.AniClips.model.UserRole;
 import com.example.AniClips.repo.UsuarioRepository;
@@ -42,6 +44,10 @@ public class UsuarioService {
                 .roles(Set.of(UserRole.USER))
                 .activationToken(generateRandomActivationCode())
                 .build();
+
+        Perfil perfil = new Perfil();
+        perfil.setUsuario(user);
+        user.setPerfil(perfil);
 
         try {
             mailSender.sendMail(createUserRequest.email(), "Activación de cuenta", user.getActivationToken());

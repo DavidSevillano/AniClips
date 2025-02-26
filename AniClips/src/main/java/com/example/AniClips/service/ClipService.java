@@ -1,6 +1,7 @@
 package com.example.AniClips.service;
 
 import com.example.AniClips.dto.clip.EditClipDto;
+import com.example.AniClips.error.UnauthorizedAccessException;
 import com.example.AniClips.files.dto.FileResponse;
 import com.example.AniClips.files.model.FileMetadata;
 import com.example.AniClips.files.service.StorageService;
@@ -8,6 +9,7 @@ import com.example.AniClips.model.Clip;
 import com.example.AniClips.query.ClipSpecificationBuilder;
 import com.example.AniClips.repo.ClipRepository;
 import com.example.AniClips.model.Usuario;
+import com.example.AniClips.repo.UsuarioRepository;
 import com.example.AniClips.util.SearchCriteria;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class ClipService {
 
     private final ClipRepository clipRepository;
     private final StorageService storageService;
+    private final UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
     public Page<Clip> findAll(org.springframework.data.domain.Pageable pageRequest) {
@@ -101,4 +105,22 @@ public Page<Clip> search(List<SearchCriteria> searchCriteriaList, Pageable pagea
                 .build();
     }
 
+    @Transactional
+    public void eliminarMiClip(Usuario usuario, Long clipId) {
+
+        Clip clip = clipRepository.findById(clipId)
+                .orElseThrow(() -> new EntityNotFoundException("Clip no encontrado"));
+
+        if (!clip.getUsuario().getId().equals(usuario.getId())) {
+            throw new UnauthorizedAccessException("No tienes permiso para eliminar este clip.");
+        }
+
+        clipRepository.deleteById(clipId);
 }
+
+    @Transactional
+    public void eliminarClip(Long clipId) {
+
+        clipRepository.deleteById(clipId);
+    }
+    }

@@ -48,4 +48,22 @@ public class MeGustaController {
                         meGustaService.save(usuario, id));
     }
 
+    @Operation(summary = "Eliminar un me gusta del usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Se ha eliminado el me gusta",
+                    content = @Content),
+            @ApiResponse(responseCode = "403",
+                    description = "No tienes permiso para eliminar este me gusta",
+                    content = @Content)
+    })
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> eliminarMiMeGusta(@AuthenticationPrincipal Usuario usuario, @PathVariable Long id) {
+
+        meGustaService.eliminarMiMeGusta(usuario, id);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
 }

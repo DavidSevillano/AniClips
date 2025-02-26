@@ -54,7 +54,7 @@ public class Clip {
     @ToString.Exclude
     private Set<Valoracion> valoraciones = new HashSet<>();
 
-    @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clip", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     private Set<Comentario> comentarios = new HashSet<>();
@@ -90,7 +90,7 @@ public class Clip {
         this.getComentarios().add(c);
     }
 
-    public void removeComentario(Valoracion c) {
+    public void removeComentario(Comentario c) {
         this.getComentarios().remove(c);
         c.setClip(null);
     }
