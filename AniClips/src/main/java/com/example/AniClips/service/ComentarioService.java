@@ -1,9 +1,11 @@
 package com.example.AniClips.service;
 
 import com.example.AniClips.dto.comentario.EditComentarioDto;
+import com.example.AniClips.dto.perfil.EditPerfilDescripcionDto;
 import com.example.AniClips.error.UnauthorizedAccessException;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Comentario;
+import com.example.AniClips.model.Perfil;
 import com.example.AniClips.repo.ClipRepository;
 import com.example.AniClips.repo.ComentarioRepository;
 import com.example.AniClips.model.Usuario;

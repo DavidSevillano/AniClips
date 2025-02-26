@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.example.AniClips.dto.user.EditSeguidoDto;
 import com.example.AniClips.dto.user.signupLogin.CreateUserRequest;
 import com.example.AniClips.error.ActivationExpiredException;
+import com.example.AniClips.error.UnauthorizedAccessException;
 import com.example.AniClips.model.Usuario;
 import com.example.AniClips.model.UserRole;
 import com.example.AniClips.repo.UsuarioRepository;

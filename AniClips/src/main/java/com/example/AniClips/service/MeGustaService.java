@@ -1,5 +1,6 @@
 package com.example.AniClips.service;
 
+import com.example.AniClips.error.UnauthorizedAccessException;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.MeGusta;
 import com.example.AniClips.repo.ClipRepository;
@@ -8,6 +9,7 @@ import com.example.AniClips.model.Usuario;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -30,5 +32,18 @@ public class MeGustaService {
                 .build();
 
         return meGustaRepository.save(meGusta);
+    }
+
+    @Transactional
+    public void eliminarMiMeGusta(Usuario usuario, Long meGustaId) {
+
+        MeGusta meGusta = meGustaRepository.findById(meGustaId)
+                .orElseThrow(() -> new EntityNotFoundException("Me gusta no encontrado"));
+
+        if (!meGusta.getUsuario().getId().equals(usuario.getId())) {
+            throw new UnauthorizedAccessException("No tienes permiso para eliminar este me gusta.");
+        }
+
+        clipRepository.deleteById(meGustaId);
     }
 }
