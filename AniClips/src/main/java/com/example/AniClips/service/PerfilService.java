@@ -45,17 +45,6 @@ public class PerfilService {
     }
 
     @Transactional
-    public Perfil saveDescripcion(Usuario usuario, EditPerfilDescripcionDto dto) {
-
-        Perfil perfil = Perfil.builder()
-                .descripcion(dto.descripcion())
-                .usuario(usuario)
-                .build();
-
-        return perfilRepository.save(perfil);
-    }
-
-    @Transactional
     public Perfil editDescripcion(Usuario usuario, EditPerfilDescripcionDto perfilDescripcionDto) {
 
         return perfilRepository.findById(usuario.getPerfil().getId())
@@ -66,18 +55,6 @@ public class PerfilService {
                     return perfilRepository.save(old);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("No existe ningun usuario con id " + usuario.getId()));
-    }
-
-    public Perfil saveAvatar(Usuario usuario, EditPerfilAvatarDto editPerfilAvatarDto) {
-
-        FileResponse foto = uploadFile(editPerfilAvatarDto.foto());
-
-        Perfil perfil = Perfil.builder()
-                .avatar(foto.uri())
-                .usuario(usuario)
-                .build();
-
-        return perfilRepository.save(perfil);
     }
 
     @Transactional

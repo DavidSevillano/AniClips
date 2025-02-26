@@ -79,29 +79,6 @@ public class PerfilController {
 
     }
 
-    @Operation(summary = "Añade una descripcion al perfil")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201",
-                    description = "Descripcion añadida",
-                    content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilDescripcionDto.class)),
-                            examples = {@ExampleObject(
-                                    value = """
-                                            {
-                                                "descripcion": "nueva descripcion"
-                                            }
-                                            """
-                            )}
-                    )}),
-    })
-    @PostMapping("/descripcion/")
-    public ResponseEntity<GetPerfilDescripcionDto> createDescripcion(@AuthenticationPrincipal Usuario usuario,
-                                                                     @RequestBody EditPerfilDescripcionDto nuevo) {
-
-        Perfil perfil = perfilService.saveDescripcion(usuario, nuevo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(GetPerfilDescripcionDto.of(perfil));
-    }
-
     @Operation(summary = "Edita la descripcion del perfil")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -128,27 +105,6 @@ public class PerfilController {
         return GetPerfilDescripcionDto.of(perfil);
     }
 
-    @Operation(summary = "Añade una foto de perfil")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201",
-                    description = "Foto de perfil añadida",
-                    content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = GetPerfilAvatarDto.class)),
-                            examples = {@ExampleObject(
-                                    value = """
-                                            {
-                                                "avatar": "http://localhost:8080/clip/download/ejemplo_069451.jpg"
-                                            }
-                                            """
-                            )}
-                    )}),
-    })
-    @PostMapping("/foto/")
-    public ResponseEntity<GetPerfilAvatarDto> createPerfil(@AuthenticationPrincipal Usuario usuario,
-                                                  @Valid @ModelAttribute EditPerfilAvatarDto nuevo) {
-        Perfil perfil = perfilService.saveAvatar(usuario, nuevo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(GetPerfilAvatarDto.of(perfil));
-    }
 
     @Operation(summary = "Edita la foto de perfil")
     @ApiResponses(value = {
