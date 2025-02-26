@@ -360,6 +360,21 @@ public class ClipController {
 
     }
 
+    @Operation(summary = "Eliminar un clip como admin")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Se ha eliminado el clip",
+                    content = @Content),
+    })
+    @DeleteMapping("/admin/delete/{id}")
+    public ResponseEntity<?> eliminarMiClip(@PathVariable Long id) {
+
+        clipService.eliminarClip(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
 
 }
 

@@ -117,4 +117,10 @@ public Page<Clip> search(List<SearchCriteria> searchCriteriaList, Pageable pagea
 
         clipRepository.deleteById(clipId);
 }
+
+    @Transactional
+    public void eliminarClip(Long clipId) {
+
+        clipRepository.deleteById(clipId);
+    }
     }
