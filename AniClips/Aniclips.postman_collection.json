@@ -16,8 +16,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var response = pm.response.json();\r",
-									"pm.environment.set(\"usuarioId\", response.id);"
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -59,7 +58,8 @@
 									"var jsonData = pm.response.json();\r",
 									"\r",
 									"pm.collectionVariables.set(\"token\", jsonData.token);\r",
-									"pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken)"
+									"pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken)\r",
+									"pm.collectionVariables.set(\"userId\", jsonData.id);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -98,7 +98,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"token\": \"9c332b4b-f922-40e1-bc17-36e43eb57959\"\r\n}",
+							"raw": "{\r\n    \"token\": \"5b0fe8be-d0a8-4ff3-8833-92362509578b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -185,13 +185,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASEURL}}/usuario/11111111-1111-1111-1111-111111111111",
+							"raw": "{{BASEURL}}/usuario/{{userId}}",
 							"host": [
 								"{{BASEURL}}"
 							],
 							"path": [
 								"usuario",
-								"11111111-1111-1111-1111-111111111111"
+								"{{userId}}"
 							]
 						}
 					},
@@ -325,7 +325,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/clip/buscar/?search=nombreAnime:Attack%20on%20Titan",
+							"raw": "{{BASE_URL}}/clip/buscar/?search=nombreAnime:Naruto Shippuden",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -337,7 +337,7 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "nombreAnime:Attack%20on%20Titan"
+									"value": "nombreAnime:Naruto Shippuden"
 								}
 							]
 						}
@@ -542,32 +542,17 @@
 				{
 					"name": "Delete mi me gusta",
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "naruto",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "hashed_password",
-									"type": "string"
-								}
-							]
-						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASEURL}}/meGusta/delete/3",
+							"raw": "{{BASEURL}}/meGusta/delete/5",
 							"host": [
 								"{{BASEURL}}"
 							],
 							"path": [
 								"meGusta",
 								"delete",
-								"3"
+								"5"
 							]
 						}
 					},
@@ -875,21 +860,6 @@
 				{
 					"name": "GetMiPerfil",
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "naruto",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "hashed_password",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1004,7 +974,7 @@
 	"variable": [
 		{
 			"key": "BASEURL",
-			"value": "http://localhost:8080",
+			"value": "http://localhost:8081",
 			"type": "string"
 		},
 		{
@@ -1016,6 +986,10 @@
 			"key": "refreshToken",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": ""
 		}
 	]
 }
