@@ -71,6 +71,17 @@ public class GlobalErrorController
                 .body(result);
     }
 
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ProblemDetail handleUnauthorizedAccess(UnauthorizedAccessException ex) {
+        ProblemDetail result = ProblemDetail
+                .forStatusAndDetail(HttpStatus.FORBIDDEN,
+                        ex.getMessage());
+        result.setTitle("No tienes acceso");
+        result.setProperty("author", "David");
+        return result;
+
+    }
+
     @Builder
     record ApiValidationSubError(
             String object,
@@ -122,19 +133,6 @@ public class GlobalErrorController
                     )
                     .build();
         }
-
-        @ExceptionHandler(UnauthorizedAccessException.class)
-        public ProblemDetail handleUnauthorizedAccess(UnauthorizedAccessException ex) {
-            ProblemDetail result = ProblemDetail
-                    .forStatusAndDetail(HttpStatus.FORBIDDEN,
-                            ex.getMessage());
-            result.setTitle("No tienes acceso");
-            result.setProperty("author", "David");
-            return result;
-
-        }
-
-
 
 
     }
