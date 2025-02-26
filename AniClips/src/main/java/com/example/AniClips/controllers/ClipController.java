@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -339,6 +340,24 @@ public class ClipController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Content-Type", mimeType)
                 .body(resource);
+    }
+
+    @Operation(summary = "Eliminar un clip del usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Se ha eliminado el clip",
+                    content = @Content),
+            @ApiResponse(responseCode = "403",
+                    description = "No tienes permiso para eliminar este clip",
+                    content = @Content)
+    })
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> eliminarMiClip(@AuthenticationPrincipal Usuario usuario, @PathVariable Long id) {
+
+        clipService.eliminarMiClip(usuario, id);
+
+        return ResponseEntity.noContent().build();
+
     }
 
 
