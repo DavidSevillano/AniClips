@@ -1,5 +1,27 @@
 # Proyecto Aniclips
 
+<h1 align="center">
+    <img src="https://github.com/DavidSevillano/AniClips/blob/main/logo.jpg" alt="logo_animalia"  width="300" height="300">
+</h1>
+
+## Descripción del Proyecto
+
+AniClips es una plataforma para compartir y descubrir clips de anime. Permite a los usuarios subir clips, comentar y seguir a otros usuarios. La aplicación está diseñada para ser fácil de usar y accesible para todos los amantes del anime.
+
+## Características
+
+   - Registro y autenticación de usuarios.
+   - Subida, búsqueda y gestión de clips de anime.
+   - Comentarios, me gustas y valoraciones de clips.
+   - Seguimiento de otros usuarios.
+     
+## Tecnologías Utilizadas
+
+   - **Java**: Lenguaje de programación principal.
+   - **Spring Boot**: Framework para construir la aplicación.
+   - **PostgreSQL**: Base de datos utilizada para almacenar datos.
+   - **Docker**: Contenerización de la aplicación.
+   - **Maven**: Gestión de dependencias y construcción del proyecto.
 
 ## Requisitos
 
