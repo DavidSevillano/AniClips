@@ -112,6 +112,24 @@ public class ComentarioController {
                         comentarioService.save(usuario, editComentarioDto));
     }
 
+    @Operation(summary = "Eliminar un clip del usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "Se ha eliminado el clip",
+                    content = @Content),
+            @ApiResponse(responseCode = "403",
+                    description = "No tienes permiso para eliminar este clip",
+                    content = @Content)
+    })
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> eliminarMiComentario(@AuthenticationPrincipal Usuario usuario, @PathVariable Long id) {
+
+        comentarioService.eliminarMiComentario(usuario, id);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
     @Operation(summary = "Eliminar un comentario de cualquier usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204",
@@ -121,7 +139,7 @@ public class ComentarioController {
                     description = "No se ha encontrado ningun comentario con id 1",
                     content = @Content)
     })
-    @DeleteMapping("/admin/{id}")
+    @DeleteMapping("/admin/delete/{id}")
     public ResponseEntity<?> eliminarComentario(@PathVariable Long id) {
 
         comentarioService.eliminarComentario(id);

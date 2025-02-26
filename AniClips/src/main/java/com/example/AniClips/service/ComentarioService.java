@@ -1,6 +1,7 @@
 package com.example.AniClips.service;
 
 import com.example.AniClips.dto.comentario.EditComentarioDto;
+import com.example.AniClips.error.UnauthorizedAccessException;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Comentario;
 import com.example.AniClips.repo.ClipRepository;
@@ -49,6 +50,19 @@ public class ComentarioService {
                 .build();
 
         return comentarioRepository.save(comentario);
+    }
+
+    @Transactional
+    public void eliminarMiComentario(Usuario usuario, Long comentarioId) {
+
+        Comentario comentario = comentarioRepository.findById(comentarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Comentario no encontrado"));
+
+        if (!comentario.getUsuario().getId().equals(usuario.getId())) {
+            throw new UnauthorizedAccessException("No tienes permiso para eliminar este comentario.");
+        }
+
+        comentarioRepository.deleteById(comentarioId);
     }
 
     @Transactional
