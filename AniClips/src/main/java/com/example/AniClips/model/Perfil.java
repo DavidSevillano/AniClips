@@ -19,9 +19,9 @@ public class Perfil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String avatar;
+    private String avatar = "";
 
-    private String descripcion;
+    private String descripcion = "";
 
     @JsonIgnore
     @OneToOne
