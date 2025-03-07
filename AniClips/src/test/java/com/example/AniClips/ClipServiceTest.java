@@ -93,7 +93,6 @@ public class ClipServiceTest {
     public void testSave() {
         EditClipDto editClipDto = new EditClipDto("Naruto", "Shonen", "Descripción", mock(MultipartFile.class), mock(MultipartFile.class));
 
-        // Simular FileMetadata usando Mockito
         FileMetadata fileMetadata = mock(FileMetadata.class);
         when(fileMetadata.getId()).thenReturn("fileId");
         when(fileMetadata.getFilename()).thenReturn("video.mp4");
