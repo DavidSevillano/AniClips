@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">AniClips</string>
+    <string name="log_in_text_presentation">Inicia sesión con tu cuenta</string>
+    <string name="username_hint">Nombre de usuario</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="log_in_btn">Inicia sesión</string>
+    <string name="sign_in_text">¿No tienes cuenta? <font color="#2D54CB">Regístrate</font></string>
+    <string name="email_hint">Email</string>
+    <string name="repeat_password_text">Repite la contraseña</string>
+    <string name="sign_in_button_text">Regístrate</string>
+    <string name="log_in_back"><font color="#FFFFFF">¿Ya tienes una cuenta? </font>Inicia sesión</string>
+    <string name="sign_in_text_presentation">Crea una cuenta</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="follow">Seguir</string>
+</resources>

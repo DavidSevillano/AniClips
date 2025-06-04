@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="backgroud_app">#191A1F</color>
+    <color name="hint_text">#66FFFFFF</color>
+    <color name="background_log_in_fields">#1F222B</color>
+    <color name="log_in_btn">#2D54CB</color>
+    <color name="not_focused">#272931</color>
+    <color name="btn_not_fucosed">#484A51</color>
+    <color name="btn_focused">#2D54CB</color>
+
+</resources>

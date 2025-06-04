@@ -108,8 +108,8 @@ public class ClipController {
                     content = @Content),
     })
     @GetMapping
-    public Page<GetClipDto> getAll(@RequestParam(defaultValue = "0") int page) {
-        Pageable pageRequest = PageRequest.of(page, 1);
+    public Page<GetClipDto> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+        Pageable pageRequest = PageRequest.of(page, size);
         return clipService.findAll(pageRequest)
                 .map(GetClipDto::of);
     }   
