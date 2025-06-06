@@ -31,7 +31,7 @@ public class OkHttpTools {
             RequestBody requestBody = RequestBody.create(JSON, json);
 
             Request request = new Request.Builder()
-                    .url(BASE_URL + "/clip/" + url)
+                    .url(BASE_URL + url)
                     .post(requestBody)
                     .build();
 
@@ -64,7 +64,7 @@ public class OkHttpTools {
             RequestBody requestBody = RequestBody.create(JSON, json);
 
             Request request = new Request.Builder()
-                    .url(BASE_URL + "/clip/" + url)
+                    .url(BASE_URL + url)
                     .post(requestBody)
                     .addHeader("Authorization", "Bearer " + jwtToken)
                     .build();
@@ -102,7 +102,7 @@ public class OkHttpTools {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(BASE_URL + "/clip/"  + url)
+                        .url(BASE_URL + url)
                         .build();
 
                 Response response = client.newCall(request).execute();

@@ -38,7 +38,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
         List<ClipDto> listaClips = new ArrayList<>();
         try {
             // Construir URL con page y size para paginación
-            String url = "?page=" + page + "&size=" + size;
+            String url = "/clip/?page=" + page + "&size=" + size;
             String responseJSON = OkHttpTools.get(url, activity);
             JSONObject response = new JSONObject(responseJSON);
 
