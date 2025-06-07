@@ -116,6 +116,6 @@ public class SignInFragment extends Fragment {
 
             }
         }).execute();
-        }
-
     }
+
+}
