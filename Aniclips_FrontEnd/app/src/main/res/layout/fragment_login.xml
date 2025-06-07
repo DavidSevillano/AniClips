@@ -45,6 +45,7 @@
         app:cardBackgroundColor="@color/background_log_in_fields">
 
         <EditText
+            android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawableStart="@drawable/face_24px"
@@ -72,6 +73,7 @@
 
 
     <EditText
+        android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_log_in_fields"

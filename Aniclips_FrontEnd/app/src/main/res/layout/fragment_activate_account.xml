@@ -81,7 +81,7 @@
             android:drawablePadding="10dp"
             android:fontFamily="@font/lexend_regular"
             android:hint="Código de activación"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
             android:padding="16dp"
             android:textColorHint="@color/hint_text"
             android:textSize="16sp" />
