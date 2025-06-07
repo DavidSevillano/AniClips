@@ -63,6 +63,25 @@ public class SignInFragment extends Fragment {
         });
     }
 
+    private boolean validarCampos() {
+        EditText[] campos = {etEmail, etUsername, etPassword, etRepeatPassword};
+        for (EditText campo : campos) {
+            if (campo.getText().toString().trim().isEmpty()) {
+                Toast.makeText(requireContext(), "Por favor, rellena todos los campos", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        if (!etPassword.getText().toString().equals(etRepeatPassword.getText().toString())) {
+            Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(etEmail.getText().toString()).matches()) {
+            Toast.makeText(requireContext(), "Por favor, introduce un email válido", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     private void createUser() {
 
         email = etEmail.getText().toString().trim();
@@ -70,10 +89,8 @@ public class SignInFragment extends Fragment {
         password = etPassword.getText().toString().trim();
         repeatPassword = etRepeatPassword.getText().toString().trim();
 
-        Log.i("sigin", email);
-        Log.i("sigin", username);
-        Log.i("sigin", password);
-        Log.i("sigin", repeatPassword);
+        if (!validarCampos()) return;
+
         new CreateUserController(requireContext(), email, username, password, repeatPassword, new CreateUserCallback() {
             @Override
             public void onUserCreatedCallback(JSONObject userJson) {
