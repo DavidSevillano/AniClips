@@ -46,4 +46,8 @@ public class LoginFragment extends Fragment {
                     .commit();
         });
     }
+
+    private void login(){
+
+    }
 }
