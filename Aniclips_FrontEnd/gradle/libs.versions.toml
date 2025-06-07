@@ -15,6 +15,7 @@ retrofit = "2.9.0"
 gson = "2.8.8"
 glide = "4.16.0"
 glideCompiler = "4.16.0"
+lottie = "6.3.0"
 
 
 
@@ -35,6 +36,7 @@ retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", ve
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glideCompiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glideCompiler" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
