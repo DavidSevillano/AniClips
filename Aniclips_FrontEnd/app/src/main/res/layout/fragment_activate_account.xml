@@ -77,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:drawableStart="@drawable/baseline_email_24"
+            android:drawableStart="@drawable/key"
             android:drawablePadding="10dp"
             android:fontFamily="@font/lexend_regular"
             android:hint="Código de activación"

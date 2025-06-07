@@ -52,7 +52,7 @@
             android:drawablePadding="10dp"
             android:fontFamily="@font/lexend_regular"
             android:hint="@string/username_hint"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
             android:padding="16dp"
             android:textColorHint="@color/hint_text"
             android:textSize="16sp"
