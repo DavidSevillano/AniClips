@@ -51,6 +51,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
                     ClipDto clipDto = new ClipDto();
                     clipDto.setDescripcion(clipJson.optString("descripcion"));
                     clipDto.setUrlVideo(clipJson.optString("urlVideo"));
+                    clipDto.setUrlMiniatura(clipJson.optString("urlMiniatura"));
                     clipDto.setVisitas(clipJson.optInt("visitas"));
                     clipDto.setDuracion(clipJson.optInt("duracion"));
                     clipDto.setCantidadMeGusta(clipJson.optInt("cantidadMeGusta"));

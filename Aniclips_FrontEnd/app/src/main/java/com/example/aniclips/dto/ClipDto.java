@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class ClipDto {
     private String descripcion;
     private String urlVideo;
+    private String urlMiniatura;
     private LocalDate fecha;
     private int visitas;
     private int duracion;
@@ -84,5 +85,11 @@ public class ClipDto {
 
     public void setMediaValoraciones(double mediaValoraciones) {
         this.mediaValoraciones = mediaValoraciones;
+    }
+    public String getUrlMiniatura() {
+        return urlMiniatura;
+    }
+    public void setUrlMiniatura(String urlMiniatura) {
+        this.urlMiniatura = urlMiniatura;
     }
 }

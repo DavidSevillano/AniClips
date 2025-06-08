@@ -1,9 +1,11 @@
 package com.example.aniclips.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -29,6 +31,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         TextView textViewUsername;
         MaterialButton followButton;
         VideoView videoViewClip;
+        ImageButton ibPlayVideo;
+        ImageView ivMiniatura;
 
         public ClipViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -36,6 +40,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             textViewUsername = itemView.findViewById(R.id.tvUsername);
             followButton = itemView.findViewById(R.id.btnFollow);
             videoViewClip = itemView.findViewById(R.id.videoViewClip);
+            ibPlayVideo = itemView.findViewById(R.id.ibPlayVideo);
+            ivMiniatura = itemView.findViewById(R.id.ivMiniatura);
         }
     }
 
@@ -51,12 +57,46 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ClipDto clip = clipList.get(position);
 
         holder.textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
+        Log.i("videoUrl", String.valueOf(clip.getUrlVideo()));
+        Log.i("miniaturaUrl", String.valueOf(clip.getUrlMiniatura()));
+
         holder.videoViewClip.setVideoPath(clip.getUrlVideo());
+
+        // Al inicio: solo miniatura y play visible, video oculto
+        holder.videoViewClip.stopPlayback();
+        holder.videoViewClip.setVisibility(View.GONE);
+        holder.ibPlayVideo.setVisibility(View.VISIBLE);
+        holder.ivMiniatura.setVisibility(View.VISIBLE);
+
+        Glide.with(holder.itemView.getContext())
+                .load(clip.getUrlMiniatura())
+                .centerCrop()
+                .into(holder.ivMiniatura);
+
+        holder.ibPlayVideo.setOnClickListener(v -> {
+            holder.ibPlayVideo.setVisibility(View.GONE);
+            holder.ivMiniatura.setVisibility(View.GONE);
+            holder.videoViewClip.setVisibility(View.VISIBLE);
+
+            if (!holder.videoViewClip.isPlaying()) {
+                holder.videoViewClip.start();
+            }
+        });
+
+        holder.videoViewClip.setOnClickListener(v -> {
+            if (holder.videoViewClip.isPlaying()) {
+                holder.videoViewClip.pause();
+                holder.ibPlayVideo.setVisibility(View.VISIBLE);
+            }
+        });
+
         String avatarUrl = clip.getGetUsuarioClipDto().getGetPerfilAvatarDto().getAvatar();
         Glide.with(holder.itemView.getContext())
                 .load(avatarUrl)
+                .centerCrop()
                 .into(holder.imageViewPerfil);
 
+        Log.i("perfilAvatar", avatarUrl);
     }
 
     @Override

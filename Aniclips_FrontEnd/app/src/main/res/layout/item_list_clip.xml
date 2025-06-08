@@ -13,14 +13,15 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewPerfil"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:scaleType="centerCrop"
             android:layout_gravity="center"
             android:layout_margin="8dp"
-            android:src="@drawable/icono_ejemplo"/>
+            android:src="@drawable/icono_ejemplo"
+            app:shapeAppearanceOverlay="@style/CircleImageView"/>
 
         <TextView
             android:id="@+id/tvUsername"
@@ -46,11 +47,32 @@
             android:fontFamily="@font/lexend_regular"/>
     </LinearLayout>
 
-    <VideoView
-        android:id="@+id/videoViewClip"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center">
+
+        <VideoView
+            android:id="@+id/videoViewClip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ivMiniatura"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <ImageButton
+            android:id="@+id/ibPlayVideo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/play_clip"/>
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
