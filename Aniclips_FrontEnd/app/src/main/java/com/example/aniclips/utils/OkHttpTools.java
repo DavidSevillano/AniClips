@@ -15,7 +15,7 @@ import okhttp3.Response;
 
 public class OkHttpTools {
 
-    private static final String BASE_URL = Constantes.API_BASE_URL;
+    private static final String BASE_URL = Constantes.API_BASE_URL_PORTATIL;
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 

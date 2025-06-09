@@ -50,9 +50,6 @@ public class CreateUserController extends AsyncTask<Void, Void,JSONObject> {
             String responseJSON = OkHttpTools.post("/auth/register", loginJson.toString());
             JSONObject response = new JSONObject(responseJSON);
 
-            // Aquí puedes comprobar el código de estado si OkHttpTools lo permite
-            // Si no es 201, puedes poner errorMsg y devolver null
-
             return response;
         } catch (Exception e) {
             e.printStackTrace();
