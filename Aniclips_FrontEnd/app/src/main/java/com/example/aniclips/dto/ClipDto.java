@@ -3,10 +3,11 @@ package com.example.aniclips.dto;
 import java.time.LocalDate;
 
 public class ClipDto {
+    private Long id;
     private String descripcion;
     private String urlVideo;
     private String urlMiniatura;
-    private LocalDate fecha;
+    private String fecha;
     private int visitas;
     private int duracion;
     private UsuarioClipDto getUsuarioClipDto;
@@ -15,6 +16,12 @@ public class ClipDto {
     private double mediaValoraciones;
 
     // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
     public String getDescripcion() {
         return descripcion;
     }
@@ -31,11 +38,11 @@ public class ClipDto {
         this.urlVideo = urlVideo;
     }
 
-    public LocalDate getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 

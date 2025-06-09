@@ -82,10 +82,20 @@
         android:padding="8dp">
 
         <ImageButton
-            android:id="@+id/ivLike"
+            android:id="@+id/ibLike"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_likes"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            app:tint="@color/bottom_nav_icon_color" />
+
+        <ImageButton
+            android:id="@+id/ibLikeFilled"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/likefilled"
+            android:visibility="gone"
             android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
             app:tint="@color/bottom_nav_icon_color" />
@@ -102,7 +112,7 @@
             android:layout_marginStart="8dp"/>
 
         <ImageButton
-            android:id="@+id/ivComment"
+            android:id="@+id/ibComment"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_comments"
@@ -123,7 +133,7 @@
             android:layout_marginStart="8dp"/>
 
         <ImageButton
-            android:id="@+id/ivRating"
+            android:id="@+id/ibRating"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_rating"

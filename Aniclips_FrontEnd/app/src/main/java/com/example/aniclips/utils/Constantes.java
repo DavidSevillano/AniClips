@@ -9,6 +9,7 @@ public class Constantes {
     public static String PREF_USER_USERNAME = "user_username";
     public static String PREF_USER_PASSWORD = "user_password";
     public static String PREF_ACTIVATION_CODE = "activation_code";
+    public static String PREF_TOKEN_JWT = "token_jwt";
 
     public static String BUNDLE_USER_USERNAME = "bundle_user_username";
 }

@@ -29,7 +29,7 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int currentPage = 0;
-    private final int pageSize = 3;  // O lo que quieras
+    private final int pageSize = 3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

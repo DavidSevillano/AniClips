@@ -14,8 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
+import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.interfaces.MeGustaCallback;
 import com.google.android.material.button.MaterialButton;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.ClipViewHolder> {
@@ -32,6 +37,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         MaterialButton followButton;
         VideoView videoViewClip;
         ImageButton ibPlayVideo;
+        ImageButton ibLike;
+        ImageButton ibLikeFilled;
         ImageView ivMiniatura;
 
         public ClipViewHolder(@NonNull View itemView) {
@@ -42,6 +49,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             videoViewClip = itemView.findViewById(R.id.videoViewClip);
             ibPlayVideo = itemView.findViewById(R.id.ibPlayVideo);
             ivMiniatura = itemView.findViewById(R.id.ivMiniatura);
+            ibLike = itemView.findViewById(R.id.ibLike);
+            ibLikeFilled = itemView.findViewById(R.id.ibLikeFilled);
         }
     }
 
@@ -57,12 +66,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ClipDto clip = clipList.get(position);
 
         holder.textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
-        Log.i("videoUrl", String.valueOf(clip.getUrlVideo()));
-        Log.i("miniaturaUrl", String.valueOf(clip.getUrlMiniatura()));
 
         holder.videoViewClip.setVideoPath(clip.getUrlVideo());
 
-        // Al inicio: solo miniatura y play visible, video oculto
         holder.videoViewClip.stopPlayback();
         holder.videoViewClip.setVisibility(View.GONE);
         holder.ibPlayVideo.setVisibility(View.VISIBLE);
@@ -96,7 +102,26 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 .centerCrop()
                 .into(holder.imageViewPerfil);
 
-        Log.i("perfilAvatar", avatarUrl);
+        holder.ibLike.setOnClickListener(v -> {
+            Long clipIdObj = clip.getId();
+
+            long clipId = clipIdObj;
+            Context context = holder.itemView.getContext();
+
+            LikeController controller = new LikeController(context, clipId, new MeGustaCallback() {
+                @Override
+                public void onMegustaSuccess(JSONObject response) {
+                    holder.ibLike.setVisibility(View.GONE);
+                    holder.ibLikeFilled.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onError(String errorMsg) {
+                    Log.e("Megusta", "Error al enviar like: " + errorMsg);
+                }
+            });
+            controller.execute();
+        });
     }
 
     @Override

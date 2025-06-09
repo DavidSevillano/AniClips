@@ -49,6 +49,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
                     JSONObject clipJson = clipsArray.getJSONObject(i);
 
                     ClipDto clipDto = new ClipDto();
+                    clipDto.setId(clipJson.optLong("id"));
                     clipDto.setDescripcion(clipJson.optString("descripcion"));
                     clipDto.setUrlVideo(clipJson.optString("urlVideo"));
                     clipDto.setUrlMiniatura(clipJson.optString("urlMiniatura"));
@@ -57,11 +58,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
                     clipDto.setCantidadMeGusta(clipJson.optInt("cantidadMeGusta"));
                     clipDto.setCantidadComentarios(clipJson.optInt("cantidadComentarios"));
                     clipDto.setMediaValoraciones(clipJson.optDouble("mediaValoraciones"));
-
-                    String fechaStr = clipJson.optString("fecha");
-                    if (fechaStr != null && !fechaStr.isEmpty()) {
-                        clipDto.setFecha(LocalDate.parse(fechaStr));
-                    }
+                    clipJson.optString("fecha");
 
                     JSONObject usuarioJson = clipJson.optJSONObject("getUsuarioClipDto");
                     if (usuarioJson != null) {
