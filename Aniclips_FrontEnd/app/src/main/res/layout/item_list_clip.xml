@@ -98,7 +98,7 @@
             android:visibility="gone"
             android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
-            app:tint="@color/bottom_nav_icon_color" />
+            app:tint="@color/btn_focused" />
 
         <TextView
             android:id="@+id/tvLikeCount"
@@ -141,6 +141,17 @@
             android:background="@android:color/transparent"
             android:layout_marginStart="16dp"
             app:tint="@color/bottom_nav_icon_color" />
+
+        <ImageButton
+            android:id="@+id/ibRatingFilled"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/starfilled"
+            android:visibility="gone"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:layout_marginStart="16dp"
+            app:tint="@color/btn_focused" />
 
         <TextView
             android:id="@+id/tvRatingCount"
