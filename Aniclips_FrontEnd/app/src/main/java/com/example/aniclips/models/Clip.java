@@ -15,6 +15,8 @@ public class Clip implements Serializable {
     private int visitas;
     private int duracion;
     private String miniatura;
+    private Boolean ledioLike;
+    private Boolean loRateo;
 
     private List<MeGusta> meGustas;
     private Usuario usuario;
@@ -24,7 +26,7 @@ public class Clip implements Serializable {
     public Clip() {
     }
 
-    public Clip(List<Comentario> comentarios, String descripcion, int duracion, LocalDate fecha, String genero, Long id, List<MeGusta> meGustas, String miniatura, String nombreAnime, String urlVideo, Usuario usuario, List<Valoracion> valoraciones, int visitas) {
+    public Clip(List<Comentario> comentarios, String descripcion, int duracion, LocalDate fecha, String genero, Long id, List<MeGusta> meGustas, String miniatura, String nombreAnime, String urlVideo, Usuario usuario, List<Valoracion> valoraciones, int visitas, Boolean ledioLike, Boolean loRateo) {
         this.comentarios = comentarios;
         this.descripcion = descripcion;
         this.duracion = duracion;
@@ -38,6 +40,8 @@ public class Clip implements Serializable {
         this.usuario = usuario;
         this.valoraciones = valoraciones;
         this.visitas = visitas;
+        this.ledioLike = ledioLike;
+        this.loRateo = loRateo;
     }
 
     public Long getId() {
@@ -142,6 +146,18 @@ public class Clip implements Serializable {
 
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
+    }
+    public Boolean getLedioLike() {
+        return ledioLike;
+    }
+    public void setLedioLike(Boolean ledioLike) {
+        this.ledioLike = ledioLike;
+    }
+    public Boolean getLoRateo() {
+        return loRateo;
+    }
+    public void setLoRateo(Boolean loRateo) {
+        this.loRateo = loRateo;
     }
 }
 

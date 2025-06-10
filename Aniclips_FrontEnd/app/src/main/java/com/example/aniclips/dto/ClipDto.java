@@ -14,6 +14,8 @@ public class ClipDto {
     private int cantidadMeGusta;
     private int cantidadComentarios;
     private double mediaValoraciones;
+    private boolean ledioLike;
+    private boolean loRateo;
 
     // Getters y Setters
     public Long getId() {
@@ -98,5 +100,17 @@ public class ClipDto {
     }
     public void setUrlMiniatura(String urlMiniatura) {
         this.urlMiniatura = urlMiniatura;
+    }
+    public boolean isLedioLike() {
+        return ledioLike;
+    }
+    public void setLedioLike(boolean ledioLike) {
+        this.ledioLike = ledioLike;
+    }
+    public boolean isLoRateo() {
+        return loRateo;
+    }
+    public void setLoRateo(boolean loRateo) {
+        this.loRateo = loRateo;
     }
 }

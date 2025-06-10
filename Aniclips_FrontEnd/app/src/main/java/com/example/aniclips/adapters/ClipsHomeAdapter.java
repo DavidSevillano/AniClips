@@ -102,22 +102,42 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 .centerCrop()
                 .into(holder.imageViewPerfil);
 
+        if (clip.isLedioLike()) {
+            holder.ibLike.setVisibility(View.GONE);
+            holder.ibLikeFilled.setVisibility(View.VISIBLE);
+        } else {
+            holder.ibLike.setVisibility(View.VISIBLE);
+            holder.ibLikeFilled.setVisibility(View.GONE);
+        }
+        Long clipIdObj = clip.getId();
+        Context context = holder.itemView.getContext();
+
         holder.ibLike.setOnClickListener(v -> {
-            Long clipIdObj = clip.getId();
+            holder.ibLike.setVisibility(View.GONE);
+            holder.ibLikeFilled.setVisibility(View.VISIBLE);
 
-            long clipId = clipIdObj;
-            Context context = holder.itemView.getContext();
-
-            LikeController controller = new LikeController(context, clipId, new MeGustaCallback() {
+            LikeController controller = new LikeController(context, clipIdObj, "POST", new MeGustaCallback() {
                 @Override
-                public void onMegustaSuccess(JSONObject response) {
-                    holder.ibLike.setVisibility(View.GONE);
-                    holder.ibLikeFilled.setVisibility(View.VISIBLE);
-                }
-
+                public void onMegustaSuccess(JSONObject response) { }
                 @Override
                 public void onError(String errorMsg) {
                     Log.e("Megusta", "Error al enviar like: " + errorMsg);
+                }
+            });
+            controller.execute();
+        });
+
+// Listener para quitar like (DELETE)
+        holder.ibLikeFilled.setOnClickListener(v -> {
+            holder.ibLike.setVisibility(View.VISIBLE);
+            holder.ibLikeFilled.setVisibility(View.GONE);
+
+            LikeController controller = new LikeController(context, clipIdObj, "DELETE", new MeGustaCallback() {
+                @Override
+                public void onMegustaSuccess(JSONObject response) { }
+                @Override
+                public void onError(String errorMsg) {
+                    Log.e("Megusta", "Error al quitar like: " + errorMsg);
                 }
             });
             controller.execute();

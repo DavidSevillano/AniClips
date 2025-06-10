@@ -16,17 +16,20 @@ public class LikeController extends AsyncTask<Void, Void, JSONObject> {
 
     private final WeakReference<Context> contextRef;
     private final MeGustaCallback callback;
+    private final String method;
     private final long clipId;
 
-    public LikeController(Context context, long clipId, MeGustaCallback callback) {
+    public LikeController(Context context, long clipId, String method, MeGustaCallback callback) {
         this.contextRef = new WeakReference<>(context);
         this.clipId = clipId;
+        this.method = method;
         this.callback = callback;
     }
 
     @Override
     protected JSONObject doInBackground(Void... voids) {
         Context context = contextRef.get();
+        String responseJSON;
         if (context == null) return null;
 
         try {
@@ -34,9 +37,22 @@ public class LikeController extends AsyncTask<Void, Void, JSONObject> {
             String token = prefs.getString(Constantes.PREF_TOKEN_JWT, null);
             if (token == null) return null;
 
-            String url = "/meGusta/" + clipId;
+            String url = "";
 
-            String responseJSON = OkHttpTools.postWithToken(url, "{}", token);
+            switch (method){
+                case "POST":
+                    url = "/meGusta/" + clipId;
+                    responseJSON = OkHttpTools.postWithToken(url, "{}", token);
+                    break;
+                case "DELETE":
+                    url = "/meGusta/delete/" + clipId;
+                    responseJSON = OkHttpTools.deleteWithToken(url, clipId, token);
+                    android.util.Log.d("LikeController", "DELETE response: " + responseJSON);
+                    break;
+                default:
+                    android.util.Log.d("LikeController", "nada");
+                    return null;
+            }
 
             return new JSONObject(responseJSON);
         } catch (Exception e) {

@@ -35,15 +35,14 @@ public class MeGustaService {
     }
 
     @Transactional
-    public void eliminarMiMeGusta(Usuario usuario, Long meGustaId) {
-
-        MeGusta meGusta = meGustaRepository.findById(meGustaId)
+    public void eliminarMiMeGusta(Usuario usuario, Long clipId) {
+        MeGusta meGusta = meGustaRepository.findMeGustaByUsuarioIdAndClipId(usuario.getId(), clipId)
                 .orElseThrow(() -> new EntityNotFoundException("Me gusta no encontrado"));
 
         if (!meGusta.getUsuario().getId().equals(usuario.getId())) {
             throw new UnauthorizedAccessException("No tienes permiso para eliminar este me gusta.");
         }
 
-        clipRepository.deleteById(meGustaId);
+        meGustaRepository.deleteById(meGusta.getId());
     }
 }

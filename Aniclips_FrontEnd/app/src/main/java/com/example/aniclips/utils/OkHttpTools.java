@@ -15,7 +15,7 @@ import okhttp3.Response;
 
 public class OkHttpTools {
 
-    private static final String BASE_URL = Constantes.API_BASE_URL_PORTATIL;
+    private static final String BASE_URL = Constantes.API_BASE_URL;
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -128,27 +128,50 @@ public class OkHttpTools {
 
         return resp;
     }
-    public static String postBusinesses(String url, String json) {
+
+    public static String getWithToken(String url, String jwtToken) {
         String resp;
-
         try {
-            Log.d("url", BASE_URL + "/businesses");
-
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(3, TimeUnit.SECONDS)
                     .build();
 
-            RequestBody requestBody = RequestBody.create(JSON, json);
-
             Request request = new Request.Builder()
-                    .url(BASE_URL + "/businesses/")
-                    .post(requestBody)
+                    .url(BASE_URL + url)
+                    .addHeader("Authorization", "Bearer " + jwtToken)
                     .build();
 
             Response response = client.newCall(request).execute();
             resp = response.body().string();
 
-            Log.d("resp", resp);
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            resp = "{\"status\":\"ERROR\",\"message\":\"ConnectException\"}";
+        } catch (IOException e) {
+            e.printStackTrace();
+            resp = "{\"status\":\"ERROR\",\"message\":\"IOException\"}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = "{\"status\":\"ERROR\",\"message\":\"Exception\"}";
+        }
+        return resp;
+    }
+
+    public static String deleteWithToken(String url, Long id, String jwtToken) {
+        String resp;
+        try {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(BASE_URL + url) // Solo usa la url recibida
+                    .delete()
+                    .addHeader("Authorization", "Bearer " + jwtToken)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            resp = response.body().string();
 
         } catch (ConnectException e) {
             e.printStackTrace();

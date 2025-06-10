@@ -1,6 +1,8 @@
 package com.example.aniclips.controllers;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 
@@ -9,6 +11,7 @@ import com.example.aniclips.dto.PerfilAvatarDto;
 import com.example.aniclips.dto.UsuarioClipDto;
 import com.example.aniclips.interfaces.HomeClipsCallback;
 import com.example.aniclips.models.Clip;
+import com.example.aniclips.utils.Constantes;
 import com.example.aniclips.utils.OkHttpTools;
 
 import org.json.JSONArray;
@@ -39,7 +42,10 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
         try {
             // Construir URL con page y size para paginación
             String url = "/clip/?page=" + page + "&size=" + size;
-            String responseJSON = OkHttpTools.get(url, activity);
+            Context context = activity.getApplicationContext();
+            SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+            String token = prefs.getString(Constantes.PREF_TOKEN_JWT, null);
+            String responseJSON = OkHttpTools.getWithToken(url, token);
             JSONObject response = new JSONObject(responseJSON);
 
             JSONArray clipsArray = response.optJSONArray("content");
@@ -58,6 +64,8 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
                     clipDto.setCantidadMeGusta(clipJson.optInt("cantidadMeGusta"));
                     clipDto.setCantidadComentarios(clipJson.optInt("cantidadComentarios"));
                     clipDto.setMediaValoraciones(clipJson.optDouble("mediaValoraciones"));
+                    clipDto.setLedioLike(clipJson.optBoolean("ledioLike"));
+                    clipDto.setLoRateo(clipJson.optBoolean("loRateo"));
                     clipJson.optString("fecha");
 
                     JSONObject usuarioJson = clipJson.optJSONObject("getUsuarioClipDto");

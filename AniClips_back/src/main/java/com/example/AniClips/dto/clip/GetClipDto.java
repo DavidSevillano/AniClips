@@ -2,6 +2,7 @@ package com.example.AniClips.dto.clip;
 
 import com.example.AniClips.dto.user.GetUsuarioClipDto;
 import com.example.AniClips.model.Clip;
+import com.example.AniClips.model.Usuario;
 import com.example.AniClips.model.Valoracion;
 
 import java.time.LocalDate;
@@ -17,19 +18,26 @@ public record GetClipDto(
         GetUsuarioClipDto getUsuarioClipDto,
         int cantidadMeGusta,
         int cantidadComentarios,
-        double mediaValoraciones
+        double mediaValoraciones,
+        boolean ledioLike,
+        boolean loRateo
 
 ) {
 
 
-    public static GetClipDto of(Clip clip) {
-
+    public static GetClipDto of(Clip clip, Usuario usuarioActual) {
         double mediaValoraciones = clip.getValoraciones().isEmpty()
                 ? 0.0
                 : clip.getValoraciones().stream()
                 .mapToDouble(Valoracion::getPuntuacion)
                 .average()
                 .orElse(0.0);
+
+        boolean leDioLike = usuarioActual != null && clip.getMeGustas().stream()
+                .anyMatch(meGusta -> meGusta.getUsuario().getId().equals(usuarioActual.getId()));
+
+        boolean loValoro = usuarioActual != null && clip.getValoraciones().stream()
+                .anyMatch(valoracion -> valoracion.getUsuario().getId().equals(usuarioActual.getId()));
 
         return new GetClipDto(
                 clip.getId(),
@@ -42,7 +50,10 @@ public record GetClipDto(
                 GetUsuarioClipDto.of(clip.getUsuario()),
                 clip.getMeGustas().size(),
                 clip.getComentarios().size(),
-                mediaValoraciones
+                mediaValoraciones,
+                leDioLike,
+                loValoro
         );
     }
+
 }

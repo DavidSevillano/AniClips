@@ -25,7 +25,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,9 +112,19 @@ public class ClipController {
     @GetMapping
     public Page<GetClipDto> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
         Pageable pageRequest = PageRequest.of(page, size);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        final Usuario usuarioActual;
+        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Usuario user) {
+            usuarioActual = user;
+        } else {
+            usuarioActual = null;
+        }
+
         return clipService.findAll(pageRequest)
-                .map(GetClipDto::of);
-    }   
+                .map(clip -> GetClipDto.of(clip, usuarioActual));
+    }
 
     @Operation(summary = "Obtiene todos los clips")
     @ApiResponses(value = {
@@ -221,9 +233,18 @@ public class ClipController {
 
         Clip clip = clipService.findById(id);
 
-        return GetClipDto.of(clip);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        final Usuario usuarioActual;
+        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Usuario user) {
+            usuarioActual = user;
+        } else {
+            usuarioActual = null;
+        }
+
+        return GetClipDto.of(clip, usuarioActual);
     }
+
 
     @Operation(summary = "Obtiene todos los clips por nombre o filtro")
     @ApiResponses(value = {
