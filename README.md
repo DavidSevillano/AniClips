@@ -17,18 +17,37 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
      
 ## Tecnologías Utilizadas
 
+   🖥️ Backend
+   
    - **Java**: Lenguaje de programación principal.
+   - **XML**:
    - **Spring Boot**: Framework para construir la aplicación.
    - **PostgreSQL**: Base de datos utilizada para almacenar datos.
    - **Docker**: Contenerización de la aplicación.
    - **Maven**: Gestión de dependencias y construcción del proyecto.
 
+   📱 Frontend (Android)
+
+   - **Java (Android)**: Desarrollo de la aplicación móvil nativa.
+   - **XML**: Definición de interfaces gráficas (layouts) en Android Studio
+   - **Android Studio**: Entorno de desarrollo para la app móvil.
+   - **OkHttp**: Cliente HTTP para consumir la API REST desde Android.
+
 ## Requisitos
 
-- **Java JDK 17** o superior
-- **Maven 3.6.3** o superior
-- **Docker** (versión 20.10.0 o superior)
-- **Docker Compose** (versión 1.27.0 o superior)
+   🖥️ Backend
+
+   - **Java JDK 17** o superior
+   - **Maven 3.6.3** o superior
+   - **Docker** (versión 20.10.0 o superior)
+   - **Docker Compose** (versión 1.27.0 o superior)
+
+   📱 Frontend (Android)
+
+   - **Android Studio Giraffe** o superior
+   - **JDK 11 o 17** configurado en Android Studio
+   - **SDK** de Android API 26+
+   - **Emulador o dispositivo físico** para pruebas
 
 ## Configuración del entorno
 
@@ -112,3 +131,37 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
     - **Eliminar un clip:**
       ```
       DELETE http://localhost:8081/clip/delete/{clipId}
+
+## Si quieres probarlo con un dispositivo movil físico o virtual solo tienes que:
+
+1. **Abrir el proyecto en Android Studio**
+
+    - Abre Android Studio.
+
+    - Selecciona "Open an existing project".
+
+    - Navega hasta la carpeta AniClips-Android (o el nombre de tu carpeta frontend) y ábrela.
+  
+2. **Configurar la IP del backend**
+
+Como el backend está dockerizado, localhost no funcionará desde un dispositivo físico ni desde un emulador. Para solucionarlo:
+
+   - Asegúrate de estar en la misma red Wi-Fi que el dispositivo.
+     
+   - Obtén la IP local de tu máquina desde el terminal con:
+        ```
+     **ipconfig**
+        ```
+
+   - En el proyecto abre la clase **Constantes.java** y cambia la urlbase.
+        ```
+     public static final String BASE_URL = "http://<IP_LOCAL>:8081";
+        ```
+
+3. **Ejecutar en un dispositivo o emulador**
+
+   - Conecta tu dispositivo Android por USB (modo desarrollador activado) o usa un emulador
+     
+   - Presiona el botón de Run (▶️) en Android Studio.
+     
+   - La app se iniciará y si el backend está levantado correctamente con Docker, podrás consumir todos los endpoints disponibles.
