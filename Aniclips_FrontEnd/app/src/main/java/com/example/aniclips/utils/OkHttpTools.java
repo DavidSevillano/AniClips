@@ -189,6 +189,39 @@ public class OkHttpTools {
         return resp;
     }
 
+    public static String putWithToken(String url, String json, String jwtToken) {
+        String resp;
+
+        try {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .build();
+
+            RequestBody requestBody = RequestBody.create(JSON, json);
+
+            Request request = new Request.Builder()
+                    .url(BASE_URL + url)
+                    .put(requestBody)
+                    .addHeader("Authorization", "Bearer " + jwtToken)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            resp = response.body().string();
+
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            resp = "{\"status\":\"ERROR\",\"message\":\"ConnectException\"}";
+        } catch (IOException e) {
+            e.printStackTrace();
+            resp = "{\"status\":\"ERROR\",\"message\":\"IOException\"}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = "{\"status\":\"ERROR\",\"message\":\"Exception\"}";
+        }
+
+        return resp;
+    }
+
     public static String putImageWithToken(String endpoint, InputStream inputStream, String token) throws IOException {
         OkHttpClient client = new OkHttpClient();
 

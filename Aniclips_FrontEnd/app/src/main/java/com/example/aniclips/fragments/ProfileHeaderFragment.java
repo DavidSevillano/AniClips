@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
 import com.example.aniclips.activities.LoginSiginActivity;
+import com.example.aniclips.controllers.DescriptionController;
 import com.example.aniclips.controllers.PerfilController;
 import com.example.aniclips.controllers.ProfilePictureController;
 import com.example.aniclips.dialogs.DialogCerrarSesion;
@@ -36,9 +38,10 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
     private TextView tvClipsNumber;
     private TextView tvFollowersNumber;
     private TextView tvFollowingNumber;
-    private TextView tvDescriptionEmpty;
+    private EditText tvDescriptionEmpty;
     private TextView tvDescriptionFilled;
     private TextView tvChangeProfilePicture;
+    private TextView tvGuardarDescription;
     private ImageButton ibLogout;
     private ImageButton ibProfile;
 
@@ -65,7 +68,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
         tvDescriptionEmpty = view.findViewById(R.id.tvDescriptionEmpty);
         tvDescriptionFilled = view.findViewById(R.id.tvDescriptionFilled);
         tvChangeProfilePicture = view.findViewById(R.id.tvChangeProfilePicture);
-
+        tvGuardarDescription = view.findViewById(R.id.tvGuardarDescription);
     }
 
     private void initEvents() {
@@ -74,6 +77,18 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
         ibProfile.setOnClickListener(v -> openImagePicker());
 
         tvChangeProfilePicture.setOnClickListener(v -> openImagePicker());
+
+        setupDescriptionEdit();
+
+        tvDescriptionEmpty.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                tvDescriptionEmpty.setHint("");
+            } else {
+                if (tvDescriptionEmpty.getText().toString().isEmpty()) {
+                    tvDescriptionEmpty.setHint("Añade tu descripción aquí");
+                }
+            }
+        });
     }
 
     private void cargarPerfil() {
@@ -106,9 +121,36 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
                             .load(avatarUrl)
                             .placeholder(R.drawable.ic_profile)
                             .circleCrop()
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
                             .into(ibProfile);
                 } else {
                     ibProfile.setImageResource(R.drawable.ic_profile);
+                }
+
+                if (description == null || description.isEmpty()) {
+                    tvDescriptionEmpty.setVisibility(VISIBLE);
+                    tvDescriptionFilled.setVisibility(GONE);
+                } else {
+                    tvDescriptionEmpty.setVisibility(GONE);
+                    tvDescriptionFilled.setVisibility(VISIBLE);
+                    tvDescriptionFilled.setText(description);
+
+                    tvDescriptionFilled.setOnClickListener(v -> {
+                        tvDescriptionFilled.setVisibility(GONE);
+                        tvDescriptionEmpty.setVisibility(VISIBLE);
+                        tvDescriptionEmpty.setText(description);
+                        tvDescriptionEmpty.requestFocus();
+                        tvDescriptionEmpty.setSelection(description.length());
+
+                        tvDescriptionEmpty.post(() -> {
+                            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager)
+                                    requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.showSoftInput(tvDescriptionEmpty, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                            }
+                        });
+                    });
                 }
 
             }
@@ -168,5 +210,51 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
                 }
             }, imageUri).execute();
         }
+    }
+
+    private void setupDescriptionEdit() {
+        tvDescriptionEmpty.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0) {
+                    tvGuardarDescription.setVisibility(GONE);
+                } else {
+                    tvGuardarDescription.setVisibility(VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        tvGuardarDescription.setOnClickListener(v -> guardarDescripcion(tvDescriptionEmpty.getText().toString().trim()));
+    }
+    private void guardarDescripcion(String descripcion) {
+        if (descripcion.isEmpty()) return;
+
+        android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager)
+                requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+        if (imm != null && getView() != null) {
+            imm.hideSoftInputFromWindow(tvDescriptionEmpty.getWindowToken(), 0);
+        }
+
+        new DescriptionController(
+                requireActivity(),
+                new PerfilCallback() {
+                    @Override
+                    public void onPerfilSuccess(org.json.JSONObject perfil) {
+                        Toast.makeText(requireContext(), "Descripción actualizada", Toast.LENGTH_SHORT).show();
+                        cargarPerfil();
+                    }
+                    @Override
+                    public void onPerfilError(String error) {
+                        Toast.makeText(requireContext(), "Error al actualizar", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                descripcion
+        ).execute();
     }
 }
