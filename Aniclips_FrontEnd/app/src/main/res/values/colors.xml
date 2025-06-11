@@ -9,4 +9,5 @@
     <color name="not_focused">#272931</color>
     <color name="btn_not_fucosed">#484A51</color>
     <color name="btn_focused">#2D54CB</color>
+    <color name="tv_profile">#272931</color>
 </resources>

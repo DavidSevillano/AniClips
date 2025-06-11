@@ -12,4 +12,7 @@
     <string name="sign_in_text_presentation">Crea una cuenta</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="follow">Seguir</string>
+    <string name="messageDialog">¿Seguro que quieres salir?</string>
+    <string name="yesDialog">Sí</string>
+    <string name="noDialog">No</string>
 </resources>

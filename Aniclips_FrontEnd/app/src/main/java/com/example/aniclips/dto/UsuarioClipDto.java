@@ -1,7 +1,12 @@
 package com.example.aniclips.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 public class UsuarioClipDto {
+    @SerializedName("Username")
     private String username;
+
+    @SerializedName("getPerfilAvatarDto")
     private PerfilAvatarDto getPerfilAvatarDto;
 
     // Getters y Setters

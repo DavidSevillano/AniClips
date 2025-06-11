@@ -55,7 +55,10 @@ public class SignInFragment extends Fragment {
 
     private void initEvents() {
         tvLogIn.setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager().popBackStack();
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.loginSignin_container, new LoginFragment())
+                    .commit();
         });
 
         btnSignIn.setOnClickListener(v -> {

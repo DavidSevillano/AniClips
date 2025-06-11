@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.aniclips.R;
 import com.example.aniclips.fragments.HomeFragment;
+import com.example.aniclips.fragments.ProfileFragment;
 import com.example.aniclips.fragments.SearchFragment;
 import com.example.aniclips.utils.HideNavigationBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.nav_search) {
                     selectedFragment = new SearchFragment();
                 } else if (item.getItemId() == R.id.nav_profile) {
-                    // selectedFragment = new ProfileFragment(); // Uncomment when ProfileFragment is implemented
+                    selectedFragment = new ProfileFragment();
                 }
                 if (selectedFragment != null) {
                     getSupportFragmentManager()
