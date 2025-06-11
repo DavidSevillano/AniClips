@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -165,7 +167,7 @@ public class OkHttpTools {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(BASE_URL + url) // Solo usa la url recibida
+                    .url(BASE_URL + url)
                     .delete()
                     .addHeader("Authorization", "Bearer " + jwtToken)
                     .build();
@@ -187,4 +189,26 @@ public class OkHttpTools {
         return resp;
     }
 
+    public static String putImageWithToken(String endpoint, InputStream inputStream, String token) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        byte[] imageBytes = inputStream.readAllBytes();
+
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), imageBytes);
+        MultipartBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("foto", "profile.jpg", fileBody)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(Constantes.API_BASE_URL + endpoint)
+                .addHeader("Authorization", "Bearer " + token)
+                .put(requestBody)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().string();
+        }
+    }
 }
