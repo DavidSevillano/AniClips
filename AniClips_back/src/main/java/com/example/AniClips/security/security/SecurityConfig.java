@@ -71,6 +71,7 @@ public class SecurityConfig {
         );
         http.authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh/token", "/activate/account", "/error").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/logout").authenticated()
                         .requestMatchers(HttpMethod.GET, "/clip/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/videos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/miniaturas/**").permitAll()

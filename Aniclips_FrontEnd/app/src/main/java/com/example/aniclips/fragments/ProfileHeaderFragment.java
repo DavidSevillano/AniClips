@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,10 +102,20 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
     @Override
     public void onSalirConfirmado() {
-        Toast.makeText(requireContext(), "onSalirConfirmado llamado", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(requireContext(), LoginSiginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        requireActivity().finish();
+        new PerfilController(requireActivity(), new PerfilCallback() {
+            @Override
+            public void onPerfilSuccess(JSONObject perfil) {
+                Log.i("PerfilController", "Se hace la peticion en el fragment");
+                Intent intent = new Intent(requireContext(), LoginSiginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+
+            @Override
+            public void onPerfilError(String error) {
+                Toast.makeText(requireContext(), "Error al cerrar sesión", Toast.LENGTH_SHORT).show();
+            }
+        }, true).execute();
     }
 }

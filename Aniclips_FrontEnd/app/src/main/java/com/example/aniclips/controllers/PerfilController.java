@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.aniclips.utils.Constantes;
 import com.example.aniclips.utils.OkHttpTools;
@@ -14,10 +15,16 @@ import org.json.JSONObject;
 public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
     private final Activity activity;
     private final PerfilCallback callback;
+    private final boolean desdeDialogo;
 
     public PerfilController(Activity activity, PerfilCallback callback) {
+        this(activity, callback, false);
+    }
+
+    public PerfilController(Activity activity, PerfilCallback callback, boolean desdeDialogo) {
         this.activity = activity;
         this.callback = callback;
+        this.desdeDialogo = desdeDialogo;
     }
 
     @Override
@@ -26,7 +33,14 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
             Context context = activity.getApplicationContext();
             SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
             String token = prefs.getString(Constantes.PREF_TOKEN_JWT, null);
-            String responseJSON = OkHttpTools.getWithToken("/perfil/", token);
+            String responseJSON;
+            if (desdeDialogo) {
+                Log.i("PerfilController", "Se hace la peticion de logout");
+                responseJSON = OkHttpTools.postWithToken("/auth/login", "", token);
+            } else {
+                Log.i("PerfilController", "Se hace la peticion de getperfil");
+                responseJSON = OkHttpTools.getWithToken("/perfil/", token);
+            }
             return new JSONObject(responseJSON);
         } catch (Exception e) {
             e.printStackTrace();

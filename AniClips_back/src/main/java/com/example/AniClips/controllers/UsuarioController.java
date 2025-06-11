@@ -229,7 +229,12 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
 
     }
-
+    @PostMapping("/auth/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal Usuario usuario){
+        refreshTokenService.deleteAllByUser(usuario);
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Sesión cerrada");
+    }
 }
 
 
