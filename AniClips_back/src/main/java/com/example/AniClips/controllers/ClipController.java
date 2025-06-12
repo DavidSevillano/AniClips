@@ -7,6 +7,7 @@ import com.example.AniClips.files.service.StorageService;
 import com.example.AniClips.files.utils.TikaMimeTypeDetector;
 import com.example.AniClips.model.Clip;
 import com.example.AniClips.model.Usuario;
+import com.example.AniClips.repo.UsuarioRepository;
 import com.example.AniClips.service.ClipService;
 import com.example.AniClips.util.SearchCriteria;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +48,7 @@ public class ClipController {
     private final ClipService clipService;
     private final StorageService storageService;
     private final TikaMimeTypeDetector mimeTypeDetector;
+    private final UsuarioRepository usuarioRepository;
 
 
     @Operation(summary = "Obtiene todos los clips")
@@ -114,7 +116,6 @@ public class ClipController {
         Pageable pageRequest = PageRequest.of(page, size);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         final Usuario usuarioActual;
         if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Usuario user) {
             usuarioActual = user;
@@ -123,7 +124,15 @@ public class ClipController {
         }
 
         return clipService.findAll(pageRequest)
-                .map(clip -> GetClipDto.of(clip, usuarioActual));
+                .map(clip -> {
+                    boolean loSigue = false;
+                    if (usuarioActual != null) {
+                        loSigue = usuarioRepository.existsBySeguidorAndSeguido(
+                                usuarioActual.getId(), clip.getUsuario().getId()
+                        );
+                    }
+                    return GetClipDto.of(clip, usuarioActual, loSigue);
+                });
     }
 
     @Operation(summary = "Obtiene todos los clips")
@@ -230,11 +239,9 @@ public class ClipController {
     })
     @GetMapping("/{id}")
     public GetClipDto getById(@PathVariable Long id) {
-
         Clip clip = clipService.findById(id);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         final Usuario usuarioActual;
         if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Usuario user) {
             usuarioActual = user;
@@ -242,7 +249,14 @@ public class ClipController {
             usuarioActual = null;
         }
 
-        return GetClipDto.of(clip, usuarioActual);
+        boolean loSigue = false;
+        if (usuarioActual != null) {
+            loSigue = usuarioRepository.existsBySeguidorAndSeguido(
+                    usuarioActual.getId(), clip.getUsuario().getId()
+            );
+        }
+
+        return GetClipDto.of(clip, usuarioActual, loSigue);
     }
 
 

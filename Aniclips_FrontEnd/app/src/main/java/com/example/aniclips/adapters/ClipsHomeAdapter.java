@@ -19,18 +19,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
+import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.dto.UsuarioClipDto;
+import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
 import com.example.aniclips.interfaces.RateCallback;
 import com.google.android.material.button.MaterialButton;
+import com.google.gson.Gson;
 
 import java.util.Map;
 import java.util.HashMap;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.ClipViewHolder> {
 
@@ -45,6 +50,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ImageView imageViewPerfil;
         TextView textViewUsername;
         MaterialButton followButton;
+        MaterialButton followedButton;
         VideoView videoViewClip;
         ImageButton ibPlayVideo;
         ImageButton ibLike;
@@ -65,6 +71,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             ibLikeFilled = itemView.findViewById(R.id.ibLikeFilled);
             ibRating = itemView.findViewById(R.id.ibRating);
             ibRatingFilled = itemView.findViewById(R.id.ibRatingFilled);
+            followedButton = itemView.findViewById(R.id.btnFollowed);
         }
     }
 
@@ -119,6 +126,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
         setupLike(holder, clip, context);
         setupRating(holder, clip, context);
+        setupFollow(holder, clip, context);
+
     }
 
     private void setupLike(ClipViewHolder holder, ClipDto clip, Context context) {
@@ -213,7 +222,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 }).execute();
             }
         });
-    }    private void setupRating(ClipViewHolder holder, ClipDto clip, Context context) {
+    }
+    private void setupRating(ClipViewHolder holder, ClipDto clip, Context context) {
         Long clipIdObj = clip.getId();
 
         if (clip.isLoRateo()) {
@@ -230,7 +240,30 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         holder.ibRating.setOnClickListener(ratingClickListener);
         holder.ibRatingFilled.setOnClickListener(ratingClickListener);
     }
+    private void setupFollow(ClipViewHolder holder, ClipDto clip, Context context) {
+        if (clip.isLoSigue()) {
+            holder.followButton.setVisibility(View.GONE);
+            holder.followedButton.setVisibility(View.VISIBLE);
+        } else {
+            holder.followButton.setVisibility(View.VISIBLE);
+            holder.followedButton.setVisibility(View.GONE);
+        }
 
+        holder.followButton.setOnClickListener(v -> {
+            UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
+            new FollowController(context, seguidoId, new FollowCallback() {
+                @Override
+                public void onFollowSuccess(JSONObject response) {
+                    holder.followButton.setVisibility(View.GONE);
+                    holder.followedButton.setVisibility(View.VISIBLE);
+                }
+                @Override
+                public void onError(String errorMsg) {
+                    Log.e("Follow", "Error: " + errorMsg);
+                }
+            }).execute();
+        });
+    }
     @Override
     public int getItemCount() {
         return clipList.size();

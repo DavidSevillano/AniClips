@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>> {
     private final Activity activity;
@@ -66,13 +67,17 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
                     clipDto.setMediaValoraciones(clipJson.optDouble("mediaValoraciones"));
                     clipDto.setLedioLike(clipJson.optBoolean("ledioLike"));
                     clipDto.setLoRateo(clipJson.optBoolean("loRateo"));
+                    clipDto.setLoSigue(clipJson.optBoolean("loSigue"));
                     clipJson.optString("fecha");
 
                     JSONObject usuarioJson = clipJson.optJSONObject("getUsuarioClipDto");
                     if (usuarioJson != null) {
                         UsuarioClipDto usuario = new UsuarioClipDto();
-                        usuario.setUsername(usuarioJson.optString("Username"));
 
+                        String idUserStr = usuarioJson.optString("idUser", null);
+                        usuario.setIdUser(UUID.fromString(idUserStr));
+
+                        usuario.setUsername(usuarioJson.optString("username"));
                         JSONObject avatarJson = usuarioJson.optJSONObject("getPerfilAvatarDto");
                         if (avatarJson != null) {
                             PerfilAvatarDto avatar = new PerfilAvatarDto();

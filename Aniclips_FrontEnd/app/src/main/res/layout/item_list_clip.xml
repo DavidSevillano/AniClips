@@ -36,15 +36,31 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFollow"
-            android:layout_width="87dp"
+            android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="8dp"
             app:cornerRadius="20dp"
             android:backgroundTint="@color/not_focused"
             android:textSize="12dp"
+            android:textColor="@color/white"
             android:text="@string/follow"
             android:fontFamily="@font/lexend_regular"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFollowed"
+            android:layout_width="97dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="20dp"
+            android:visibility="gone"
+            android:backgroundTint="@color/btn_focused"
+            android:textSize="12dp"
+            android:textColor="@color/white"
+            android:text="Seguido"
+            android:fontFamily="@font/lexend_regular"/>
+
     </LinearLayout>
 
     <FrameLayout

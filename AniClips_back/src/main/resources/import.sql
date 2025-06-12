@@ -1,6 +1,6 @@
 INSERT INTO usuario (id, username, email, password, enabled, activation_token, created_at)
 VALUES
-  ('11111111-1111-1111-1111-111111111111', 'naruto', 'naruto@konoha.com', '1', true, NULL, NOW()),
+  ('11111111-1111-1111-1111-111111111111', 'naruto', 'naruto@konoha.com', '{noop}1', true, NULL, NOW()),
   ('22222222-2222-2222-2222-222222222222', 'goku', 'goku@saiyan.com', '{noop}hashed_password', true, NULL, NOW()),
   ('33333333-3333-3333-3333-333333333333', 'eren', 'eren@paradis.com', '{noop}hashed_password', true, NULL, NOW()),
   ('44444444-4444-4444-4444-444444444444', 'luffy', 'luffy@strawhat.com', '{noop}hashed_password', true, NULL, NOW()),

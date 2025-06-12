@@ -26,6 +26,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
             """)
     Optional<Usuario> findByIdAntiLazy(@Param("id") UUID id);
 
+    @Query("SELECT COUNT(u) > 0 FROM Usuario u JOIN u.seguidos s WHERE u.id = :userId AND s.id = :seguidoId")
+    boolean existsBySeguidorAndSeguido(@Param("userId") UUID userId, @Param("seguidoId") UUID seguidoId);
+
 
 
 }

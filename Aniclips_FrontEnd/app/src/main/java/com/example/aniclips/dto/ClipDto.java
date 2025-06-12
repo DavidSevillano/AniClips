@@ -16,6 +16,7 @@ public class ClipDto {
     private double mediaValoraciones;
     private boolean ledioLike;
     private boolean loRateo;
+    private boolean loSigue;
 
     // Getters y Setters
     public Long getId() {
@@ -112,5 +113,11 @@ public class ClipDto {
     }
     public void setLoRateo(boolean loRateo) {
         this.loRateo = loRateo;
+    }
+    public boolean isLoSigue() {
+        return loSigue;
+    }
+    public void setLoSigue(boolean loSigue) {
+        this.loSigue = loSigue;
     }
 }

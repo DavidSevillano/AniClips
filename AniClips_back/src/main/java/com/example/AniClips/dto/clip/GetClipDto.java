@@ -20,12 +20,10 @@ public record GetClipDto(
         int cantidadComentarios,
         double mediaValoraciones,
         boolean ledioLike,
-        boolean loRateo
-
+        boolean loRateo,
+        boolean loSigue
 ) {
-
-
-    public static GetClipDto of(Clip clip, Usuario usuarioActual) {
+    public static GetClipDto of(Clip clip, Usuario usuarioActual, boolean loSigue) {
         double mediaValoraciones = clip.getValoraciones().isEmpty()
                 ? 0.0
                 : clip.getValoraciones().stream()
@@ -52,8 +50,8 @@ public record GetClipDto(
                 clip.getComentarios().size(),
                 mediaValoraciones,
                 leDioLike,
-                loValoro
+                loValoro,
+                loSigue
         );
     }
-
 }
