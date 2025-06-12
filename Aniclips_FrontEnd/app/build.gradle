@@ -46,6 +46,7 @@ dependencies {
     implementation libs.gson
     implementation libs.glide
     implementation libs.lottie
+    implementation libs.exoplayer
     annotationProcessor libs.glideCompiler
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

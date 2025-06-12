@@ -35,8 +35,6 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
             super(itemView);
             ibThumbnail = itemView.findViewById(R.id.ibThumbnail);
             tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvDuration = itemView.findViewById(R.id.tvDuration);
-
         }
     }
 

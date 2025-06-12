@@ -1,0 +1,206 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroud_app"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tvTituloSheet"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="Sube un nuevo clip"
+        android:textSize="20sp"
+        android:textColor="@android:color/white" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/btn_not_fucosed"
+        android:padding="6dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Clip"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:padding="10dp"
+            android:layout_marginStart="0.5dp"
+            android:layout_marginBottom="-19dp"
+            android:background="@drawable/bg_title_rounded"
+            android:layout_marginTop="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/background_log_in_fields">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSubirClip"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="start|center_vertical"
+                android:background="@android:color/transparent"
+                android:text="Sube aquí tu clip"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:drawablePadding="6dp"
+                android:textColor="@color/hint_text"
+                android:drawableStart="@drawable/upload"
+                android:paddingStart="10dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Nombre -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="Nombre"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginStart="0.5dp"
+            android:layout_marginBottom="-19dp"
+            android:padding="10dp"
+            android:background="@drawable/bg_title_rounded"
+            android:layout_marginTop="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/background_log_in_fields">
+
+            <EditText
+                android:id="@+id/etNombreAnime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Nombre del anime"
+                android:inputType="textPersonName"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_text"
+                android:background="@android:color/transparent"/>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Género -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="Género"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginStart="0.5dp"
+            android:layout_marginBottom="-19dp"
+            android:padding="10dp"
+            android:background="@drawable/bg_title_rounded"
+            android:layout_marginTop="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/background_log_in_fields">
+
+            <AutoCompleteTextView
+                android:id="@+id/etGenero"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Género del anime"
+                android:inputType="none"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_text"
+                android:background="@android:color/transparent"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="Miniatura"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginStart="0.5dp"
+            android:layout_marginBottom="-19dp"
+            android:padding="10dp"
+            android:background="@drawable/bg_title_rounded"
+            android:layout_marginTop="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/background_log_in_fields">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSubirMiniatura"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="start|center_vertical"
+                android:background="@android:color/transparent"
+                android:text="Selecciona una imagen"
+                android:textColor="@color/hint_text"
+                android:drawableStart="@drawable/upload"
+                android:drawablePadding="6dp"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:paddingStart="10dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="Descripción"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginStart="0.5dp"
+            android:layout_marginBottom="-19dp"
+            android:padding="10dp"
+            android:background="@drawable/bg_title_rounded"
+            android:layout_marginTop="16dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/background_log_in_fields">
+
+            <EditText
+                android:id="@+id/etDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Introduce aquí la descripción"
+                android:inputType="textMultiLine"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_text"
+                android:background="@android:color/transparent"/>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón subir -->
+        <Button
+            android:id="@+id/btnSubir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Subir"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/btn_focused"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</LinearLayout>

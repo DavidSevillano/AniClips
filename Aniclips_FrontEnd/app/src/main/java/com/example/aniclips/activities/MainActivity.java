@@ -1,19 +1,71 @@
 package com.example.aniclips.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
 import com.example.aniclips.R;
+import com.example.aniclips.controllers.UploadClipController;
 import com.example.aniclips.fragments.HomeFragment;
 import com.example.aniclips.fragments.ProfileFragment;
 import com.example.aniclips.fragments.SearchFragment;
+import com.example.aniclips.interfaces.PerfilCallback;
 import com.example.aniclips.utils.HideNavigationBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Uri videoUri = null;
+    private Uri miniaturaUri = null;
+
+    private AppCompatButton btnClipRef;
+    private AppCompatButton btnMiniaturaRef;
+
+    private final ActivityResultLauncher<Intent> videoPickerLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            videoUri = result.getData().getData();
+                            if (btnClipRef != null) {
+                                btnClipRef.setText("Clip introducido");
+                                btnClipRef.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
+                            }
+                        }
+                    }
+            );
+
+    private final ActivityResultLauncher<Intent> miniaturaPickerLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            miniaturaUri = result.getData().getData();
+                            if (btnMiniaturaRef != null) {
+                                btnMiniaturaRef.setText("Miniatura introducida");
+                                btnMiniaturaRef.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
+                            }
+                        }
+                    }
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +105,88 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             });
+
+            FloatingActionButton fab = findViewById(R.id.fabSubirClip);
+            fab.setOnClickListener(v -> {
+                PopupMenu popup = new PopupMenu(this, v);
+                popup.getMenu().add("Subir clip");
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getTitle().equals("Subir clip")) {
+                        mostrarBottomSheet();
+                        return true;
+                    }
+                    return false;
+                });
+                popup.show();
+            });
         }
+    }
+
+    private void mostrarBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_subir_clip, null);
+        bottomSheetDialog.setContentView(view);
+        HideNavigationBar.hideNavigationBar(view);
+
+        bottomSheetDialog.setCancelable(false);
+        bottomSheetDialog.setCanceledOnTouchOutside(true);
+
+        EditText etNombre = view.findViewById(R.id.etNombreAnime);
+        AutoCompleteTextView etGenero = view.findViewById(R.id.etGenero);
+        EditText etDescripcion = view.findViewById(R.id.etDescripcion);
+        Button btnSubir = view.findViewById(R.id.btnSubir);
+        btnClipRef = view.findViewById(R.id.btnSubirClip);
+        btnMiniaturaRef = view.findViewById(R.id.btnSubirMiniatura);
+
+        btnClipRef.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("video/*");
+            videoPickerLauncher.launch(intent);
+        });
+
+        btnMiniaturaRef.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            miniaturaPickerLauncher.launch(intent);
+        });
+
+
+        String[] generos = {"Shonen", "Shojo", "Seinen", "Josei", "Mecha", "Isekai", "Slice of Life", "Horror", "Comedia", "Otros"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, generos);
+        etGenero.setAdapter(adapter);
+        etGenero.setThreshold(1);
+
+        int itemHeight = (int) (48 * getResources().getDisplayMetrics().density);
+        etGenero.setDropDownHeight(itemHeight * 4);
+        etGenero.setDropDownVerticalOffset(0);
+
+        etGenero.setOnClickListener(v -> etGenero.showDropDown());
+        btnSubir.setOnClickListener(v -> {
+            String nombre = etNombre.getText().toString().trim();
+            String genero = etGenero.getText().toString().trim();
+            String descripcion = etDescripcion.getText().toString().trim();
+
+            if (videoUri == null || miniaturaUri == null || nombre.isEmpty() || genero.isEmpty() || descripcion.isEmpty()) {
+                Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
+            } else {
+                new UploadClipController(
+                        this,
+                        new PerfilCallback() {
+                            @Override
+                            public void onPerfilSuccess(JSONObject response) {
+                                Toast.makeText(MainActivity.this, "Clip subido exitosamente", Toast.LENGTH_SHORT).show();
+                                bottomSheetDialog.dismiss();
+                            }
+                            @Override
+                            public void onPerfilError(String error) {
+                                Toast.makeText(MainActivity.this, "Error al subir el clip", Toast.LENGTH_SHORT).show();
+                            }
+                        },
+                        nombre, genero, descripcion, videoUri, miniaturaUri
+                ).execute();
+            }
+        });
+
+        bottomSheetDialog.show();
     }
 }

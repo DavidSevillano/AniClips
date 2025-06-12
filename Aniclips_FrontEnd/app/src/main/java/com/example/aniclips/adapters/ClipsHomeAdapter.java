@@ -1,6 +1,7 @@
 package com.example.aniclips.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,17 +23,19 @@ import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dto.ClipDto;
-import com.example.aniclips.dto.UsuarioClipDto;
 import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
 import com.example.aniclips.interfaces.RateCallback;
+import com.example.aniclips.utils.Constantes;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.button.MaterialButton;
-import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.HashMap;
-import org.json.JSONObject;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -49,22 +51,26 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     public static class ClipViewHolder extends RecyclerView.ViewHolder {
         ImageView imageViewPerfil;
         TextView textViewUsername;
+        TextView tvLikeCount;
+        TextView tvCommentCount;
+        TextView tvRatingCount;
         MaterialButton followButton;
         MaterialButton followedButton;
-        VideoView videoViewClip;
         ImageButton ibPlayVideo;
         ImageButton ibLike;
         ImageButton ibLikeFilled;
         ImageButton ibRating;
         ImageButton ibRatingFilled;
         ImageView ivMiniatura;
+        PlayerView playerView;
+        ExoPlayer exoPlayer;
 
         public ClipViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewPerfil = itemView.findViewById(R.id.imageViewPerfil);
             textViewUsername = itemView.findViewById(R.id.tvUsername);
             followButton = itemView.findViewById(R.id.btnFollow);
-            videoViewClip = itemView.findViewById(R.id.videoViewClip);
+            playerView = itemView.findViewById(R.id.playerView);
             ibPlayVideo = itemView.findViewById(R.id.ibPlayVideo);
             ivMiniatura = itemView.findViewById(R.id.ivMiniatura);
             ibLike = itemView.findViewById(R.id.ibLike);
@@ -72,6 +78,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             ibRating = itemView.findViewById(R.id.ibRating);
             ibRatingFilled = itemView.findViewById(R.id.ibRatingFilled);
             followedButton = itemView.findViewById(R.id.btnFollowed);
+            tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
+            tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
+            tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
         }
     }
 
@@ -89,37 +98,43 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
         holder.textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
 
-        holder.videoViewClip.setVideoPath(clip.getUrlVideo());
-
-        holder.videoViewClip.stopPlayback();
-        holder.videoViewClip.setVisibility(View.GONE);
+        holder.playerView.setVisibility(View.GONE);
         holder.ibPlayVideo.setVisibility(View.VISIBLE);
         holder.ivMiniatura.setVisibility(View.VISIBLE);
 
-        Glide.with(holder.itemView.getContext())
+        Glide.with(context)
                 .load(clip.getUrlMiniatura())
                 .centerCrop()
                 .into(holder.ivMiniatura);
 
+        holder.tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
+        holder.tvCommentCount.setText(String.valueOf(clip.getCantidadComentarios()));
+        holder.tvRatingCount.setText(String.valueOf(clip.getMediaValoraciones()));
+
         holder.ibPlayVideo.setOnClickListener(v -> {
             holder.ibPlayVideo.setVisibility(View.GONE);
             holder.ivMiniatura.setVisibility(View.GONE);
-            holder.videoViewClip.setVisibility(View.VISIBLE);
+            holder.playerView.setVisibility(View.VISIBLE);
 
-            if (!holder.videoViewClip.isPlaying()) {
-                holder.videoViewClip.start();
+            if (holder.exoPlayer == null) {
+                holder.exoPlayer = new ExoPlayer.Builder(context).build();
+                holder.playerView.setPlayer(holder.exoPlayer);
+                MediaItem mediaItem = MediaItem.fromUri(clip.getUrlVideo());
+                holder.exoPlayer.setMediaItem(mediaItem);
+                holder.exoPlayer.prepare();
             }
+            holder.exoPlayer.setPlayWhenReady(true);
         });
 
-        holder.videoViewClip.setOnClickListener(v -> {
-            if (holder.videoViewClip.isPlaying()) {
-                holder.videoViewClip.pause();
+        holder.playerView.setOnClickListener(v -> {
+            if (holder.exoPlayer != null && holder.exoPlayer.isPlaying()) {
+                holder.exoPlayer.pause();
                 holder.ibPlayVideo.setVisibility(View.VISIBLE);
             }
         });
 
         String avatarUrl = clip.getGetUsuarioClipDto().getGetPerfilAvatarDto().getAvatar();
-        Glide.with(holder.itemView.getContext())
+        Glide.with(context)
                 .load(avatarUrl)
                 .centerCrop()
                 .into(holder.imageViewPerfil);
@@ -127,7 +142,6 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         setupLike(holder, clip, context);
         setupRating(holder, clip, context);
         setupFollow(holder, clip, context);
-
     }
 
     private void setupLike(ClipViewHolder holder, ClipDto clip, Context context) {
@@ -223,6 +237,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             }
         });
     }
+
     private void setupRating(ClipViewHolder holder, ClipDto clip, Context context) {
         Long clipIdObj = clip.getId();
 
@@ -240,7 +255,20 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         holder.ibRating.setOnClickListener(ratingClickListener);
         holder.ibRatingFilled.setOnClickListener(ratingClickListener);
     }
+
     private void setupFollow(ClipViewHolder holder, ClipDto clip, Context context) {
+
+        SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+        String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
+
+        String clipUserId = clip.getGetUsuarioClipDto().getIdUser().toString();
+
+        if (myUserId != null && myUserId.equals(clipUserId)) {
+            holder.followButton.setVisibility(View.GONE);
+            holder.followedButton.setVisibility(View.GONE);
+            return;
+        }
+
         if (clip.isLoSigue()) {
             holder.followButton.setVisibility(View.GONE);
             holder.followedButton.setVisibility(View.VISIBLE);
@@ -264,6 +292,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             }).execute();
         });
     }
+
     @Override
     public int getItemCount() {
         return clipList.size();
@@ -273,5 +302,14 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         int startPos = clipList.size();
         clipList.addAll(nuevosClips);
         notifyItemRangeInserted(startPos, nuevosClips.size());
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ClipViewHolder holder) {
+        if (holder.exoPlayer != null) {
+            holder.exoPlayer.release();
+            holder.exoPlayer = null;
+        }
+        super.onViewRecycled(holder);
     }
 }

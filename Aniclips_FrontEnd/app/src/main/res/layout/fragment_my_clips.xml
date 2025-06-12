@@ -31,4 +31,10 @@
         android:gravity="center"
         android:layout_marginTop="16dp"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvClips"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
 </LinearLayout>

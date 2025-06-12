@@ -99,7 +99,6 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
     @Override
     protected void onPostExecute(List<ClipDto> listaClips) {
         if (listaClips == null || listaClips.isEmpty()) {
-            callback.onError("No se recibieron clips");
         } else {
             callback.onHomeClipsCallback(listaClips);
         }

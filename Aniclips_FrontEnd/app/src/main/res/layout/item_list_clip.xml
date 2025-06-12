@@ -66,13 +66,18 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:background="#000000"
+        >
 
-        <VideoView
-            android:id="@+id/videoViewClip"
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/playerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" />
+            app:resize_mode="fit"
+            app:use_controller="false"
+            app:surface_type="texture_view"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/ivMiniatura"

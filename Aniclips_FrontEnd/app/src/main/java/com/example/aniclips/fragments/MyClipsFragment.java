@@ -1,49 +1,78 @@
 package com.example.aniclips.fragments;
 
+
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aniclips.R;
+import com.example.aniclips.adapters.MyClipsAdapter;
+import com.example.aniclips.controllers.PerfilController;
+import com.example.aniclips.dto.ClipDtoMiniatura;
+import com.example.aniclips.interfaces.PerfilCallback;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyClipsFragment extends Fragment {
+    private RecyclerView rvClips;
+    private TextView tvNoClips;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
-    public MyClipsFragment() {
-        // Required empty public constructor
-    }
-
-    public static MyClipsFragment newInstance(String param1, String param2) {
-        MyClipsFragment fragment = new MyClipsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_my_clips, container, false);
+        rvClips = view.findViewById(R.id.rvClips);
+        tvNoClips = view.findViewById(R.id.tvNoClips);
+        rvClips.setLayoutManager(new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false));        loadClips();
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_clips, container, false);
+    private void loadClips() {
+        new PerfilController(getActivity(), new PerfilCallback() {
+            @Override
+            public void onPerfilSuccess(JSONObject perfil) {
+                try {
+                    JSONArray clipsArray = perfil.getJSONArray("clips");
+                    List<com.example.aniclips.dto.ClipDtoMiniatura> clips = new ArrayList<>();
+                    for (int i = 0; i < clipsArray.length(); i++) {
+                        JSONObject obj = clipsArray.getJSONObject(i);
+                        com.example.aniclips.dto.ClipDtoMiniatura clip = new ClipDtoMiniatura();
+                        clip.setId(obj.getLong("id"));
+                        clip.setMiniatura(obj.getString("miniatura"));
+                        clip.setNombreAnime(obj.getString("nombreAnime"));
+                        clips.add(clip);
+                    }
+                    if (clips.isEmpty()) {
+                        tvNoClips.setVisibility(View.VISIBLE);
+                        rvClips.setVisibility(View.GONE);
+                    } else {
+                        tvNoClips.setVisibility(View.GONE);
+                        rvClips.setVisibility(View.VISIBLE);
+                        rvClips.setAdapter(new MyClipsAdapter(getContext(), clips));
+                    }
+                } catch (Exception e) {
+                    tvNoClips.setVisibility(View.VISIBLE);
+                    rvClips.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onPerfilError(String errorMsg) {
+                tvNoClips.setVisibility(View.VISIBLE);
+                rvClips.setVisibility(View.GONE);
+            }
+        }).execute();
     }
 }
