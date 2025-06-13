@@ -44,6 +44,18 @@ public class PerfilService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Perfil findPerfilByUsuarioId(String id) {
+
+        UUID uuid = UUID.fromString(id);
+
+        Usuario usuario = usuarioRepository.findByIdAntiLazy(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("No existe ningún usuario con ID " + id));
+
+        return usuario.getPerfil();
+    }
+
+
     @Transactional
     public Perfil editDescripcion(Usuario usuario, EditPerfilDescripcionDto perfilDescripcionDto) {
 

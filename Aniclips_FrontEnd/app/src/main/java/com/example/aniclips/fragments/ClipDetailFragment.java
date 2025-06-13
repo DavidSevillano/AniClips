@@ -42,8 +42,11 @@ import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,6 +60,7 @@ public class ClipDetailFragment extends Fragment {
     private TextView tvCommentCount;
     private TextView tvRatingCount;
     private TextView tvDescription;
+    private TextView tvDate;
     private MaterialButton followButton;
     private MaterialButton followedButton;
     private ImageButton ibPlayVideo;
@@ -69,6 +73,10 @@ public class ClipDetailFragment extends Fragment {
     private ExoPlayer exoPlayer;
 
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
+
+    // Handler y Runnable para controlar la miniatura
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable showMiniaturaRunnable;
 
     public static ClipDetailFragment newInstance(long clipId) {
         ClipDetailFragment fragment = new ClipDetailFragment();
@@ -106,6 +114,7 @@ public class ClipDetailFragment extends Fragment {
         tvCommentCount = view.findViewById(R.id.tvCommentCount);
         tvRatingCount = view.findViewById(R.id.tvRatingCount);
         tvDescription = view.findViewById(R.id.tvDescription);
+        tvDate = view.findViewById(R.id.tvDate);
 
         new HomeFragmentController(requireActivity(), new HomeClipsCallback() {
             @Override
@@ -131,6 +140,9 @@ public class ClipDetailFragment extends Fragment {
                             .into(imageViewPerfil);
 
                     ibPlayVideo.setOnClickListener(v -> {
+                        if (showMiniaturaRunnable != null) {
+                            handler.removeCallbacks(showMiniaturaRunnable);
+                        }
                         ibPlayVideo.setVisibility(View.GONE);
                         ivMiniatura.setVisibility(View.GONE);
                         playerView.setVisibility(View.VISIBLE);
@@ -150,14 +162,19 @@ public class ClipDetailFragment extends Fragment {
                                         playerView.setVisibility(View.VISIBLE);
                                         ivMiniatura.setVisibility(View.GONE);
 
-                                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                        // Cancelar cualquier aparición anterior
+                                        if (showMiniaturaRunnable != null) {
+                                            handler.removeCallbacks(showMiniaturaRunnable);
+                                        }
+                                        showMiniaturaRunnable = () -> {
                                             ivMiniatura.setAlpha(0f);
                                             ivMiniatura.setVisibility(View.VISIBLE);
                                             ivMiniatura.animate()
                                                     .alpha(1f)
                                                     .setDuration(600)
                                                     .start();
-                                        }, 1000);
+                                        };
+                                        handler.postDelayed(showMiniaturaRunnable, 2000);
                                     }
                                 }
                             });
@@ -168,6 +185,23 @@ public class ClipDetailFragment extends Fragment {
                         exoPlayer.setPlayWhenReady(true);
                     });
 
+                    playerView.setOnClickListener(v -> {
+                        if (exoPlayer != null && exoPlayer.isPlaying()) {
+                            exoPlayer.pause();
+                            ibPlayVideo.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                    String fechaStr = clip.getFecha();
+                        try {
+                            SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                            Date date = sdfInput.parse(fechaStr);
+                            SimpleDateFormat sdfOutput = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "ES"));
+                            String fechaFormateada = sdfOutput.format(date);
+                            tvDate.setText(fechaFormateada);
+                        } catch (Exception e) {
+                            tvDate.setText(fechaStr);
+                        }
                     setupLike(clip, requireContext());
                     setupRating(clip, requireContext());
                     setupFollow(clip, requireContext());
@@ -335,6 +369,9 @@ public class ClipDetailFragment extends Fragment {
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
+        }
+        if (showMiniaturaRunnable != null) {
+            handler.removeCallbacks(showMiniaturaRunnable);
         }
         super.onDestroyView();
     }

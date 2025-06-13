@@ -16,6 +16,8 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
     private final Activity activity;
     private final PerfilCallback callback;
     private final boolean desdeDialogo;
+    private final String userId;
+
 
     public PerfilController(Activity activity, PerfilCallback callback) {
         this(activity, callback, false);
@@ -24,7 +26,14 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
     public PerfilController(Activity activity, PerfilCallback callback, boolean desdeDialogo) {
         this.activity = activity;
         this.callback = callback;
+        this.userId = null;
         this.desdeDialogo = desdeDialogo;
+    }
+    public PerfilController(Activity activity, PerfilCallback callback, String userId) {
+        this.activity = activity;
+        this.callback = callback;
+        this.userId = userId;
+        this.desdeDialogo = false;
     }
 
     @Override
@@ -34,11 +43,11 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
             SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
             String token = prefs.getString(Constantes.PREF_TOKEN_JWT, null);
             String responseJSON;
-            if (desdeDialogo) {
-                Log.i("PerfilController", "Se hace la peticion de logout");
+            if (userId != null) {
+                responseJSON = OkHttpTools.getWithToken("/perfil/" + userId, token);
+            } else if (desdeDialogo) {
                 responseJSON = OkHttpTools.postWithToken("/auth/login", "", token);
             } else {
-                Log.i("PerfilController", "Se hace la peticion de getperfil");
                 responseJSON = OkHttpTools.getWithToken("/perfil/", token);
             }
             return new JSONObject(responseJSON);

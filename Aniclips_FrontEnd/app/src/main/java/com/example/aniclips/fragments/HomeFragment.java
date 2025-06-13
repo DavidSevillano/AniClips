@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,9 +45,18 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
         adapter = new ClipsHomeAdapter(new ArrayList<>());
         recyclerViewClips.setAdapter(adapter);
 
+        adapter.setOnUserClickListener(userId -> {
+            ProfileFragment fragment = ProfileFragment.newInstance(userId.toString());
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         recyclerViewClips.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView,int dx,int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (dy <= 0) return;
@@ -76,11 +86,19 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
 
     @Override
     public void onHomeClipsCallback(List<ClipDto> clips) {
+        LinearLayout homeMainLayout = getView().findViewById(R.id.homeMainLayout);
+
         if (clips.size() < pageSize) {
             isLastPage = true;
         }
         adapter.addClips(clips);
         isLoading = false;
+
+        if (homeMainLayout.getVisibility() != View.VISIBLE) {
+            homeMainLayout.setVisibility(View.VISIBLE);
+            homeMainLayout.setAlpha(0f);
+            homeMainLayout.animate().alpha(1f).setDuration(250).start();
+        }
     }
 
     @Override
@@ -89,4 +107,3 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
         isLoading = false;
     }
 }
-

@@ -79,6 +79,21 @@ public class PerfilController {
 
     }
 
+    @Operation(summary = "Obtiene el perfil por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Perfil encontrado",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = GetPerfilCompletoDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado", content = @Content)
+    })
+    @GetMapping("/{id}")
+    public GetPerfilCompletoDto getPerfilById(@PathVariable String id) {
+
+        Perfil perfil = perfilService.findPerfilByUsuarioId(id);
+        return GetPerfilCompletoDto.of(perfil);
+    }
+
+
     @Operation(summary = "Edita la descripcion del perfil")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",

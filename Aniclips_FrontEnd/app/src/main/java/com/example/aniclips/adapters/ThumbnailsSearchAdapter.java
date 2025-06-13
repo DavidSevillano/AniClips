@@ -50,7 +50,6 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
         Miniatura miniatura = miniaturaList.get(position);
 
         holder.tvTitle.setText(miniatura.getNombreAnime());
-        holder.tvDuration.setText(String.valueOf(miniatura.getDuracion()));
         String avatarUrl = miniatura.getUrlMiniatura();
         Glide.with(holder.itemView.getContext())
                 .load(avatarUrl)

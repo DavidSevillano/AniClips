@@ -205,7 +205,7 @@
         android:layout_marginStart="4dp"
         android:text="10 de febrero"
         android:textSize="12sp"
-        android:textColor="@color/white"
+        android:textColor="#B3FFFFFF"
         android:padding="8dp"/>
 
 

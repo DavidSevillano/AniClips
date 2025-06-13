@@ -40,7 +40,8 @@ public class MyClipsFragment extends Fragment {
     }
 
     private void loadClips() {
-        new PerfilController(getActivity(), new PerfilCallback() {
+        String userId = getArguments() != null ? getArguments().getString("user_id") : null;
+        PerfilCallback callback = new PerfilCallback() {
             @Override
             public void onPerfilSuccess(JSONObject perfil) {
                 try {
@@ -73,6 +74,11 @@ public class MyClipsFragment extends Fragment {
                 tvNoClips.setVisibility(View.VISIBLE);
                 rvClips.setVisibility(View.GONE);
             }
-        }).execute();
-    }
-}
+        };
+
+        if (userId == null) {
+            new PerfilController(getActivity(), callback).execute();
+        } else {
+            new PerfilController(getActivity(), callback, userId).execute();
+        }
+    }}

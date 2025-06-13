@@ -3,6 +3,8 @@ package com.example.aniclips.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dto.ClipDto;
 import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
+import com.example.aniclips.interfaces.OnUserClickListener;
 import com.example.aniclips.interfaces.RateCallback;
 import com.example.aniclips.utils.Constantes;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -35,6 +38,9 @@ import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -44,9 +50,14 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
     private List<ClipDto> clipList;
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
+    private OnUserClickListener userClickListener;
 
     public ClipsHomeAdapter(List<ClipDto> clipList) {
         this.clipList = clipList;
+    }
+
+    public void setOnUserClickListener(OnUserClickListener listener) {
+        this.userClickListener = listener;
     }
 
     public static class ClipViewHolder extends RecyclerView.ViewHolder {
@@ -56,6 +67,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         TextView tvCommentCount;
         TextView tvRatingCount;
         TextView tvDescription;
+        TextView tvDate;
         MaterialButton followButton;
         MaterialButton followedButton;
         ImageButton ibPlayVideo;
@@ -66,6 +78,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ImageView ivMiniatura;
         PlayerView playerView;
         ExoPlayer exoPlayer;
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable showMiniaturaRunnable;
 
         public ClipViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -84,6 +99,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
             tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvDate = itemView.findViewById(R.id.tvDate);
         }
     }
 
@@ -110,11 +126,26 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 .centerCrop()
                 .into(holder.ivMiniatura);
 
+        holder.textViewUsername.setOnClickListener(v -> {
+            if (userClickListener != null) {
+                userClickListener.onUserClick(clip.getGetUsuarioClipDto().getIdUser());
+            }
+        });
+        holder.imageViewPerfil.setOnClickListener(v -> {
+            if (userClickListener != null) {
+                userClickListener.onUserClick(clip.getGetUsuarioClipDto().getIdUser());
+            }
+        });
+
         holder.tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
         holder.tvCommentCount.setText(String.valueOf(clip.getCantidadComentarios()));
         holder.tvRatingCount.setText(String.valueOf(clip.getMediaValoraciones()));
 
         holder.ibPlayVideo.setOnClickListener(v -> {
+            // Cancelar aparición pendiente de miniatura
+            if (holder.showMiniaturaRunnable != null) {
+                holder.handler.removeCallbacks(holder.showMiniaturaRunnable);
+            }
             holder.ibPlayVideo.setVisibility(View.GONE);
             holder.ivMiniatura.setVisibility(View.GONE);
             holder.playerView.setVisibility(View.VISIBLE);
@@ -133,14 +164,19 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                             holder.ibPlayVideo.setVisibility(View.VISIBLE);
                             holder.playerView.setVisibility(View.VISIBLE);
                             holder.ivMiniatura.setVisibility(View.GONE);
-                            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+
+                            if (holder.showMiniaturaRunnable != null) {
+                                holder.handler.removeCallbacks(holder.showMiniaturaRunnable);
+                            }
+                            holder.showMiniaturaRunnable = () -> {
                                 holder.ivMiniatura.setAlpha(0f);
                                 holder.ivMiniatura.setVisibility(View.VISIBLE);
                                 holder.ivMiniatura.animate()
                                         .alpha(1f)
                                         .setDuration(600)
                                         .start();
-                            }, 2000);
+                            };
+                            holder.handler.postDelayed(holder.showMiniaturaRunnable, 2000);
                         }
                     }
                 });
@@ -165,6 +201,17 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 .into(holder.imageViewPerfil);
 
         holder.tvDescription.setText(clip.getDescripcion());
+
+        String fechaStr = clip.getFecha();
+        try {
+            SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = sdfInput.parse(fechaStr);
+            SimpleDateFormat sdfOutput = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "ES"));
+            String fechaFormateada = sdfOutput.format(date);
+            holder.tvDate.setText(fechaFormateada);
+        } catch (Exception e) {
+            holder.tvDate.setText(fechaStr);
+        }
 
         setupLike(holder, clip, context);
         setupRating(holder, clip, context);
@@ -336,6 +383,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         if (holder.exoPlayer != null) {
             holder.exoPlayer.release();
             holder.exoPlayer = null;
+        }
+        if (holder.showMiniaturaRunnable != null) {
+            holder.handler.removeCallbacks(holder.showMiniaturaRunnable);
         }
         super.onViewRecycled(holder);
     }

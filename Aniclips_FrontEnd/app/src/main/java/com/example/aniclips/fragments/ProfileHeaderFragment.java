@@ -5,9 +5,9 @@ import static android.view.View.VISIBLE;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +29,7 @@ import com.example.aniclips.controllers.ProfilePictureController;
 import com.example.aniclips.dialogs.DialogCerrarSesion;
 import com.example.aniclips.interfaces.PerfilCallback;
 import com.example.aniclips.interfaces.SalirDialogListener;
+import com.example.aniclips.utils.Constantes;
 
 import org.json.JSONObject;
 
@@ -47,6 +48,14 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
+    public interface PerfilLoadedListener {
+        void onPerfilLoaded();
+    }
+    private PerfilLoadedListener perfilLoadedListener;
+
+    public void setPerfilLoadedListener(PerfilLoadedListener listener) {
+        this.perfilLoadedListener = listener;
+    }
 
     @Nullable
     @Override
@@ -73,11 +82,8 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
     private void initEvents() {
         ibLogout.setOnClickListener(v -> mostrarDialogoSalir());
-
         ibProfile.setOnClickListener(v -> openImagePicker());
-
         tvChangeProfilePicture.setOnClickListener(v -> openImagePicker());
-
         setupDescriptionEdit();
 
         tvDescriptionEmpty.setOnFocusChangeListener((v, hasFocus) -> {
@@ -92,7 +98,30 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
     }
 
     private void cargarPerfil() {
-        new PerfilController(requireActivity(), new PerfilCallback() {
+        String userId = getArguments() != null ? getArguments().getString("user_id") : null;
+
+        SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE);
+        String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
+
+        boolean esMiPerfil = (userId == null || userId.equals(myUserId));
+        if (!esMiPerfil) {
+            tvChangeProfilePicture.setVisibility(View.GONE);
+            ibProfile.setEnabled(false);
+            tvDescriptionEmpty.setEnabled(false);
+            tvGuardarDescription.setVisibility(View.GONE);
+        } else {
+            tvChangeProfilePicture.setVisibility(View.VISIBLE);
+            ibProfile.setEnabled(true);
+            tvDescriptionEmpty.setEnabled(true);
+        }
+
+        if (userId != null && myUserId != null && !userId.equals(myUserId)) {
+            ibLogout.setVisibility(View.GONE);
+        } else {
+            ibLogout.setVisibility(View.VISIBLE);
+        }
+
+        PerfilCallback callback = new PerfilCallback() {
             @Override
             public void onPerfilSuccess(JSONObject perfil) {
                 String username = perfil.optString("username", "");
@@ -136,33 +165,43 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
                     tvDescriptionFilled.setVisibility(VISIBLE);
                     tvDescriptionFilled.setText(description);
 
-                    tvDescriptionFilled.setOnClickListener(v -> {
-                        tvDescriptionFilled.setVisibility(GONE);
-                        tvDescriptionEmpty.setVisibility(VISIBLE);
-                        tvDescriptionEmpty.setText(description);
-                        tvDescriptionEmpty.requestFocus();
-                        tvDescriptionEmpty.setSelection(description.length());
+                    if (esMiPerfil) {
+                        tvDescriptionFilled.setOnClickListener(v -> {
+                            tvDescriptionFilled.setVisibility(GONE);
+                            tvDescriptionEmpty.setVisibility(VISIBLE);
+                            tvDescriptionEmpty.setText(description);
+                            tvDescriptionEmpty.requestFocus();
+                            tvDescriptionEmpty.setSelection(description.length());
 
-                        tvDescriptionEmpty.post(() -> {
-                            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager)
-                                    requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
-                            if (imm != null) {
-                                imm.showSoftInput(tvDescriptionEmpty, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
-                            }
+                            tvDescriptionEmpty.post(() -> {
+                                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager)
+                                        requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                                if (imm != null) {
+                                    imm.showSoftInput(tvDescriptionEmpty, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                                }
+                            });
                         });
-                    });
+                    } else {
+                        tvDescriptionFilled.setOnClickListener(null);
+                    }
                 }
 
+                if (perfilLoadedListener != null) {
+                    perfilLoadedListener.onPerfilLoaded();
+                }
             }
-
-
-
 
             @Override
             public void onPerfilError(String error) {
                 tvUsername.setText("Error");
             }
-        }).execute();
+        };
+
+        if (userId == null) {
+            new PerfilController(requireActivity(), callback).execute();
+        } else {
+            new PerfilController(requireActivity(), callback, userId).execute();
+        }
     }
 
     private void mostrarDialogoSalir() {
@@ -173,7 +212,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
     public void onSalirConfirmado() {
         new PerfilController(requireActivity(), new PerfilCallback() {
             @Override
-            public void onPerfilSuccess(JSONObject perfil) {
+            public void onPerfilSuccess(org.json.JSONObject perfil) {
                 Intent intent = new Intent(requireContext(), LoginSiginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
