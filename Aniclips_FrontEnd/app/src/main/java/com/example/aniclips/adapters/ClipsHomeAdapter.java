@@ -29,6 +29,7 @@ import com.example.aniclips.interfaces.RateCallback;
 import com.example.aniclips.utils.Constantes;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.button.MaterialButton;
 
@@ -54,6 +55,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         TextView tvLikeCount;
         TextView tvCommentCount;
         TextView tvRatingCount;
+        TextView tvDescription;
         MaterialButton followButton;
         MaterialButton followedButton;
         ImageButton ibPlayVideo;
@@ -81,6 +83,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
             tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
+            tvDescription = itemView.findViewById(R.id.tvDescription);
         }
     }
 
@@ -118,10 +121,25 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
             if (holder.exoPlayer == null) {
                 holder.exoPlayer = new ExoPlayer.Builder(context).build();
+                holder.exoPlayer.setVolume(1f);
                 holder.playerView.setPlayer(holder.exoPlayer);
                 MediaItem mediaItem = MediaItem.fromUri(clip.getUrlVideo());
                 holder.exoPlayer.setMediaItem(mediaItem);
                 holder.exoPlayer.prepare();
+                holder.exoPlayer.addListener(new Player.Listener() {
+                    @Override
+                    public void onPlaybackStateChanged(int state) {
+                        if (state == Player.STATE_ENDED) {
+                            holder.playerView.setVisibility(View.GONE);
+                            holder.ivMiniatura.setVisibility(View.VISIBLE);
+                            holder.ibPlayVideo.setVisibility(View.VISIBLE);
+                            holder.exoPlayer.seekTo(0);
+                            holder.exoPlayer.setPlayWhenReady(false);
+                        }
+                    }
+                });
+            } else {
+                holder.exoPlayer.seekTo(0);
             }
             holder.exoPlayer.setPlayWhenReady(true);
         });
@@ -138,6 +156,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 .load(avatarUrl)
                 .centerCrop()
                 .into(holder.imageViewPerfil);
+
+        holder.tvDescription.setText(clip.getDescripcion());
 
         setupLike(holder, clip, context);
         setupRating(holder, clip, context);
