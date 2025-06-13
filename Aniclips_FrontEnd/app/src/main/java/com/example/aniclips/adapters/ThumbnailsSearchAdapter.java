@@ -5,15 +5,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
+import com.example.aniclips.fragments.ClipDetailFragment;
 import com.example.aniclips.models.Miniatura;
-import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -28,8 +29,6 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
     public static class ThumbnailViewHolder extends RecyclerView.ViewHolder {
         ImageView ibThumbnail;
         TextView tvTitle;
-        TextView tvDuration;
-
 
         public ThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +54,16 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
                 .load(avatarUrl)
                 .into(holder.ibThumbnail);
 
+        holder.ibThumbnail.setOnClickListener(v -> {
+            FragmentActivity activity = (FragmentActivity) holder.itemView.getContext();
+            Fragment fragment = ClipDetailFragment.newInstance(miniatura.getId());
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
     }
 
     @Override
@@ -66,5 +75,10 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
         int startPos = miniaturaList.size();
         miniaturaList.addAll(nuevasThubnails);
         notifyItemRangeInserted(startPos, nuevasThubnails.size());
+    }
+
+    public void clearThumbnails() {
+        miniaturaList.clear();
+        notifyDataSetChanged();
     }
 }

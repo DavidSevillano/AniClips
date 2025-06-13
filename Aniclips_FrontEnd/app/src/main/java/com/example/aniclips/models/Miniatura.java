@@ -2,24 +2,24 @@ package com.example.aniclips.models;
 
 public class Miniatura {
 
-    private int duracion;
+    private Long id;
     private String urlMiniatura;
     private String nombreAnime;
 
     public Miniatura() {
     }
-    public Miniatura(int duracion, String urlMiniatura, String nombreAnime) {
-        this.duracion = duracion;
+    public Miniatura(Long id, String urlMiniatura, String nombreAnime) {
+        this.id = id;
         this.urlMiniatura = urlMiniatura;
         this.nombreAnime = nombreAnime;
     }
 
-    public int getDuracion() {
-        return duracion;
+    public Long getId() {
+        return id;
     }
 
-    public void setDuracion(int duracion) {
-        this.duracion = duracion;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUrlMiniatura() {

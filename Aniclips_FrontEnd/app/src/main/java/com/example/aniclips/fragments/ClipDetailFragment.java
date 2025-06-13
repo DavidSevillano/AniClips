@@ -131,7 +131,7 @@ public class ClipDetailFragment extends Fragment {
 
                     tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
                     tvCommentCount.setText(String.valueOf(clip.getCantidadComentarios()));
-                    tvRatingCount.setText(String.valueOf(clip.getMediaValoraciones()));
+                    tvRatingCount.setText(String.format(Locale.US, "%.2f", clip.getMediaValoraciones()));
                     tvDescription.setText(clip.getDescripcion());
 
                     Glide.with(requireContext())

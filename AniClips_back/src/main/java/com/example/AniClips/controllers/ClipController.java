@@ -200,8 +200,10 @@ public class ClipController {
                     content = @Content),
     })
     @GetMapping("/miniatura")
-    public Page<GetClipMiniaturaDto> getAllMiniatura(@RequestParam(defaultValue = "0") int page) {
-        Pageable pageRequest = PageRequest.of(page, 15);
+    public Page<GetClipMiniaturaDto> getAllMiniatura(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        Pageable pageRequest = PageRequest.of(page, size);
         return clipService.findAll(pageRequest)
                 .map(GetClipMiniaturaDto::of);
     }

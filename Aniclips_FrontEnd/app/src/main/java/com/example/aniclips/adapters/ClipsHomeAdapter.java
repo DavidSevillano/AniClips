@@ -139,7 +139,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
         holder.tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
         holder.tvCommentCount.setText(String.valueOf(clip.getCantidadComentarios()));
-        holder.tvRatingCount.setText(String.valueOf(clip.getMediaValoraciones()));
+        holder.tvRatingCount.setText(String.format(Locale.US, "%.2f", clip.getMediaValoraciones()));
 
         holder.ibPlayVideo.setOnClickListener(v -> {
             // Cancelar aparición pendiente de miniatura

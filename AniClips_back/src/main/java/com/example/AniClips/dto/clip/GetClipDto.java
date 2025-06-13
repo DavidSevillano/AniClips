@@ -26,10 +26,11 @@ public record GetClipDto(
     public static GetClipDto of(Clip clip, Usuario usuarioActual, boolean loSigue) {
         double mediaValoraciones = clip.getValoraciones().isEmpty()
                 ? 0.0
-                : clip.getValoraciones().stream()
+                : Math.min(5.0, Math.max(0.0, clip.getValoraciones().stream()
                 .mapToDouble(Valoracion::getPuntuacion)
                 .average()
-                .orElse(0.0);
+                .orElse(0.0)));
+
 
         boolean leDioLike = usuarioActual != null && clip.getMeGustas().stream()
                 .anyMatch(meGusta -> meGusta.getUsuario().getId().equals(usuarioActual.getId()));

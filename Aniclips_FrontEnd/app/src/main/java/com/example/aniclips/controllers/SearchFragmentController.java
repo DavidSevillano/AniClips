@@ -47,9 +47,9 @@ public class SearchFragmentController extends AsyncTask<Void, Void, List<Miniatu
                     JSONObject miniaturaJson = clipsArray.getJSONObject(i);
 
                     Miniatura miniatura = new Miniatura();
+                    miniatura.setId(miniaturaJson.optLong("id"));
                     miniatura.setNombreAnime(miniaturaJson.optString("nombreAnime"));
                     miniatura.setUrlMiniatura(miniaturaJson.optString("miniatura"));
-                    miniatura.setDuracion(miniaturaJson.optInt("duracion"));
 
                     listaMiniaturas.add(miniatura);
                 }
