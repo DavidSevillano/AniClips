@@ -21,12 +21,10 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // Cargar ProfileHeaderFragment
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.profileHeaderContainer, new ProfileHeaderFragment())
                 .commit();
 
-        // Cargar MyClipsFragment
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.myClipsContainer, new MyClipsFragment())
                 .commit();

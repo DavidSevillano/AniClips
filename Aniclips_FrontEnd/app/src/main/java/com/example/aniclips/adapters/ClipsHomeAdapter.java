@@ -130,15 +130,22 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     @Override
                     public void onPlaybackStateChanged(int state) {
                         if (state == Player.STATE_ENDED) {
-                            holder.playerView.setVisibility(View.GONE);
-                            holder.ivMiniatura.setVisibility(View.VISIBLE);
                             holder.ibPlayVideo.setVisibility(View.VISIBLE);
-                            holder.exoPlayer.seekTo(0);
-                            holder.exoPlayer.setPlayWhenReady(false);
+                            holder.playerView.setVisibility(View.VISIBLE);
+                            holder.ivMiniatura.setVisibility(View.GONE);
+                            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                                holder.ivMiniatura.setAlpha(0f);
+                                holder.ivMiniatura.setVisibility(View.VISIBLE);
+                                holder.ivMiniatura.animate()
+                                        .alpha(1f)
+                                        .setDuration(600)
+                                        .start();
+                            }, 2000);
                         }
                     }
                 });
-            } else {
+            }
+            if (holder.exoPlayer.getPlaybackState() == Player.STATE_ENDED) {
                 holder.exoPlayer.seekTo(0);
             }
             holder.exoPlayer.setPlayWhenReady(true);

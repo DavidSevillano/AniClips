@@ -49,7 +49,7 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
             public void onScrolled(@NonNull RecyclerView recyclerView,int dx,int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (dy <= 0) return; // Solo carga más si bajas
+                if (dy <= 0) return;
 
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
@@ -65,20 +65,19 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
             }
         });
 
-        // Carga la primera página
         cargarClipsHome(currentPage);
 
         return view;
     }
 
     private void cargarClipsHome(int page) {
-        new HomeFragmentController(requireActivity(), this, page, pageSize).execute();
+        new HomeFragmentController(requireActivity(), this, page, pageSize, null).execute();
     }
 
     @Override
     public void onHomeClipsCallback(List<ClipDto> clips) {
         if (clips.size() < pageSize) {
-            isLastPage = true; // No hay más datos si recibimos menos que el tamaño de página
+            isLastPage = true;
         }
         adapter.addClips(clips);
         isLoading = false;

@@ -15,4 +15,6 @@
     <string name="messageDialog">¿Seguro que quieres salir?</string>
     <string name="yesDialog">Sí</string>
     <string name="noDialog">No</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/aniclips/controllers/DescriptionController.java
 package com.example.aniclips.controllers;
 
 import android.app.Activity;

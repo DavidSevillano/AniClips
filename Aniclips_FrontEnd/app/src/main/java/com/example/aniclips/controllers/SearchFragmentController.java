@@ -36,7 +36,6 @@ public class SearchFragmentController extends AsyncTask<Void, Void, List<Miniatu
         if (activity == null) return null;
         List<Miniatura> listaMiniaturas = new ArrayList<>();
         try {
-            // Construir URL con page y size para paginación
             String url = "/clip/miniatura?page=" + page + "&size=" + size;
             String responseJSON = OkHttpTools.get(url, activity);
             JSONObject response = new JSONObject(responseJSON);

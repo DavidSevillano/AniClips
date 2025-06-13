@@ -5,13 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.UUID;
 
 public class UsuarioClipDto {
-    @SerializedName("idUser")
     private UUID idUser;
 
-    @SerializedName("username")
     private String username;
 
-    @SerializedName("getPerfilAvatarDto")
     private PerfilAvatarDto getPerfilAvatarDto;
 
     // Getters y Setters

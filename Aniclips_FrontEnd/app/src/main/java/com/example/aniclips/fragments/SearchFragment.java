@@ -29,7 +29,7 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int currentPage = 0;
-    private final int pageSize = 9; // Tamaño de página (3 filas de 3 columnas)
+    private final int pageSize = 9;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,7 +39,7 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
         recyclerViewSearch.setOverScrollMode(View.OVER_SCROLL_NEVER);
         recyclerViewSearch.setItemAnimator(null);
 
-        layoutManager = new GridLayoutManager(requireContext(), 3); // 3 columnas
+        layoutManager = new GridLayoutManager(requireContext(), 3);
         recyclerViewSearch.setLayoutManager(layoutManager);
 
         adapter = new ThumbnailsSearchAdapter(new ArrayList<>());
@@ -50,7 +50,7 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (dy <= 0) return; // Solo carga más si bajas
+                if (dy <= 0) return;
 
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
@@ -66,7 +66,7 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
             }
         });
 
-        // Carga la primera página
+
         cargarMiniaturas(currentPage);
 
         return view;
@@ -79,7 +79,7 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
     @Override
     public void onSearchThumbnailCallback(List<Miniatura> miniaturas) {
         if (miniaturas.size() < pageSize) {
-            isLastPage = true; // No hay más datos si recibimos menos que el tamaño de página
+            isLastPage = true;
         }
         adapter.addThumbnail(miniaturas);
         isLoading = false;

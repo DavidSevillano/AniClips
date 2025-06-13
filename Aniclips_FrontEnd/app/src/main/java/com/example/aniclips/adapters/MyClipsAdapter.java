@@ -1,17 +1,21 @@
 package com.example.aniclips.adapters;
 
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
 import com.example.aniclips.dto.ClipDtoMiniatura;
+import com.example.aniclips.fragments.ClipDetailFragment;
 
 import java.util.List;
 
@@ -36,6 +40,16 @@ public class MyClipsAdapter extends RecyclerView.Adapter<MyClipsAdapter.ClipView
         ClipDtoMiniatura clip = clips.get(position);
         holder.tvTitle.setText(clip.getNombreAnime());
         Glide.with(context).load(clip.getMiniatura()).into(holder.ibThumbnail);
+
+        holder.ibThumbnail.setOnClickListener(v -> {
+            FragmentActivity activity = (FragmentActivity) context;
+            Fragment fragment = ClipDetailFragment.newInstance(clip.getId());
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
 
     @Override
@@ -54,8 +68,4 @@ public class MyClipsAdapter extends RecyclerView.Adapter<MyClipsAdapter.ClipView
         }
     }
 
-    private String formatDuration(int ms) {
-        int seconds = ms / 1000;
-        return ":" + seconds;
-    }
 }

@@ -108,7 +108,6 @@ public class SignInFragment extends Fragment {
                     prefs.edit().putString(Constantes.PREF_USER_USERNAME, username).apply();
                     prefs.edit().putString(Constantes.PREF_USER_PASSWORD, password).apply();
                 } else {
-                    // Maneja el error aquí si lo deseas
                     Toast.makeText(requireContext(), "Error al crear usuario", Toast.LENGTH_SHORT).show();
                 }
             }

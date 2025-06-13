@@ -45,10 +45,10 @@ public class MyClipsFragment extends Fragment {
             public void onPerfilSuccess(JSONObject perfil) {
                 try {
                     JSONArray clipsArray = perfil.getJSONArray("clips");
-                    List<com.example.aniclips.dto.ClipDtoMiniatura> clips = new ArrayList<>();
+                    List<ClipDtoMiniatura> clips = new ArrayList<>();
                     for (int i = 0; i < clipsArray.length(); i++) {
                         JSONObject obj = clipsArray.getJSONObject(i);
-                        com.example.aniclips.dto.ClipDtoMiniatura clip = new ClipDtoMiniatura();
+                        ClipDtoMiniatura clip = new ClipDtoMiniatura();
                         clip.setId(obj.getLong("id"));
                         clip.setMiniatura(obj.getString("miniatura"));
                         clip.setNombreAnime(obj.getString("nombreAnime"));
@@ -60,7 +60,7 @@ public class MyClipsFragment extends Fragment {
                     } else {
                         tvNoClips.setVisibility(View.GONE);
                         rvClips.setVisibility(View.VISIBLE);
-                        rvClips.setAdapter(new MyClipsAdapter(getContext(), clips));
+                        rvClips.setAdapter(new MyClipsAdapter(requireActivity(), clips));
                     }
                 } catch (Exception e) {
                     tvNoClips.setVisibility(View.VISIBLE);
