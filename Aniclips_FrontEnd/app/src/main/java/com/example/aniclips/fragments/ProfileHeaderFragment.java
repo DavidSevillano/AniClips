@@ -4,10 +4,12 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +25,13 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
 import com.example.aniclips.activities.LoginSiginActivity;
+import com.example.aniclips.activities.MainActivity;
+import com.example.aniclips.controllers.DeleteUserController;
 import com.example.aniclips.controllers.DescriptionController;
 import com.example.aniclips.controllers.PerfilController;
 import com.example.aniclips.controllers.ProfilePictureController;
 import com.example.aniclips.dialogs.DialogCerrarSesion;
+import com.example.aniclips.interfaces.DeleteCallback;
 import com.example.aniclips.interfaces.PerfilCallback;
 import com.example.aniclips.interfaces.SalirDialogListener;
 import com.example.aniclips.utils.Constantes;
@@ -45,6 +50,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
     private TextView tvGuardarDescription;
     private ImageButton ibLogout;
     private ImageButton ibProfile;
+    private ImageButton ibDeleteUser;
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -78,6 +84,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
         tvDescriptionFilled = view.findViewById(R.id.tvDescriptionFilled);
         tvChangeProfilePicture = view.findViewById(R.id.tvChangeProfilePicture);
         tvGuardarDescription = view.findViewById(R.id.tvGuardarDescription);
+        ibDeleteUser = view.findViewById(R.id.ibDeleteUser);
     }
 
     private void initEvents() {
@@ -99,9 +106,9 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
     private void cargarPerfil() {
         String userId = getArguments() != null ? getArguments().getString("user_id") : null;
-
         SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
+        String myUserRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
 
         boolean esMiPerfil = (userId == null || userId.equals(myUserId));
         if (!esMiPerfil) {
@@ -119,6 +126,42 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
             ibLogout.setVisibility(View.GONE);
         } else {
             ibLogout.setVisibility(View.VISIBLE);
+        }
+
+        if ("ADMIN".equals(myUserRole) && !esMiPerfil && userId != null) {
+            ibDeleteUser.setVisibility(View.VISIBLE);
+            ibDeleteUser.setOnClickListener(v -> {
+                AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                        .setTitle("ATENCIÓN")
+                        .setMessage("¿Seguro que quieres eliminar este usuario?")
+                        .setPositiveButton("Sí", (dialogInterface, which) -> {
+                            new DeleteUserController(requireActivity(), userId, new DeleteCallback() {
+                                @Override
+                                public void onDeleteSuccess(JSONObject response) {
+                                    Toast.makeText(requireContext(), "Usuario eliminado correctamente", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(requireContext(), MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    requireActivity().finish();
+                                }
+                                @Override
+                                public void onDeleteError(JSONObject error) {
+                                    Toast.makeText(requireContext(), "Error al eliminar usuario", Toast.LENGTH_SHORT).show();
+                                }
+                            }).execute();
+                        })
+                        .setNegativeButton("No", null)
+                        .create();
+
+                dialog.show();
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                        .setTextColor(requireContext().getColor(android.R.color.white));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                        .setTextColor(requireContext().getColor(android.R.color.white));
+            });
+        } else {
+            ibDeleteUser.setVisibility(View.GONE);
         }
 
         PerfilCallback callback = new PerfilCallback() {
@@ -167,15 +210,15 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
                     if (esMiPerfil) {
                         tvDescriptionFilled.setOnClickListener(v -> {
-                            tvDescriptionFilled.setVisibility(GONE);
-                            tvDescriptionEmpty.setVisibility(VISIBLE);
                             tvDescriptionEmpty.setText(description);
+                            tvDescriptionEmpty.setVisibility(VISIBLE);
+                            tvDescriptionFilled.setVisibility(GONE);
                             tvDescriptionEmpty.requestFocus();
                             tvDescriptionEmpty.setSelection(description.length());
 
                             tvDescriptionEmpty.post(() -> {
-                                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager)
-                                        requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                                android.view.inputmethod.InputMethodManager imm =
+                                        (android.view.inputmethod.InputMethodManager) requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
                                 if (imm != null) {
                                     imm.showSoftInput(tvDescriptionEmpty, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
                                 }
@@ -203,7 +246,6 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
             new PerfilController(requireActivity(), callback, userId).execute();
         }
     }
-
     private void mostrarDialogoSalir() {
         new DialogCerrarSesion().show(getChildFragmentManager(), "salirDialog");
     }
