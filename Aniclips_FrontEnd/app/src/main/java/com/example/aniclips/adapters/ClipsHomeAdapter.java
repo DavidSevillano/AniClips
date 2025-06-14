@@ -1,6 +1,8 @@
 package com.example.aniclips.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Handler;
@@ -16,15 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
+import com.example.aniclips.activities.MainActivity;
+import com.example.aniclips.controllers.DeleteClipController;
 import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.interfaces.DeleteCallback;
 import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
 import com.example.aniclips.interfaces.OnUserClickListener;
@@ -75,6 +82,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ImageButton ibLikeFilled;
         ImageButton ibRating;
         ImageButton ibRatingFilled;
+        ImageButton ibDelete;
         ImageView ivMiniatura;
         PlayerView playerView;
         ExoPlayer exoPlayer;
@@ -100,6 +108,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             tvRatingCount = itemView.findViewById(R.id.tvRatingCount);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvDate = itemView.findViewById(R.id.tvDate);
+            ibDelete = itemView.findViewById(R.id.ibDelete);
         }
     }
 
@@ -114,6 +123,16 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     public void onBindViewHolder(@NonNull ClipViewHolder holder, int position) {
         ClipDto clip = clipList.get(position);
         Context context = holder.itemView.getContext();
+
+        SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+        String userRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
+
+        if ("ADMIN".equals(userRole)) {
+            holder.ibDelete.setVisibility(View.VISIBLE);
+            setupDelete(holder, clip, context);
+        } else {
+            holder.ibDelete.setVisibility(View.GONE);
+        }
 
         holder.textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
 
@@ -142,7 +161,6 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         holder.tvRatingCount.setText(String.format(Locale.US, "%.2f", clip.getMediaValoraciones()));
 
         holder.ibPlayVideo.setOnClickListener(v -> {
-            // Cancelar aparición pendiente de miniatura
             if (holder.showMiniaturaRunnable != null) {
                 holder.handler.removeCallbacks(holder.showMiniaturaRunnable);
             }
@@ -364,6 +382,40 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     Log.e("Follow", "Error: " + errorMsg);
                 }
             }).execute();
+        });
+    }
+
+    private void setupDelete(ClipViewHolder holder, ClipDto clip, Context context) {
+        holder.ibDelete.setOnClickListener(v -> {
+            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle("ATENCIÓN")
+                    .setMessage("¿Estás seguro de que quieres eliminar este clip?")
+                    .setPositiveButton("Sí", (dialogInterface, which) -> {
+                        new DeleteClipController(context, clip.getId(), new DeleteCallback() {
+                            @Override
+                            public void onDeleteSuccess(JSONObject response) {
+                                Toast.makeText(context, "Clip eliminado correctamente", android.widget.Toast.LENGTH_SHORT).show();
+                                int pos = holder.getAdapterPosition();
+                                if (pos != RecyclerView.NO_POSITION) {
+                                    clipList.remove(pos);
+                                    notifyItemRemoved(pos);
+                                }
+                            }
+                            @Override
+                            public void onDeleteError(JSONObject error) {
+                                Toast.makeText(context, "Error al eliminar el clip", android.widget.Toast.LENGTH_SHORT).show();
+                            }
+                        }).execute();
+                    })
+                    .setNegativeButton("No", null)
+                    .create();
+
+            dialog.show();
+
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(context.getColor(android.R.color.white));
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(context.getColor(android.R.color.white));
         });
     }
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,11 +61,15 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
 
         etSearch = view.findViewById(R.id.etSearch);
 
+        searchMainLayout.setVisibility(View.VISIBLE);
+        searchMainLayout.setAlpha(0f);
+        searchMainLayout.animate().alpha(1f).setDuration(250).start();
+
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
-                android.view.inputmethod.InputMethodManager imm =
-                        (android.view.inputmethod.InputMethodManager) requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm =
+                        (InputMethodManager) requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
                 }
@@ -149,11 +154,6 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
         adapter.addThumbnail(miniaturas);
         isLoading = false;
 
-        if (searchMainLayout.getVisibility() != View.VISIBLE) {
-            searchMainLayout.setVisibility(View.VISIBLE);
-            searchMainLayout.setAlpha(0f);
-            searchMainLayout.animate().alpha(1f).setDuration(250).start();
-        }
     }
 
     @Override

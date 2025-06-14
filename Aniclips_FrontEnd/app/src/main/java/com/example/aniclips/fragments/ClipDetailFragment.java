@@ -1,6 +1,7 @@
 package com.example.aniclips.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -17,18 +18,24 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
+import com.example.aniclips.activities.MainActivity;
+import com.example.aniclips.adapters.ClipsHomeAdapter;
+import com.example.aniclips.controllers.DeleteClipController;
 import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.HomeFragmentController;
 import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.interfaces.DeleteCallback;
 import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.HomeClipsCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
@@ -68,13 +75,13 @@ public class ClipDetailFragment extends Fragment {
     private ImageButton ibLikeFilled;
     private ImageButton ibRating;
     private ImageButton ibRatingFilled;
+    private ImageButton ibDelete;
     private ImageView ivMiniatura;
     private PlayerView playerView;
     private ExoPlayer exoPlayer;
 
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
 
-    // Handler y Runnable para controlar la miniatura
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable showMiniaturaRunnable;
 
@@ -115,12 +122,28 @@ public class ClipDetailFragment extends Fragment {
         tvRatingCount = view.findViewById(R.id.tvRatingCount);
         tvDescription = view.findViewById(R.id.tvDescription);
         tvDate = view.findViewById(R.id.tvDate);
+        ibDelete = view.findViewById(R.id.ibDelete);
+
+        view.setVisibility(View.VISIBLE);
+        view.setAlpha(0f);
+        view.animate().alpha(1f).setDuration(250).start();
+
+        SharedPreferences prefs = getContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+        String userRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
 
         new HomeFragmentController(requireActivity(), new HomeClipsCallback() {
             @Override
             public void onHomeClipsCallback(List<ClipDto> clips) {
                 if (clips != null && !clips.isEmpty()) {
+
                     ClipDto clip = clips.get(0);
+
+                    if ("ADMIN".equals(userRole)) {
+                        ibDelete.setVisibility(View.VISIBLE);
+                        setupDelete(clip, requireContext());
+                    } else {
+                        ibDelete.setVisibility(View.GONE);
+                    }
 
                     textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
 
@@ -162,7 +185,6 @@ public class ClipDetailFragment extends Fragment {
                                         playerView.setVisibility(View.VISIBLE);
                                         ivMiniatura.setVisibility(View.GONE);
 
-                                        // Cancelar cualquier aparición anterior
                                         if (showMiniaturaRunnable != null) {
                                             handler.removeCallbacks(showMiniaturaRunnable);
                                         }
@@ -361,6 +383,39 @@ public class ClipDetailFragment extends Fragment {
                     Log.e("Follow", "Error: " + errorMsg);
                 }
             }).execute();
+        });
+    }
+
+    private void setupDelete(ClipDto clip, Context context) {
+        ibDelete.setOnClickListener(v -> {
+            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle("ATENCIÓN")
+                    .setMessage("¿Estás seguro de que quieres eliminar este clip?")
+                    .setPositiveButton("Sí", (dialogInterface, which) -> {
+                        new DeleteClipController(context, clip.getId(), new DeleteCallback() {
+                            @Override
+                            public void onDeleteSuccess(JSONObject response) {
+                                Toast.makeText(context, "Clip eliminado correctamente", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(requireContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                requireActivity().finish();
+                            }
+                            @Override
+                            public void onDeleteError(JSONObject error) {
+                                Toast.makeText(context, "Error al eliminar el clip", Toast.LENGTH_SHORT).show();
+                            }
+                        }).execute();
+                    })
+                    .setNegativeButton("No", null)
+                    .create();
+
+            dialog.show();
+
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(context.getColor(android.R.color.white));
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(context.getColor(android.R.color.white));
         });
     }
 
