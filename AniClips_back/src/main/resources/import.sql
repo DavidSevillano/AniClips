@@ -86,7 +86,13 @@ VALUES
   ('Sword Art Online', 'Atrapados en un mundo virtual', 'http://192.168.1.141:8080/videos/Ejemplo11.mp4', '2024-01-07', 1000, 88, 'http://192.168.1.141:8080/miniaturas/miniatura11.jpg', 'cfb3f7e5-3620-4bd2-85c1-f7589d137c72', 'Acción'),
   ('Tokyo Ghoul', 'La dualidad entre humano y monstruo', 'http://192.168.1.141:8080/videos/Ejemplo12.mp4', '2024-01-08', 1000, 85, 'http://192.168.1.141:8080/miniaturas/miniatura12.jpg', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc', 'Acción'),
   ('Bleach', 'El destino de los shinigami en batalla', 'http://192.168.1.141:8080/videos/Ejemplo13.mp4', '2024-01-09', 1000, 80, 'http://192.168.1.141:8080/miniaturas/miniatura13.jpg', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a', 'Acción'),
-  ('Hunter x Hunter', 'La búsqueda de un cazador legendario', 'http://192.168.1.141:8080/videos/Ejemplo14.mp4', '2024-01-10', 1000, 90, 'http://192.168.1.141:8080/miniaturas/miniatura14.jpg', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879', 'Acción');
+  ('Hunter x Hunter', 'La búsqueda de un cazador legendario', 'http://192.168.1.141:8080/videos/Ejemplo14.mp4', '2024-01-10', 1000, 90, 'http://192.168.1.141:8080/miniaturas/miniatura14.jpg', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879', 'Acción'),
+  ('Jujutsu Kaisen', 'Gojo vs Sukuna', 'http://192.168.1.141:8080/videos/Ejemplo15.mp4', '2024-01-15', 1200, 110, 'http://192.168.1.141:8080/miniaturas/miniatura15.jpg', '22222222-2222-2222-2222-222222222222', 'Shonen'),
+  ('Chainsaw Man', 'Denji se transforma', 'http://192.168.1.141:8080/videos/Ejemplo16.mp4', '2024-01-16', 1300, 95, 'http://192.168.1.141:8080/miniaturas/miniatura16.jpg', '22222222-2222-2222-2222-222222222222', 'Acción'),
+  ('Attack on Titan', 'Eren vs Reiner', 'http://192.168.1.141:8080/videos/Ejemplo17.mp4', '2024-01-17', 1400, 105, 'http://192.168.1.141:8080/miniaturas/miniatura17.jpg', '33333333-3333-3333-3333-333333333333', 'Shonen'),
+  ('One Piece', 'Luffy Gear 5', 'http://192.168.1.141:8080/videos/Ejemplo18.mp4', '2024-01-18', 1500, 115, 'http://192.168.1.141:8080/miniaturas/miniatura18.jpg', '44444444-4444-4444-4444-444444444444', 'Aventura'),
+  ('Demon Slayer', 'Tanjiro contra Akaza', 'http://192.168.1.141:8080/videos/Ejemplo19.mp4', '2024-01-19', 1600, 100, 'http://192.168.1.141:8080/miniaturas/miniatura19.jpg', '55555555-5555-5555-5555-555555555555', 'Acción'),
+  ('My Hero Academia', 'Deku Full Power', 'http://192.168.1.141:8080/videos/Ejemplo20.mp4', '2024-01-20', 1700, 98, 'http://192.168.1.141:8080/miniaturas/miniatura20.jpg', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5', 'Shonen');
 
 --INSERT INTO clip (nombre_anime, descripcion, url_video, fecha, visitas, duracion, miniatura, usuario_id, genero)
 --VALUES
@@ -104,6 +110,12 @@ VALUES
 --  ('Tokyo Ghoul', 'La dualidad entre humano y monstruo', 'http://192.168.56.1:8080/videos/Ejemplo12.mp4', '2024-01-08', 1000, 85, 'http://192.168.56.1:8080/miniaturas/miniatura12.jpg', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc', 'Acción'),
 --  ('Bleach', 'El destino de los shinigami en batalla', 'http://192.168.56.1:8080/videos/Ejemplo13.mp4', '2024-01-09', 1000, 80, 'http://192.168.56.1:8080/miniaturas/miniatura13.jpg', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a', 'Acción'),
 --  ('Hunter x Hunter', 'La búsqueda de un cazador legendario', 'http://192.168.56.1:8080/videos/Ejemplo14.mp4', '2024-01-10', 1000, 90, 'http://192.168.56.1:8080/miniaturas/miniatura14.jpg', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879', 'Acción');
+--  ('Jujutsu Kaisen', 'Gojo vs Sukuna', 'http://192.168.56.1:8080/videos/Ejemplo15.mp4', '2024-01-15', 1200, 110, 'http://192.168.56.1:8080/miniaturas/miniatura15.jpg', '22222222-2222-2222-2222-222222222222', 'Shonen'),
+--  ('Chainsaw Man', 'Denji se transforma', 'http://192.168.56.1:8080/videos/Ejemplo16.mp4', '2024-01-16', 1300, 95, 'http://192.168.56.1:8080/miniaturas/miniatura16.jpg', '22222222-2222-2222-2222-222222222222', 'Acción'),
+--  ('Attack on Titan', 'Eren vs Reiner', 'http://192.168.56.1:8080/videos/Ejemplo17.mp4', '2024-01-17', 1400, 105, 'http://192.168.56.1:8080/miniaturas/miniatura17.jpg', '33333333-3333-3333-3333-333333333333', 'Shonen'),
+--  ('One Piece', 'Luffy Gear 5', 'http://192.168.56.1:8080/videos/Ejemplo18.mp4', '2024-01-18', 1500, 115, 'http://192.168.56.1:8080/miniaturas/miniatura18.jpg', '44444444-4444-4444-4444-444444444444', 'Aventura'),
+--  ('Demon Slayer', 'Tanjiro contra Akaza', 'http://192.168.56.1:8080/videos/Ejemplo19.mp4', '2024-01-19', 1600, 100, 'http://192.168.56.1:8080/miniaturas/miniatura19.jpg', '55555555-5555-5555-5555-555555555555', 'Acción'),
+--  ('My Hero Academia', 'Deku Full Power', 'http://192.168.56.1:8080/videos/Ejemplo20.mp4', '2024-01-20', 1700, 98, 'http://192.168.56.1:8080/miniaturas/miniatura20.jpg', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5', 'Shonen');
 
 INSERT INTO comentario (fecha, texto, usuario_id, clip_id)
 VALUES

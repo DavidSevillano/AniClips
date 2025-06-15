@@ -33,6 +33,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
     private final int page;
     private final int size;
     private final Long clipId;
+    private boolean noClips = false;
 
     private final WeakReference<ProgressBar> progressBarRef;
 
@@ -71,6 +72,12 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
                 String url = "/clip/?page=" + page + "&size=" + size;
                 responseJSON = OkHttpTools.getWithToken(url, token);
                 JSONObject response = new JSONObject(responseJSON);
+
+                if (response.has("status") && response.optInt("status") == 404) {
+                    noClips = true;
+                    return null;
+                }
+
                 JSONArray clipsArray = response.optJSONArray("content");
                 if (clipsArray != null) {
                     for (int i = 0; i < clipsArray.length(); i++) {
@@ -97,6 +104,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
         clipDto.setDuracion(clipJson.optInt("duracion"));
         clipDto.setCantidadMeGusta(clipJson.optInt("cantidadMeGusta"));
         clipDto.setCantidadComentarios(clipJson.optInt("cantidadComentarios"));
+        clipDto.setCantidadValoraciones(clipJson.optInt("cantidadValoraciones"));
         clipDto.setMediaValoraciones(clipJson.optDouble("mediaValoraciones"));
         clipDto.setLedioLike(clipJson.optBoolean("ledioLike"));
         clipDto.setLoRateo(clipJson.optBoolean("loRateo"));
@@ -125,9 +133,22 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
         ProgressBar progressBar = progressBarRef.get();
         if (progressBar != null) progressBar.setVisibility(View.GONE);
 
-        if (listaClips == null || listaClips.isEmpty()) {
-        } else {
-            callback.onHomeClipsCallback(listaClips);
+        if (noClips) {
+            if (page == 0) {
+                callback.onNoClips();
+            } else {
+                callback.onClipsLoaded(new ArrayList<>());
+            }
+            return;
         }
+        if (listaClips == null || listaClips.isEmpty()) {
+            if (page == 0) {
+                callback.onNoClips();
+            } else {
+                callback.onClipsLoaded(new ArrayList<>());
+            }
+            return;
+        }
+        callback.onClipsLoaded(listaClips);
     }
 }

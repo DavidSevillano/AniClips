@@ -19,6 +19,7 @@ public record GetClipDto(
         int cantidadMeGusta,
         int cantidadComentarios,
         double mediaValoraciones,
+        int cantidadValoraciones,
         boolean ledioLike,
         boolean loRateo,
         boolean loSigue
@@ -31,6 +32,7 @@ public record GetClipDto(
                 .average()
                 .orElse(0.0)));
 
+        int cantidadValoraciones = clip.getValoraciones().size(); // <-- Calcula aquí
 
         boolean leDioLike = usuarioActual != null && clip.getMeGustas().stream()
                 .anyMatch(meGusta -> meGusta.getUsuario().getId().equals(usuarioActual.getId()));
@@ -50,6 +52,7 @@ public record GetClipDto(
                 clip.getMeGustas().size(),
                 clip.getComentarios().size(),
                 mediaValoraciones,
+                cantidadValoraciones,
                 leDioLike,
                 loValoro,
                 loSigue

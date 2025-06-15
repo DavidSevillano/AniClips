@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -260,39 +258,35 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         holder.ibLike.setOnClickListener(v -> {
             if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
 
-            holder.ibLike.setVisibility(View.GONE);
-            holder.ibLikeFilled.setVisibility(View.VISIBLE);
+            clip.setLedioLike(true);
+            clip.setCantidadMeGusta(clip.getCantidadMeGusta() + 1);
+            notifyItemChanged(holder.getAdapterPosition());
 
-            LikeController controller = new LikeController(context, clipIdObj, "POST", new MeGustaCallback() {
+            new LikeController(context, clipIdObj, "POST", new MeGustaCallback() {
                 @Override
                 public void onMegustaSuccess(JSONObject response) { }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Megusta", "Error al enviar like: " + errorMsg);
-                }
-            });
-            controller.execute();
+                public void onError(String errorMsg) { }
+            }).execute();
         });
 
         holder.ibLikeFilled.setOnClickListener(v -> {
             if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
 
-            holder.ibLike.setVisibility(View.VISIBLE);
-            holder.ibLikeFilled.setVisibility(View.GONE);
+            clip.setLedioLike(false);
+            clip.setCantidadMeGusta(Math.max(0, clip.getCantidadMeGusta() - 1));
+            notifyItemChanged(holder.getAdapterPosition());
 
-            LikeController controller = new LikeController(context, clipIdObj, "DELETE", new MeGustaCallback() {
+            new LikeController(context, clipIdObj, "DELETE", new MeGustaCallback() {
                 @Override
                 public void onMegustaSuccess(JSONObject response) { }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Megusta", "Error al quitar like: " + errorMsg);
-                }
-            });
-            controller.execute();
+                public void onError(String errorMsg) { }
+            }).execute();
         });
     }
 
-    private void showRatingPopup(ClipViewHolder holder, Context context, Long clipIdObj, View anchorView) {
+    private void showRatingPopup(ClipViewHolder holder, Context context, Long clipIdObj, View anchorView, ClipDto clip, TextView tvRatingCount) {
         View popupView = LayoutInflater.from(context).inflate(R.layout.popup_rating, null);
         RatingBar ratingBar = popupView.findViewById(R.id.ratingBar);
 
@@ -321,6 +315,19 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             if (fromUser) {
                 ratingsMap.put(clipIdObj, (int) rating);
 
+                int cantidadValoraciones = clip.getCantidadValoraciones();
+                double mediaActual = clip.getMediaValoraciones();
+                double sumaTotal = mediaActual * cantidadValoraciones;
+                sumaTotal += rating;
+                int nuevoTotal = cantidadValoraciones + 1;
+                double nuevaMedia = sumaTotal / nuevoTotal;
+
+                clip.setMediaValoraciones(nuevaMedia);
+                clip.setCantidadValoraciones(nuevoTotal);
+                clip.setLoRateo(true);
+                tvRatingCount.setText(String.format(Locale.US, "%.2f", nuevaMedia));
+                notifyItemChanged(holder.getAdapterPosition());
+
                 if (rating > 0) {
                     holder.ibRating.setVisibility(View.GONE);
                     holder.ibRatingFilled.setVisibility(View.VISIBLE);
@@ -330,18 +337,18 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     holder.ibRatingFilled.setVisibility(View.GONE);
                     holder.ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
                 }
+
                 new RateController(context, clipIdObj, (int) rating, new RateCallback() {
                     @Override
                     public void onRateSuccess(JSONObject response) { }
                     @Override
-                    public void onError(String errorMsg) {
-                        Log.e("Valoracion", "Error al enviar valoración: " + errorMsg);
-                    }
+                    public void onError(String errorMsg) { }
                 }).execute();
+
+                popupWindow.dismiss();
             }
         });
     }
-
     private void setupRating(ClipViewHolder holder, ClipDto clip, Context context) {
         Long clipIdObj = clip.getId();
 
@@ -355,16 +362,11 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             holder.ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
         }
 
-        View.OnClickListener ratingClickListener = v -> {
-            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
-            showRatingPopup(holder, context, clipIdObj, v);
-        };
+        View.OnClickListener ratingClickListener = v -> showRatingPopup(holder, context, clipIdObj, v, clip, holder.tvRatingCount);
         holder.ibRating.setOnClickListener(ratingClickListener);
         holder.ibRatingFilled.setOnClickListener(ratingClickListener);
     }
-
     private void setupFollow(ClipViewHolder holder, ClipDto clip, Context context) {
-
         SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
 
@@ -385,7 +387,6 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         }
 
         holder.followButton.setOnClickListener(v -> {
-            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             new FollowController(context, seguidoId, "POST", new FollowCallback() {
                 @Override
@@ -394,14 +395,11 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     holder.followedButton.setVisibility(View.VISIBLE);
                 }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Follow", "Error: " + errorMsg);
-                }
+                public void onError(String errorMsg) { }
             }).execute();
         });
 
         holder.followedButton.setOnClickListener(v -> {
-            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             new FollowController(context, seguidoId, "DELETE", new FollowCallback() {
                 @Override
@@ -410,12 +408,19 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     holder.followedButton.setVisibility(View.GONE);
                 }
                 @Override
-                public void onError(String errorMsg) {
-                    holder.followButton.setVisibility(View.VISIBLE);
-                    holder.followedButton.setVisibility(View.GONE);
-                }
+                public void onError(String errorMsg) { }
             }).execute();
         });
+    }
+
+    public void updateFollowStateForUser(UUID userId, boolean isFollowed) {
+        for (int i = 0; i < clipList.size(); i++) {
+            ClipDto clip = clipList.get(i);
+            if (clip.getGetUsuarioClipDto().getIdUser().equals(userId)) {
+                clip.setLoSigue(isFollowed);
+                notifyItemChanged(i);
+            }
+        }
     }
 
     private void setupDelete(ClipViewHolder holder, ClipDto clip, Context context) {
@@ -427,7 +432,6 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                         new DeleteClipController(context, clip.getId(), new DeleteCallback() {
                             @Override
                             public void onDeleteSuccess(JSONObject response) {
-                                Toast.makeText(context, "Clip eliminado correctamente", android.widget.Toast.LENGTH_SHORT).show();
                                 int pos = holder.getAdapterPosition();
                                 if (pos != RecyclerView.NO_POSITION) {
                                     clipList.remove(pos);
@@ -435,9 +439,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                                 }
                             }
                             @Override
-                            public void onDeleteError(JSONObject error) {
-                                Toast.makeText(context, "Error al eliminar el clip", android.widget.Toast.LENGTH_SHORT).show();
-                            }
+                            public void onDeleteError(JSONObject error) { }
                         }).execute();
                     })
                     .setNegativeButton("No", null)
@@ -458,9 +460,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     }
 
     public void addClips(List<ClipDto> nuevosClips) {
-        int startPos = clipList.size();
+        int start = clipList.size();
         clipList.addAll(nuevosClips);
-        notifyItemRangeInserted(startPos, nuevosClips.size());
+        notifyItemRangeInserted(start, nuevosClips.size());
     }
 
     @Override

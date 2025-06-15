@@ -1,0 +1,17 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/text_no_clips"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_stat_rect"
+        android:gravity="center"
+        android:fontFamily="@font/lexend_regular"
+        android:text="No sigues a ningún usuario, explora clips y sigue a cualquier usuario para que te aparezcan sus últimos clips!!!"
+        android:textSize="15sp"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"/>
+</FrameLayout>

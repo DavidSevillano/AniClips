@@ -13,6 +13,7 @@ public class ClipDto {
     private UsuarioClipDto getUsuarioClipDto;
     private int cantidadMeGusta;
     private int cantidadComentarios;
+    private int cantidadValoraciones;
     private double mediaValoraciones;
     private boolean ledioLike;
     private boolean loRateo;
@@ -87,6 +88,12 @@ public class ClipDto {
 
     public void setCantidadComentarios(int cantidadComentarios) {
         this.cantidadComentarios = cantidadComentarios;
+    }
+    public int getCantidadValoraciones() {
+        return cantidadValoraciones;
+    }
+    public void setCantidadValoraciones(int cantidadValoraciones) {
+        this.cantidadValoraciones = cantidadValoraciones;
     }
 
     public double getMediaValoraciones() {

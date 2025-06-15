@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -105,7 +104,16 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
     }
 
     @Override
-    public void onHomeClipsCallback(List<ClipDto> clips) {
+    public void onClipsLoaded(List<ClipDto> clips) {
+        if ((clips == null || clips.isEmpty()) && currentPage == 0) {
+            onNoClips();
+            return;
+        }
+        if (clips == null || clips.isEmpty()) {
+            isLastPage = true;
+            isLoading = false;
+            return;
+        }
         LinearLayout homeMainLayout = getView().findViewById(R.id.homeMainLayout);
 
         if (clips.size() < pageSize) {
@@ -114,7 +122,7 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
         adapter.addClips(clips);
         isLoading = false;
 
-        if (homeMainLayout.getVisibility() != View.VISIBLE) {
+        if (homeMainLayout != null && homeMainLayout.getVisibility() != View.VISIBLE) {
             homeMainLayout.setVisibility(View.VISIBLE);
             homeMainLayout.setAlpha(0f);
             homeMainLayout.animate().alpha(1f).setDuration(250).start();
@@ -122,8 +130,10 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
     }
 
     @Override
-    public void onError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        isLoading = false;
+    public void onNoClips() {
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.mainContainer, new NoClipsFragment())
+                .commit();
     }
 }

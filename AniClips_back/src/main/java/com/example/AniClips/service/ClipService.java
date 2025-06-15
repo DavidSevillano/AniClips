@@ -46,6 +46,15 @@ public class ClipService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Clip> findAllByUsuariosSeguidos(UUID usuarioId, Pageable pageRequest) {
+        Page<Clip> result = clipRepository.findAllByUsuariosSeguidos(usuarioId, pageRequest);
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException("No se han encontrado clips");
+        }
+        return result;
+    }
+
+    @Transactional(readOnly = true)
     public Clip findById(Long id) {
         Optional<Clip> clip = clipRepository.findByIdDetalles(id);
 

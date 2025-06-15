@@ -55,7 +55,7 @@
             android:id="@+id/btnFollowed"
             android:layout_width="97dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:layout_marginStart="8dp"
             app:cornerRadius="20dp"
             android:visibility="gone"

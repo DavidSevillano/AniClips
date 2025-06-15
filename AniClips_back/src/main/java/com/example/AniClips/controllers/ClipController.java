@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,26 +114,23 @@ public class ClipController {
     })
     @GetMapping
     public Page<GetClipDto> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
-        Pageable pageRequest = PageRequest.of(page, size);
-
+        Pageable pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "fecha");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final Usuario usuarioActual;
         if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Usuario user) {
             usuarioActual = user;
         } else {
-            usuarioActual = null;
+            return Page.empty();
         }
 
-        return clipService.findAll(pageRequest)
-                .map(clip -> {
-                    boolean loSigue = false;
-                    if (usuarioActual != null) {
-                        loSigue = usuarioRepository.existsBySeguidorAndSeguido(
-                                usuarioActual.getId(), clip.getUsuario().getId()
-                        );
-                    }
-                    return GetClipDto.of(clip, usuarioActual, loSigue);
-                });
+        Page<Clip> clips = clipService.findAllByUsuariosSeguidos(usuarioActual.getId(), pageRequest);
+
+        return clips.map(clip -> {
+            boolean loSigue = usuarioRepository.existsBySeguidorAndSeguido(
+                    usuarioActual.getId(), clip.getUsuario().getId()
+            );
+            return GetClipDto.of(clip, usuarioActual, loSigue);
+        });
     }
 
     @Operation(summary = "Obtiene todos los clips")

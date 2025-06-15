@@ -24,12 +24,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
 import com.example.aniclips.activities.MainActivity;
-import com.example.aniclips.adapters.ClipsHomeAdapter;
 import com.example.aniclips.controllers.DeleteClipController;
 import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.HomeFragmentController;
@@ -82,11 +80,11 @@ public class ClipDetailFragment extends Fragment {
     private ExoPlayer exoPlayer;
     private ProgressBar progressBar;
 
-
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
-
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable showMiniaturaRunnable;
+
+    private ClipDto currentClip;
 
     public static ClipDetailFragment newInstance(long clipId) {
         ClipDetailFragment fragment = new ClipDetailFragment();
@@ -128,7 +126,6 @@ public class ClipDetailFragment extends Fragment {
         ibDelete = view.findViewById(R.id.ibDelete);
         progressBar = view.findViewById(R.id.progressBar);
 
-
         view.setVisibility(View.VISIBLE);
         view.setAlpha(0f);
         view.animate().alpha(1f).setDuration(250).start();
@@ -138,10 +135,10 @@ public class ClipDetailFragment extends Fragment {
 
         new HomeFragmentController(requireActivity(), new HomeClipsCallback() {
             @Override
-            public void onHomeClipsCallback(List<ClipDto> clips) {
+            public void onClipsLoaded(List<ClipDto> clips) {
                 if (clips != null && !clips.isEmpty()) {
-
                     ClipDto clip = clips.get(0);
+                    currentClip = clip;
 
                     if ("ADMIN".equals(userRole)) {
                         ibDelete.setVisibility(View.VISIBLE);
@@ -220,15 +217,15 @@ public class ClipDetailFragment extends Fragment {
                     });
 
                     String fechaStr = clip.getFecha();
-                        try {
-                            SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                            Date date = sdfInput.parse(fechaStr);
-                            SimpleDateFormat sdfOutput = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "ES"));
-                            String fechaFormateada = sdfOutput.format(date);
-                            tvDate.setText(fechaFormateada);
-                        } catch (Exception e) {
-                            tvDate.setText(fechaStr);
-                        }
+                    try {
+                        SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        Date date = sdfInput.parse(fechaStr);
+                        SimpleDateFormat sdfOutput = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "ES"));
+                        String fechaFormateada = sdfOutput.format(date);
+                        tvDate.setText(fechaFormateada);
+                    } catch (Exception e) {
+                        tvDate.setText(fechaStr);
+                    }
                     setupLike(clip, requireContext());
                     setupRating(clip, requireContext());
                     setupFollow(clip, requireContext());
@@ -236,8 +233,7 @@ public class ClipDetailFragment extends Fragment {
             }
 
             @Override
-            public void onError(String message) {
-            }
+            public void onNoClips() { }
         }, 0, 0, clipId, progressBar).execute();
 
         return view;
@@ -257,37 +253,43 @@ public class ClipDetailFragment extends Fragment {
         }
 
         ibLike.setOnClickListener(v -> {
+            clip.setLedioLike(true);
+            clip.setCantidadMeGusta(clip.getCantidadMeGusta() + 1);
+            tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
             ibLike.setVisibility(View.GONE);
             ibLikeFilled.setVisibility(View.VISIBLE);
+            ibLikeFilled.setColorFilter(context.getColor(R.color.btn_focused));
 
-            LikeController controller = new LikeController(context, clipIdObj, "POST", new MeGustaCallback() {
+            new LikeController(context, clipIdObj, "POST", new MeGustaCallback() {
                 @Override
                 public void onMegustaSuccess(JSONObject response) { }
                 @Override
                 public void onError(String errorMsg) {
                     Log.e("Megusta", "Error al enviar like: " + errorMsg);
                 }
-            });
-            controller.execute();
+            }).execute();
         });
 
         ibLikeFilled.setOnClickListener(v -> {
+            clip.setLedioLike(false);
+            clip.setCantidadMeGusta(Math.max(0, clip.getCantidadMeGusta() - 1));
+            tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
             ibLike.setVisibility(View.VISIBLE);
             ibLikeFilled.setVisibility(View.GONE);
+            ibLike.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
 
-            LikeController controller = new LikeController(context, clipIdObj, "DELETE", new MeGustaCallback() {
+            new LikeController(context, clipIdObj, "DELETE", new MeGustaCallback() {
                 @Override
                 public void onMegustaSuccess(JSONObject response) { }
                 @Override
                 public void onError(String errorMsg) {
                     Log.e("Megusta", "Error al quitar like: " + errorMsg);
                 }
-            });
-            controller.execute();
+            }).execute();
         });
     }
 
-    private void showRatingPopup(Context context, Long clipIdObj, View anchorView) {
+    private void showRatingPopup(Context context, Long clipIdObj, View anchorView, ClipDto clip, TextView tvRatingCount) {
         View popupView = LayoutInflater.from(context).inflate(R.layout.popup_rating, null);
         RatingBar ratingBar = popupView.findViewById(R.id.ratingBar);
 
@@ -316,6 +318,18 @@ public class ClipDetailFragment extends Fragment {
             if (fromUser) {
                 ratingsMap.put(clipIdObj, (int) rating);
 
+                int cantidadValoraciones = clip.getCantidadValoraciones();
+                double mediaActual = clip.getMediaValoraciones();
+                double sumaTotal = mediaActual * cantidadValoraciones;
+                sumaTotal += rating;
+                int nuevoTotal = cantidadValoraciones + 1;
+                double nuevaMedia = sumaTotal / nuevoTotal;
+
+                clip.setMediaValoraciones(nuevaMedia);
+                clip.setCantidadValoraciones(nuevoTotal);
+                clip.setLoRateo(true);
+                tvRatingCount.setText(String.format(Locale.US, "%.2f", nuevaMedia));
+
                 if (rating > 0) {
                     ibRating.setVisibility(View.GONE);
                     ibRatingFilled.setVisibility(View.VISIBLE);
@@ -325,6 +339,7 @@ public class ClipDetailFragment extends Fragment {
                     ibRatingFilled.setVisibility(View.GONE);
                     ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
                 }
+
                 new RateController(context, clipIdObj, (int) rating, new RateCallback() {
                     @Override
                     public void onRateSuccess(JSONObject response) { }
@@ -333,6 +348,8 @@ public class ClipDetailFragment extends Fragment {
                         Log.e("Valoracion", "Error al enviar valoración: " + errorMsg);
                     }
                 }).execute();
+
+                popupWindow.dismiss();
             }
         });
     }
@@ -350,7 +367,7 @@ public class ClipDetailFragment extends Fragment {
             ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
         }
 
-        View.OnClickListener ratingClickListener = v -> showRatingPopup(context, clipIdObj, v);
+        View.OnClickListener ratingClickListener = v -> showRatingPopup(context, clipIdObj, v, clip, tvRatingCount);
         ibRating.setOnClickListener(ratingClickListener);
         ibRatingFilled.setOnClickListener(ratingClickListener);
     }
@@ -377,12 +394,13 @@ public class ClipDetailFragment extends Fragment {
 
         followButton.setOnClickListener(v -> {
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
+            clip.setLoSigue(true);
+            followButton.setVisibility(View.GONE);
+            followedButton.setVisibility(View.VISIBLE);
+
             new FollowController(context, seguidoId, "POST", new FollowCallback() {
                 @Override
-                public void onFollowSuccess(JSONObject response) {
-                    followButton.setVisibility(View.GONE);
-                    followedButton.setVisibility(View.VISIBLE);
-                }
+                public void onFollowSuccess(JSONObject response) { }
                 @Override
                 public void onError(String errorMsg) {
                     Log.e("Follow", "Error: " + errorMsg);
@@ -392,12 +410,13 @@ public class ClipDetailFragment extends Fragment {
 
         followedButton.setOnClickListener(v -> {
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
+            clip.setLoSigue(false);
+            followButton.setVisibility(View.VISIBLE);
+            followedButton.setVisibility(View.GONE);
+
             new FollowController(context, seguidoId, "DELETE", new FollowCallback() {
                 @Override
-                public void onFollowSuccess(JSONObject response) {
-                    followButton.setVisibility(View.VISIBLE);
-                    followedButton.setVisibility(View.GONE);
-                }
+                public void onFollowSuccess(JSONObject response) { }
                 @Override
                 public void onError(String errorMsg) {
                     Log.e("Follow", "Error: " + errorMsg);
