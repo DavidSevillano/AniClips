@@ -1,8 +1,6 @@
 package com.example.aniclips.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Handler;
@@ -25,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
-import com.example.aniclips.activities.MainActivity;
 import com.example.aniclips.controllers.DeleteClipController;
 import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.LikeController;
@@ -58,6 +55,15 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     private List<ClipDto> clipList;
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
     private OnUserClickListener userClickListener;
+
+    public interface OnRequireLoginListener {
+        boolean onRequireLogin();
+    }
+    private OnRequireLoginListener requireLoginListener;
+
+    public void setOnRequireLoginListener(OnRequireLoginListener listener) {
+        this.requireLoginListener = listener;
+    }
 
     public ClipsHomeAdapter(List<ClipDto> clipList) {
         this.clipList = clipList;
@@ -146,11 +152,13 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 .into(holder.ivMiniatura);
 
         holder.textViewUsername.setOnClickListener(v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
             if (userClickListener != null) {
                 userClickListener.onUserClick(clip.getGetUsuarioClipDto().getIdUser());
             }
         });
         holder.imageViewPerfil.setOnClickListener(v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
             if (userClickListener != null) {
                 userClickListener.onUserClick(clip.getGetUsuarioClipDto().getIdUser());
             }
@@ -250,6 +258,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         }
 
         holder.ibLike.setOnClickListener(v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
+
             holder.ibLike.setVisibility(View.GONE);
             holder.ibLikeFilled.setVisibility(View.VISIBLE);
 
@@ -265,6 +275,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         });
 
         holder.ibLikeFilled.setOnClickListener(v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
+
             holder.ibLike.setVisibility(View.VISIBLE);
             holder.ibLikeFilled.setVisibility(View.GONE);
 
@@ -343,7 +355,10 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             holder.ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
         }
 
-        View.OnClickListener ratingClickListener = v -> showRatingPopup(holder, context, clipIdObj, v);
+        View.OnClickListener ratingClickListener = v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
+            showRatingPopup(holder, context, clipIdObj, v);
+        };
         holder.ibRating.setOnClickListener(ratingClickListener);
         holder.ibRatingFilled.setOnClickListener(ratingClickListener);
     }
@@ -370,6 +385,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         }
 
         holder.followButton.setOnClickListener(v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
+
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             new FollowController(context, seguidoId, new FollowCallback() {
                 @Override

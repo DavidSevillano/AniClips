@@ -103,7 +103,7 @@ public class SignInFragment extends Fragment {
                             .replace(R.id.loginSignin_container, new ActivateAccountFragment())
                             .commit();
 
-                    SharedPreferences prefs = requireContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                    SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
                     prefs.edit().putString(Constantes.PREF_USER_EMAIL, email).apply();
                     prefs.edit().putString(Constantes.PREF_USER_USERNAME, username).apply();
                     prefs.edit().putString(Constantes.PREF_USER_PASSWORD, password).apply();

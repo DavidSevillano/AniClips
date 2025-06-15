@@ -1,6 +1,7 @@
 package com.example.aniclips.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import com.example.aniclips.R;
 import com.example.aniclips.adapters.ClipsHomeAdapter;
 import com.example.aniclips.controllers.HomeFragmentController;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.dialogs.RegisterDialog;
 import com.example.aniclips.interfaces.HomeClipsCallback;
+import com.example.aniclips.utils.Constantes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +31,6 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
     private ClipsHomeAdapter adapter;
     private LinearLayoutManager layoutManager;
     private ProgressBar progressBar;
-
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -46,8 +48,21 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
         recyclerViewClips.setLayoutManager(layoutManager);
         progressBar = view.findViewById(R.id.progressBar);
 
-
         adapter = new ClipsHomeAdapter(new ArrayList<>());
+
+        adapter.setOnRequireLoginListener(() -> {
+            boolean loggedIn = requireContext()
+                    .getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE)
+                    .contains(Constantes.PREF_TOKEN_JWT);
+            Log.d("LOGIN_CHECK", "¿Logueado?: " + loggedIn);
+            if (!loggedIn) {
+                Log.d("LOGIN_CHECK", "Mostrando RegisterDialog");
+                new RegisterDialog().show(getParentFragmentManager(), "RegisterDialog");
+                return true;
+            }
+            return false;
+        });
+
         recyclerViewClips.setAdapter(adapter);
 
         adapter.setOnUserClickListener(userId -> {

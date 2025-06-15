@@ -66,7 +66,7 @@ public class ActivateAccountFragment extends Fragment {
                         .newInstance(username)
                         .show(getParentFragmentManager(), "TurnoIniciado");
 
-                SharedPreferences prefs = requireContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
                 prefs.edit().putString(Constantes.PREF_ACTIVATION_CODE, username).apply();
 
             }

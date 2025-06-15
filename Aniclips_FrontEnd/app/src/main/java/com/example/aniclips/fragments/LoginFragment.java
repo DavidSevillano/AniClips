@@ -29,6 +29,7 @@ public class LoginFragment extends Fragment {
     private EditText etPassword;
     private Button btnLogin;
     private TextView tvSignIn;
+    private TextView tvNoAccount;
     private ProgressBar progressBar;
 
     @Nullable
@@ -45,6 +46,7 @@ public class LoginFragment extends Fragment {
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogIn);
         tvSignIn = view.findViewById(R.id.tvSignIn);
+        tvNoAccount = view.findViewById(R.id.tvNoAccount);
         progressBar = view.findViewById(R.id.progressBar);
     }
 
@@ -57,6 +59,10 @@ public class LoginFragment extends Fragment {
         });
         btnLogin.setOnClickListener(v -> {
             login();
+        });
+        tvNoAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), MainActivity.class);
+            startActivity(intent);
         });
     }
 

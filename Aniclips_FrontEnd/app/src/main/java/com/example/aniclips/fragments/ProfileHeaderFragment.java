@@ -69,6 +69,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
         View view = inflater.inflate(R.layout.fragment_profile_header, container, false);
         initViews(view);
         initEvents();
+
         cargarPerfil();
         return view;
     }
@@ -258,9 +259,12 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
     @Override
     public void onSalirConfirmado() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE);
+        prefs.edit().clear().apply();
+
         new PerfilController(requireActivity(), new PerfilCallback() {
             @Override
-            public void onPerfilSuccess(org.json.JSONObject perfil) {
+            public void onPerfilSuccess(JSONObject perfil) {
                 Intent intent = new Intent(requireContext(), LoginSiginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

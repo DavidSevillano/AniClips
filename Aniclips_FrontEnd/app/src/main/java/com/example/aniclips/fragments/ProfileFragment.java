@@ -1,18 +1,25 @@
 package com.example.aniclips.fragments;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+
 import com.example.aniclips.R;
+import com.example.aniclips.activities.LoginSiginActivity;
+import com.example.aniclips.utils.Constantes;
 
 public class ProfileFragment extends Fragment {
     private static final String ARG_USER_ID = "user_id";
     private String userId;
     private View profileMainLayout;
+    private View overlay;
 
     public static ProfileFragment newInstance(String userId) {
         ProfileFragment fragment = new ProfileFragment();
@@ -26,8 +33,33 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        overlay = view.findViewById(R.id.overlayProfileLoginRequired);
         profileMainLayout = view.findViewById(R.id.profileMainLayout);
-        profileMainLayout.setVisibility(View.GONE);
+
+        SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE);
+        boolean loggedIn = prefs.contains(Constantes.PREF_TOKEN_JWT);
+        if (!loggedIn) {
+            overlay.setVisibility(View.VISIBLE);
+            profileMainLayout.setVisibility(View.VISIBLE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                profileMainLayout.setRenderEffect(
+                        android.graphics.RenderEffect.createBlurEffect(20f, 20f, android.graphics.Shader.TileMode.CLAMP)
+                );
+            }
+
+            Button btnLogout = overlay.findViewById(R.id.btnOverlayLogout);
+            btnLogout.setOnClickListener(v -> {
+                prefs.edit().clear().apply();
+                Intent intent = new Intent(requireContext(), LoginSiginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                requireActivity().finish();
+            });
+        } else {
+            overlay.setVisibility(View.GONE);
+            profileMainLayout.setVisibility(View.GONE);
+        }
 
         if (getArguments() != null) {
             userId = getArguments().getString(ARG_USER_ID);
@@ -43,7 +75,7 @@ public class ProfileFragment extends Fragment {
         myClipsFragment.setArguments(bundle);
 
         headerFragment.setPerfilLoadedListener(() -> {
-            if (profileMainLayout != null) {
+            if (profileMainLayout != null && loggedIn) {
                 profileMainLayout.setVisibility(View.VISIBLE);
                 profileMainLayout.setAlpha(0f);
                 profileMainLayout.animate().alpha(1f).setDuration(250).start();

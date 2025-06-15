@@ -11,6 +11,7 @@ import com.example.aniclips.R;
 import com.example.aniclips.fragments.HomeFragment;
 import com.example.aniclips.fragments.LoginFragment;
 import com.example.aniclips.fragments.SearchFragment;
+import com.example.aniclips.fragments.SignInFragment;
 import com.example.aniclips.utils.HideNavigationBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -24,10 +25,16 @@ public class LoginSiginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login_signin);
 
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.loginSignin_container, new LoginFragment())
-                .commit();
-            }
+        if (getIntent().getBooleanExtra("showSignInFragment", false)) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.loginSignin_container, new SignInFragment())
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.loginSignin_container, new LoginFragment())
+                    .commit();
         }
+    }
+}

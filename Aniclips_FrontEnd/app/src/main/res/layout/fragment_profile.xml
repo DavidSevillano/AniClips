@@ -35,5 +35,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <LinearLayout
+        android:id="@+id/overlayProfileLoginRequired"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/tvLoginRequired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Necesitas estar logueado para usar tu perfil"
+            android:textColor="#FFF"
+            android:textSize="20sp"
+            android:background="@drawable/bg_stat_rect"
+            android:padding="24dp"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnOverlayLogout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Salir"
+            android:textColor="#FFF"
+            android:backgroundTint="@color/btn_focused"
+            android:layout_marginTop="24dp"/>
+    </LinearLayout>
 
 </FrameLayout>

@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +26,7 @@ import com.example.aniclips.fragments.HomeFragment;
 import com.example.aniclips.fragments.ProfileFragment;
 import com.example.aniclips.fragments.SearchFragment;
 import com.example.aniclips.interfaces.PerfilCallback;
+import com.example.aniclips.utils.Constantes;
 import com.example.aniclips.utils.HideNavigationBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -108,16 +111,34 @@ public class MainActivity extends AppCompatActivity {
 
             FloatingActionButton fab = findViewById(R.id.fabSubirClip);
             fab.setOnClickListener(v -> {
-                PopupMenu popup = new PopupMenu(this, v);
-                popup.getMenu().add("Subir clip");
-                popup.setOnMenuItemClickListener(item -> {
-                    if (item.getTitle().equals("Subir clip")) {
+                View popupView = getLayoutInflater().inflate(R.layout.popup_subir_clip, null);
+
+                final PopupWindow popupWindow = new PopupWindow(
+                        popupView,
+                        (int) (200 * getResources().getDisplayMetrics().density),
+                        (int) (60 * getResources().getDisplayMetrics().density),
+                        true
+                );
+
+                popupWindow.setAnimationStyle(R.style.PopupAnimation);
+
+                popupView.setOnClickListener(view -> {
+                    popupWindow.dismiss();
+                    boolean loggedIn = getSharedPreferences("My_prefs", MODE_PRIVATE).contains(Constantes.PREF_TOKEN_JWT);
+                    android.util.Log.d("LOGIN_CHECK", "¿Logueado?: " + loggedIn);
+                    if (!loggedIn) {
+                        android.util.Log.d("LOGIN_CHECK", "Mostrando RegisterDialog");
+                        new com.example.aniclips.dialogs.RegisterDialog()
+                                .show(getSupportFragmentManager(), "RegisterDialog");
+                    } else {
                         mostrarBottomSheet();
-                        return true;
                     }
-                    return false;
                 });
-                popup.show();
+
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+
+                popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], location[1] - popupWindow.getHeight());
             });
         }
     }
@@ -149,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
             intent.setType("image/*");
             miniaturaPickerLauncher.launch(intent);
         });
+
+
 
 
         String[] generos = {"Shonen", "Shojo", "Seinen", "Josei", "Mecha", "Isekai", "Slice of Life", "Horror", "Comedia", "Otros"};
