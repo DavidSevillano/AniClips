@@ -49,6 +49,13 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
 
         adapter = new ClipsHomeAdapter(new ArrayList<>());
 
+        adapter.setOnClipsEmptyListener(() -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.mainContainer, new NoClipsFragment())
+                    .commit();
+        });
+
         adapter.setOnRequireLoginListener(() -> {
             boolean loggedIn = requireContext()
                     .getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE)

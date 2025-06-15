@@ -70,6 +70,13 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     public void setOnUserClickListener(OnUserClickListener listener) {
         this.userClickListener = listener;
     }
+    public interface OnClipsEmptyListener {
+        void onClipsEmpty();
+    }
+    private OnClipsEmptyListener onClipsEmptyListener;
+    public void setOnClipsEmptyListener(OnClipsEmptyListener listener) {
+        this.onClipsEmptyListener = listener;
+    }
 
     public static class ClipViewHolder extends RecyclerView.ViewHolder {
         ImageView imageViewPerfil;
@@ -436,6 +443,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                                 if (pos != RecyclerView.NO_POSITION) {
                                     clipList.remove(pos);
                                     notifyItemRemoved(pos);
+                                    if (clipList.isEmpty() && onClipsEmptyListener != null) {
+                                        onClipsEmptyListener.onClipsEmpty();
+                                    }
                                 }
                             }
                             @Override

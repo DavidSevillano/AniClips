@@ -170,7 +170,6 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
 
     @Override
     public void onSearchThumbnailCallback(List<Miniatura> miniaturas) {
-        adapter.clearThumbnails();
         if (miniaturas.size() < pageSize) {
             isLastPage = true;
         }
@@ -277,6 +276,8 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
             filtroMinValoracion = minValoracion;
             filtroMaxValoracion = maxValoracion;
             filtroGenero = generoSeleccionado;
+
+            adapter.clearThumbnails();
 
             new SearchFilterController(
                     requireActivity(),
