@@ -56,19 +56,6 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
                     .commit();
         });
 
-        adapter.setOnRequireLoginListener(() -> {
-            boolean loggedIn = requireContext()
-                    .getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE)
-                    .contains(Constantes.PREF_TOKEN_JWT);
-            Log.d("LOGIN_CHECK", "¿Logueado?: " + loggedIn);
-            if (!loggedIn) {
-                Log.d("LOGIN_CHECK", "Mostrando RegisterDialog");
-                new RegisterDialog().show(getParentFragmentManager(), "RegisterDialog");
-                return true;
-            }
-            return false;
-        });
-
         recyclerViewClips.setAdapter(adapter);
 
         adapter.setOnUserClickListener(userId -> {

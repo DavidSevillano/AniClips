@@ -33,6 +33,7 @@ import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.HomeFragmentController;
 import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
+import com.example.aniclips.dialogs.RegisterDialog;
 import com.example.aniclips.dto.ClipDto;
 import com.example.aniclips.interfaces.DeleteCallback;
 import com.example.aniclips.interfaces.FollowCallback;
@@ -164,6 +165,25 @@ public class ClipDetailFragment extends Fragment {
                             .centerCrop()
                             .into(imageViewPerfil);
 
+                    textViewUsername.setOnClickListener(v -> {
+                        if (!checkLoginAndShowDialog(requireContext())) return;
+                        ProfileFragment fragment = ProfileFragment.newInstance(clip.getGetUsuarioClipDto().getIdUser().toString());
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.mainContainer, fragment)
+                                .addToBackStack(null)
+                                .commit();
+                    });
+                    imageViewPerfil.setOnClickListener(v -> {
+                        if (!checkLoginAndShowDialog(requireContext())) return;
+                        ProfileFragment fragment = ProfileFragment.newInstance(clip.getGetUsuarioClipDto().getIdUser().toString());
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.mainContainer, fragment)
+                                .addToBackStack(null)
+                                .commit();
+                    });
+
                     ibPlayVideo.setOnClickListener(v -> {
                         if (showMiniaturaRunnable != null) {
                             handler.removeCallbacks(showMiniaturaRunnable);
@@ -239,6 +259,19 @@ public class ClipDetailFragment extends Fragment {
         return view;
     }
 
+    private boolean isUserLoggedIn(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+        return prefs.contains(Constantes.PREF_TOKEN_JWT);
+    }
+
+    private boolean checkLoginAndShowDialog(Context context) {
+        if (!isUserLoggedIn(context)) {
+            new RegisterDialog().show(getParentFragmentManager(), "RegisterDialog");
+            return false;
+        }
+        return true;
+    }
+
     private void setupLike(ClipDto clip, Context context) {
         Long clipIdObj = clip.getId();
 
@@ -253,6 +286,7 @@ public class ClipDetailFragment extends Fragment {
         }
 
         ibLike.setOnClickListener(v -> {
+            if (!checkLoginAndShowDialog(context)) return;
             clip.setLedioLike(true);
             clip.setCantidadMeGusta(clip.getCantidadMeGusta() + 1);
             tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
@@ -271,6 +305,7 @@ public class ClipDetailFragment extends Fragment {
         });
 
         ibLikeFilled.setOnClickListener(v -> {
+            if (!checkLoginAndShowDialog(context)) return;
             clip.setLedioLike(false);
             clip.setCantidadMeGusta(Math.max(0, clip.getCantidadMeGusta() - 1));
             tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
@@ -367,7 +402,10 @@ public class ClipDetailFragment extends Fragment {
             ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
         }
 
-        View.OnClickListener ratingClickListener = v -> showRatingPopup(context, clipIdObj, v, clip, tvRatingCount);
+        View.OnClickListener ratingClickListener = v -> {
+            if (!checkLoginAndShowDialog(context)) return;
+            showRatingPopup(context, clipIdObj, v, clip, tvRatingCount);
+        };
         ibRating.setOnClickListener(ratingClickListener);
         ibRatingFilled.setOnClickListener(ratingClickListener);
     }
@@ -393,6 +431,7 @@ public class ClipDetailFragment extends Fragment {
         }
 
         followButton.setOnClickListener(v -> {
+            if (!checkLoginAndShowDialog(context)) return;
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             clip.setLoSigue(true);
             followButton.setVisibility(View.GONE);
@@ -409,6 +448,7 @@ public class ClipDetailFragment extends Fragment {
         });
 
         followedButton.setOnClickListener(v -> {
+            if (!checkLoginAndShowDialog(context)) return;
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             clip.setLoSigue(false);
             followButton.setVisibility(View.VISIBLE);
