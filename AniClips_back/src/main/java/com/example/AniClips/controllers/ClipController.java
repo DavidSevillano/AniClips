@@ -324,7 +324,7 @@ public class ClipController {
 
         List<SearchCriteria> params = new ArrayList<>();
         if (search != null) {
-            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(.+?),");
+            Pattern pattern = Pattern.compile("(\\w+?)(:|<=|>=|<|>)(.+?),");
             Matcher matcher = pattern.matcher(search + ",");
             while (matcher.find()) {
                 params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));

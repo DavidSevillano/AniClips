@@ -2,6 +2,8 @@ package com.example.aniclips.controllers;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.aniclips.interfaces.SearchThumbnailCallback;
 import com.example.aniclips.models.Miniatura;
@@ -10,6 +12,7 @@ import com.example.aniclips.utils.OkHttpTools;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,15 +20,31 @@ public class SearchFilterController extends AsyncTask<Void, Void, List<Miniatura
     private final Activity activity;
     private final SearchThumbnailCallback callback;
     private final String nombreAnime;
+    private final String genero;
+    private final Float minValoracion;
+    private final Float maxValoracion;
     private final int page;
     private final int size;
 
-    public SearchFilterController(Activity activity, SearchThumbnailCallback callback, String nombreAnime, int page, int size) {
+    private final WeakReference<ProgressBar> progressBarRef;
+
+    public SearchFilterController(Activity activity, SearchThumbnailCallback callback, String nombreAnime, String genero, Float minValoracion, Float maxValoracion, int page, int size, ProgressBar progressBar) {
         this.activity = activity;
         this.callback = callback;
         this.nombreAnime = nombreAnime;
+        this.genero = genero;
+        this.minValoracion = minValoracion;
+        this.maxValoracion = maxValoracion;
         this.page = page;
         this.size = size;
+        this.progressBarRef = new WeakReference<>(progressBar);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -33,7 +52,20 @@ public class SearchFilterController extends AsyncTask<Void, Void, List<Miniatura
         if (activity == null) return null;
         List<Miniatura> listaMiniaturas = new ArrayList<>();
         try {
-            String searchParam = "nombreAnime:" + nombreAnime;
+            List<String> searchParams = new ArrayList<>();
+            if (nombreAnime != null && !nombreAnime.isEmpty()) {
+                searchParams.add("nombreAnime:" + nombreAnime);
+            }
+            if (genero != null && !genero.isEmpty()) {
+                searchParams.add("genero:" + genero);
+            }
+            if (minValoracion != null) {
+                searchParams.add("valoracion>=" + minValoracion);
+            }
+            if (maxValoracion != null) {
+                searchParams.add("valoracion<=" + maxValoracion);
+            }
+            String searchParam = String.join(",", searchParams);
             String url = "/clip/buscar/?search=" + searchParam + "&page=" + page + "&size=" + size;
             String responseJSON = OkHttpTools.get(url, activity);
             JSONObject response = new JSONObject(responseJSON);
@@ -60,6 +92,8 @@ public class SearchFilterController extends AsyncTask<Void, Void, List<Miniatura
 
     @Override
     protected void onPostExecute(List<Miniatura> listaMiniaturas) {
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (listaMiniaturas == null || listaMiniaturas.isEmpty()) {
             callback.onError("No se encontraron resultados");
         } else {

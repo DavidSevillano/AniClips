@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,9 @@ public class MyClipsAdapter extends RecyclerView.Adapter<MyClipsAdapter.ClipView
 
         holder.ibThumbnail.setOnClickListener(v -> {
             FragmentActivity activity = (FragmentActivity) context;
+            ProgressBar progressBar = activity.findViewById(R.id.progressBar);
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+
             Fragment fragment = ClipDetailFragment.newInstance(clip.getId());
             activity.getSupportFragmentManager()
                     .beginTransaction()
@@ -67,5 +71,4 @@ public class MyClipsAdapter extends RecyclerView.Adapter<MyClipsAdapter.ClipView
             ibThumbnail = itemView.findViewById(R.id.ibThumbnail);
         }
     }
-
 }

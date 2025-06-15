@@ -9,12 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,10 +105,13 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
     }
 
     private void cargarPerfil() {
+        ProgressBar progressBar = requireParentFragment().getView().findViewById(R.id.progressBar);
         String userId = getArguments() != null ? getArguments().getString("user_id") : null;
         SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
         String myUserRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
+
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
 
         boolean esMiPerfil = (userId == null || userId.equals(myUserId));
         if (!esMiPerfil) {
@@ -167,6 +170,8 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
         PerfilCallback callback = new PerfilCallback() {
             @Override
             public void onPerfilSuccess(JSONObject perfil) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+
                 String username = perfil.optString("username", "");
                 String description = perfil.optString("descripcion", "");
                 int clipsNumber = perfil.optInt("numeroClips", 0);
@@ -236,6 +241,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
             @Override
             public void onPerfilError(String error) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 tvUsername.setText("Error");
             }
         };

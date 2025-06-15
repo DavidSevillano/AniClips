@@ -1,7 +1,10 @@
 package com.example.aniclips.controllers;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.aniclips.dto.ClipDto;
 import com.example.aniclips.dto.PerfilAvatarDto;
@@ -14,6 +17,7 @@ import com.example.aniclips.utils.OkHttpTools;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +28,21 @@ public class SearchFragmentController extends AsyncTask<Void, Void, List<Miniatu
     private final int page;
     private final int size;
 
-    public SearchFragmentController(Activity activity, SearchThumbnailCallback callback, int page, int size) {
+    private final WeakReference<ProgressBar> progressBarRef;
+
+    public SearchFragmentController(Activity activity, SearchThumbnailCallback callback, int page, int size, ProgressBar progressBar) {
         this.activity = activity;
         this.callback = callback;
         this.page = page;
         this.size = size;
+        this.progressBarRef = new WeakReference<>(progressBar);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -62,6 +76,9 @@ public class SearchFragmentController extends AsyncTask<Void, Void, List<Miniatu
 
     @Override
     protected void onPostExecute(List<Miniatura> listaMiniaturas) {
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+
         if (listaMiniaturas == null || listaMiniaturas.isEmpty()) {
             callback.onError("No se recibieron miniaturas");
         } else {

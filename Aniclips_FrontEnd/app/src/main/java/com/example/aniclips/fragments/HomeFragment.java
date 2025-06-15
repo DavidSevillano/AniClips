@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,8 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
     private RecyclerView recyclerViewClips;
     private ClipsHomeAdapter adapter;
     private LinearLayoutManager layoutManager;
+    private ProgressBar progressBar;
+
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -41,6 +44,8 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
         recyclerViewClips.setItemAnimator(null);
         layoutManager = new LinearLayoutManager(requireContext());
         recyclerViewClips.setLayoutManager(layoutManager);
+        progressBar = view.findViewById(R.id.progressBar);
+
 
         adapter = new ClipsHomeAdapter(new ArrayList<>());
         recyclerViewClips.setAdapter(adapter);
@@ -81,7 +86,7 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
     }
 
     private void cargarClipsHome(int page) {
-        new HomeFragmentController(requireActivity(), this, page, pageSize, null).execute();
+        new HomeFragmentController(requireActivity(), this, page, pageSize, null, progressBar).execute();
     }
 
     @Override

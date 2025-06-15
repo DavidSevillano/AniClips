@@ -31,33 +31,26 @@ public abstract class GenericSpecificationBuilder<U> {
             String operation = criteria.operation();
             Object value = criteria.value();
 
-
             Predicate predicate = null;
 
             if (key.equalsIgnoreCase("valoracion")) {
+                Subquery<Double> subquery = query.subquery(Double.class);
+                Root<U> subRoot = (Root<U>) subquery.from(root.getModel().getBindableJavaType());
+                Join<Object, Object> valoraciones = subRoot.join("valoraciones", JoinType.LEFT);
 
-                //Subquery para calcular la media de las valoraciones
-                Subquery<Double> subquery = query.subquery(Double.class); //Devuelve un double
+                subquery.select(builder.coalesce(builder.avg(valoraciones.get("puntuacion")), 0.0))
+                        .where(builder.equal(subRoot.get("id"), root.get("id")));
 
-                Root<U> subRoot = (Root<U>) subquery.from(root.getModel().getBindableJavaType()); //Le indicamos a la subconsulta en que entidad trabajar
-
-                Join<Object, Object> valoraciones = subRoot.join("valoraciones", JoinType.LEFT); //Accedemos a las puntuaciones de cada clip
-
-                subquery.select(builder.coalesce(builder.avg(valoraciones.get("puntuacion")), 0.0)) //Calcula el promedio y si no tiene valoraciones devuelve 0.0
-                        .where(builder.equal(subRoot.get("id"), root.get("id"))); //Asegura que la subquery calcule la mdeia de las valoraciones del clip actual
-
-                if (operation.equals(">")) {
+                if (operation.equals(">") || operation.equals(">=")) {
                     predicate = builder.greaterThanOrEqualTo(subquery, Double.valueOf(value.toString()));
-                } else if (operation.equals("<")) {
+                } else if (operation.equals("<") || operation.equals("<=")) {
                     predicate = builder.lessThanOrEqualTo(subquery, Double.valueOf(value.toString()));
                 } else if (operation.equals(":")) {
                     predicate = builder.equal(subquery, Double.valueOf(value.toString()));
                 }
-
             }
-            else if (operation.equals(">")) {
-                Class<?> fieldType = root.get(key).getJavaType(); //Obtiene el tipo de key
-
+            else if (operation.equals(">") || operation.equals(">=")) {
+                Class<?> fieldType = root.get(key).getJavaType();
                 if (fieldType == Integer.class) {
                     predicate = builder.greaterThanOrEqualTo(root.get(key).as(Integer.class), Integer.valueOf(value.toString()));
                 } else if (fieldType == Double.class || fieldType == Float.class) {
@@ -65,9 +58,8 @@ public abstract class GenericSpecificationBuilder<U> {
                 } else if (fieldType == Long.class) {
                     predicate = builder.greaterThanOrEqualTo(root.get(key).as(Long.class), Long.valueOf(value.toString()));
                 }
-            } else if (operation.equals("<")) {
+            } else if (operation.equals("<") || operation.equals("<=")) {
                 Class<?> fieldType = root.get(key).getJavaType();
-
                 if (fieldType == Integer.class) {
                     predicate = builder.lessThanOrEqualTo(root.get(key).as(Integer.class), Integer.valueOf(value.toString()));
                 } else if (fieldType == Double.class || fieldType == Float.class) {
@@ -78,17 +70,15 @@ public abstract class GenericSpecificationBuilder<U> {
             } else if (operation.equals(":")) {
                 if (root.get(key).getJavaType() == String.class) {
                     String valor = value.toString().trim();
-                    if (valor.contains(" ")) { //La busqueda es exacta
+                    if (valor.contains(" ")) {
                         predicate = builder.equal(root.get(key), valor);
-                    } else { //La busqueda es parcial
+                    } else {
                         predicate = builder.like(builder.lower(root.get(key)), "%" + valor.toLowerCase() + "%");
                     }
                 } else {
                     predicate = builder.equal(root.get(key), value);
                 }
             }
-
-
 
             return predicate;
         };

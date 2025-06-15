@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class LoginFragment extends Fragment {
     private EditText etPassword;
     private Button btnLogin;
     private TextView tvSignIn;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -43,6 +45,7 @@ public class LoginFragment extends Fragment {
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogIn);
         tvSignIn = view.findViewById(R.id.tvSignIn);
+        progressBar = view.findViewById(R.id.progressBar);
     }
 
     private void initEvents() {
@@ -71,21 +74,26 @@ public class LoginFragment extends Fragment {
     private void login(){
         if (!validarCampos()) return;
 
-        new LoginController(requireContext(), etUsername.getText().toString(), etPassword.getText().toString(), new LoginCallback() {
-            @Override
-            public void onLoginSuccess(JSONObject response) {
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                startActivity(intent);
-            }
+        new LoginController(
+                requireContext(),
+                etUsername.getText().toString(),
+                etPassword.getText().toString(),
+                new LoginCallback() {
+                    @Override
+                    public void onLoginSuccess(JSONObject response) {
+                        Intent intent = new Intent(requireContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
 
-            @Override
-            public void onLoginError(JSONObject error) {
-                if (error != null && error.has("detail") && "Bad credentials".equals(error.optString("detail"))) {
-                    Toast.makeText(requireContext(), "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(requireContext(), "Error al iniciar sesión", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).execute();
+                    @Override
+                    public void onLoginError(JSONObject error) {
+                        if (error != null && error.has("detail") && "Bad credentials".equals(error.optString("detail"))) {
+                            Toast.makeText(requireContext(), "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), "Error al iniciar sesión", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, progressBar
+        ).execute();
     }
 }

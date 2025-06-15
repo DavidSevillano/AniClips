@@ -1,9 +1,13 @@
 package com.example.aniclips.controllers;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.app.ProgressDialog;
+import android.view.View;
+import android.widget.ProgressBar;
 
 
 import com.example.aniclips.dto.ClipDto;
@@ -18,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,12 +34,23 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
     private final int size;
     private final Long clipId;
 
-    public HomeFragmentController(Activity activity, HomeClipsCallback callback, int page, int size, Long clipId) {
+    private final WeakReference<ProgressBar> progressBarRef;
+
+
+    public HomeFragmentController(Activity activity, HomeClipsCallback callback, int page, int size, Long clipId, ProgressBar progressBar) {
         this.activity = activity;
         this.callback = callback;
         this.page = page;
         this.size = size;
         this.clipId = clipId;
+        this.progressBarRef = new WeakReference<>(progressBar);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -106,6 +122,9 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
 
     @Override
     protected void onPostExecute(List<ClipDto> listaClips) {
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+
         if (listaClips == null || listaClips.isEmpty()) {
         } else {
             callback.onHomeClipsCallback(listaClips);

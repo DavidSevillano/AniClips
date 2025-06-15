@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +80,8 @@ public class ClipDetailFragment extends Fragment {
     private ImageView ivMiniatura;
     private PlayerView playerView;
     private ExoPlayer exoPlayer;
+    private ProgressBar progressBar;
+
 
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
 
@@ -123,6 +126,8 @@ public class ClipDetailFragment extends Fragment {
         tvDescription = view.findViewById(R.id.tvDescription);
         tvDate = view.findViewById(R.id.tvDate);
         ibDelete = view.findViewById(R.id.ibDelete);
+        progressBar = view.findViewById(R.id.progressBar);
+
 
         view.setVisibility(View.VISIBLE);
         view.setAlpha(0f);
@@ -233,7 +238,7 @@ public class ClipDetailFragment extends Fragment {
             @Override
             public void onError(String message) {
             }
-        }, 0, 0, clipId).execute();
+        }, 0, 0, clipId, progressBar).execute();
 
         return view;
     }

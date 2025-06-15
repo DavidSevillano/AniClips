@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroud_app"
+    android:padding="16dp">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filtros"
+            android:textSize="22sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:paddingBottom="16dp"/>
+
+        <ImageButton
+            android:id="@+id/btnCerrarSheet"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Cerrar"
+            app:tint="@color/white"/>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Géneros"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"
+
+        android:paddingBottom="8dp"/>
+
+    <GridLayout
+        android:id="@+id/gridGeneros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4"
+        android:alignmentMode="alignMargins"
+        android:rowOrderPreserved="false"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnShonen"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Shonen"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnShojo"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Shojo"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnSeinen"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Seinen"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnJosei"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Josei"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnMecha"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Mecha"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnIsekai"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Isekai"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnSlice"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Slice of Life"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnHorror"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Horror"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnComedia"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Comedia"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnOtros"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/tv_profile"
+            android:text="Otros"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:layout_margin="4dp"/>
+    </GridLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valoración"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="8dp"
+        android:paddingTop="8dp"/>
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/rangeSliderValoracion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="0"
+        android:valueTo="5"
+        android:stepSize="0.5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnReiniciarFiltros"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reiniciar"
+            android:backgroundTint="@color/btn_focused"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnAplicarFiltros"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Aplicar"
+            android:backgroundTint="@color/btn_focused"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</LinearLayout>

@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -56,6 +57,9 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
 
         holder.ibThumbnail.setOnClickListener(v -> {
             FragmentActivity activity = (FragmentActivity) holder.itemView.getContext();
+            ProgressBar progressBar = activity.findViewById(R.id.progressBar);
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+
             Fragment fragment = ClipDetailFragment.newInstance(miniatura.getId());
             activity.getSupportFragmentManager()
                     .beginTransaction()
@@ -63,7 +67,6 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
                     .addToBackStack(null)
                     .commit();
         });
-
     }
 
     @Override

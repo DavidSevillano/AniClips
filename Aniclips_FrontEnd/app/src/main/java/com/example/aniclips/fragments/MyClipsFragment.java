@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,16 +35,22 @@ public class MyClipsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_clips, container, false);
         rvClips = view.findViewById(R.id.rvClips);
         tvNoClips = view.findViewById(R.id.tvNoClips);
-        rvClips.setLayoutManager(new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false));        loadClips();
+        rvClips.setLayoutManager(new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false));
+        loadClips();
 
         return view;
     }
 
+
     private void loadClips() {
+        ProgressBar progressBar = requireParentFragment().getView().findViewById(R.id.progressBar);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+
         String userId = getArguments() != null ? getArguments().getString("user_id") : null;
         PerfilCallback callback = new PerfilCallback() {
             @Override
             public void onPerfilSuccess(JSONObject perfil) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 try {
                     JSONArray clipsArray = perfil.getJSONArray("clips");
                     List<ClipDtoMiniatura> clips = new ArrayList<>();
@@ -71,6 +78,7 @@ public class MyClipsFragment extends Fragment {
 
             @Override
             public void onPerfilError(String errorMsg) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 tvNoClips.setVisibility(View.VISIBLE);
                 rvClips.setVisibility(View.GONE);
             }
@@ -81,4 +89,5 @@ public class MyClipsFragment extends Fragment {
         } else {
             new PerfilController(getActivity(), callback, userId).execute();
         }
-    }}
+    }
+}

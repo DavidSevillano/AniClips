@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
 import androidx.fragment.app.Fragment;
 import com.example.aniclips.R;
 
 public class ProfileFragment extends Fragment {
     private static final String ARG_USER_ID = "user_id";
     private String userId;
-
     private View profileMainLayout;
 
     public static ProfileFragment newInstance(String userId) {
@@ -38,16 +39,16 @@ public class ProfileFragment extends Fragment {
         ProfileHeaderFragment headerFragment = new ProfileHeaderFragment();
         headerFragment.setArguments(bundle);
 
+        MyClipsFragment myClipsFragment = new MyClipsFragment();
+        myClipsFragment.setArguments(bundle);
+
         headerFragment.setPerfilLoadedListener(() -> {
-            if (profileMainLayout.getVisibility() != View.VISIBLE) {
+            if (profileMainLayout != null) {
                 profileMainLayout.setVisibility(View.VISIBLE);
                 profileMainLayout.setAlpha(0f);
                 profileMainLayout.animate().alpha(1f).setDuration(250).start();
             }
         });
-
-        MyClipsFragment myClipsFragment = new MyClipsFragment();
-        myClipsFragment.setArguments(bundle);
 
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.profileHeaderContainer, headerFragment)

@@ -1,6 +1,7 @@
 package com.example.aniclips.controllers;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
     private final boolean desdeDialogo;
     private final String userId;
 
+    private ProgressDialog progressDialog;
 
     public PerfilController(Activity activity, PerfilCallback callback) {
         this(activity, callback, false);
@@ -59,6 +61,9 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject perfil) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
         if (perfil != null) {
             callback.onPerfilSuccess(perfil);
         } else {

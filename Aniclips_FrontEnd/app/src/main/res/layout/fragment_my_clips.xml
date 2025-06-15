@@ -6,9 +6,6 @@
     android:background="#1E1E24"
     android:padding="16dp">
 
-
-
-    <!-- Icono de video -->
     <ImageView
         android:id="@+id/ivVideoIcon"
         android:layout_width="40dp"

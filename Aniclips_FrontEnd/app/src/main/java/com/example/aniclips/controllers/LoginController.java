@@ -1,8 +1,12 @@
 package com.example.aniclips.controllers;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.aniclips.interfaces.LoginCallback;
 import com.example.aniclips.utils.Constantes;
@@ -18,12 +22,22 @@ public class LoginController extends AsyncTask<Void, Void, JSONObject> {
     private final LoginCallback callback;
     private final String username;
     private final String password;
+    private final WeakReference<ProgressBar> progressBarRef;
 
-    public LoginController(Context context, String username, String password, LoginCallback callback) {
+
+    public LoginController(Context context, String username, String password, LoginCallback callback, ProgressBar progressBar) {
         this.contextRef = new WeakReference<>(context);
         this.callback = callback;
         this.username = username;
         this.password = password;
+        this.progressBarRef = new WeakReference<>(progressBar);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -45,6 +59,11 @@ public class LoginController extends AsyncTask<Void, Void, JSONObject> {
     @Override
     protected void onPostExecute(JSONObject response) {
         Context context = contextRef.get();
+
+        ProgressBar progressBar = progressBarRef.get();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+
+
         if (response == null || context == null) {
             callback.onLoginError(null);
             return;
