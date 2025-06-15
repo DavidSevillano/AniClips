@@ -377,11 +377,26 @@ public class ClipDetailFragment extends Fragment {
 
         followButton.setOnClickListener(v -> {
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
-            new FollowController(context, seguidoId, new FollowCallback() {
+            new FollowController(context, seguidoId, "POST", new FollowCallback() {
                 @Override
                 public void onFollowSuccess(JSONObject response) {
                     followButton.setVisibility(View.GONE);
                     followedButton.setVisibility(View.VISIBLE);
+                }
+                @Override
+                public void onError(String errorMsg) {
+                    Log.e("Follow", "Error: " + errorMsg);
+                }
+            }).execute();
+        });
+
+        followedButton.setOnClickListener(v -> {
+            UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
+            new FollowController(context, seguidoId, "DELETE", new FollowCallback() {
+                @Override
+                public void onFollowSuccess(JSONObject response) {
+                    followButton.setVisibility(View.VISIBLE);
+                    followedButton.setVisibility(View.GONE);
                 }
                 @Override
                 public void onError(String errorMsg) {

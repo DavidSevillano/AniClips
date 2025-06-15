@@ -386,9 +386,8 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
         holder.followButton.setOnClickListener(v -> {
             if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
-
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
-            new FollowController(context, seguidoId, new FollowCallback() {
+            new FollowController(context, seguidoId, "POST", new FollowCallback() {
                 @Override
                 public void onFollowSuccess(JSONObject response) {
                     holder.followButton.setVisibility(View.GONE);
@@ -397,6 +396,23 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 @Override
                 public void onError(String errorMsg) {
                     Log.e("Follow", "Error: " + errorMsg);
+                }
+            }).execute();
+        });
+
+        holder.followedButton.setOnClickListener(v -> {
+            if (requireLoginListener != null && requireLoginListener.onRequireLogin()) return;
+            UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
+            new FollowController(context, seguidoId, "DELETE", new FollowCallback() {
+                @Override
+                public void onFollowSuccess(JSONObject response) {
+                    holder.followButton.setVisibility(View.VISIBLE);
+                    holder.followedButton.setVisibility(View.GONE);
+                }
+                @Override
+                public void onError(String errorMsg) {
+                    holder.followButton.setVisibility(View.VISIBLE);
+                    holder.followedButton.setVisibility(View.GONE);
                 }
             }).execute();
         });
