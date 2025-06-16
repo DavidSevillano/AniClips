@@ -1,18 +1,36 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/text_no_clips"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_stat_rect"
-        android:gravity="center"
-        android:fontFamily="@font/lexend_regular"
-        android:layout_marginHorizontal="6dp"
-        android:text="No hay clips disponibles, explora clips en el apartado de búsqueda y sigue a cualquier usuario para que te aparezcan sus últimos clips!!!"
-        android:textSize="15sp"
-        android:textColor="#FFFFFF"
-        android:padding="12dp"/>
+        android:orientation="vertical"
+        android:background="@color/tv_profile"
+        android:gravity="center">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_no_clips"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center"
+            app:lottie_rawRes="@raw/no_video_found"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"/>
+
+        <TextView
+            android:id="@+id/text_no_clips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_stat_rect"
+            android:gravity="center"
+            android:fontFamily="@font/lexend_regular"
+            android:layout_marginHorizontal="6dp"
+            android:text="No hay clips disponibles, sigue a cualquier usuario para que te aparezcan sus últimos clips!"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"/>
+    </LinearLayout>
 </FrameLayout>

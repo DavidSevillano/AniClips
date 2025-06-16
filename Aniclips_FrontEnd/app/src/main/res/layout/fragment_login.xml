@@ -72,23 +72,21 @@
         app:layout_constraintTop_toBottomOf="@+id/cvUsername"
         app:cardBackgroundColor="@color/background_log_in_fields">
 
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_log_in_fields"
-        android:drawableStart="@drawable/lock_24px"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/lexend_regular"
-        android:hint="@string/password_hint"
-        android:textColor="@color/white"
-        android:inputType="textPassword"
-        android:padding="16dp"
-        android:textColorHint="@color/hint_text"
-        android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_log_in_fields"
+            android:drawableStart="@drawable/lock_24px"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/lexend_regular"
+            android:hint="@string/password_hint"
+            android:textColor="@color/white"
+            android:inputType="textPassword"
+            android:padding="16dp"
+            android:textColorHint="@color/hint_text"
+            android:textSize="16sp"/>
     </androidx.cardview.widget.CardView>
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogIn"
@@ -133,12 +131,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNoAccount" />
 
+    <View
+        android:id="@+id/progressOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#80000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -146,4 +154,3 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
