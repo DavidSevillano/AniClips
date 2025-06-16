@@ -201,8 +201,7 @@ public class ClipController {
     public Page<GetClipMiniaturaDto> getAllMiniatura(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size) {
-        Pageable pageRequest = PageRequest.of(page, size);
-        return clipService.findAll(pageRequest)
+        Pageable pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fecha"));        return clipService.findAll(pageRequest)
                 .map(GetClipMiniaturaDto::of);
     }
 
@@ -318,7 +317,7 @@ public class ClipController {
     public Page<GetClipMiniaturaDto> buscar(@RequestParam(value = "search", required = true) String search,
                                             @RequestParam(defaultValue = "0") int page) {
 
-        Pageable pageRequest = PageRequest.of(page, 15);
+        Pageable pageRequest = PageRequest.of(page, 18, Sort.Direction.DESC);
 
         List<SearchCriteria> params = new ArrayList<>();
         if (search != null) {

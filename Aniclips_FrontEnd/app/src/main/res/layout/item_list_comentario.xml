@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ibUser"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/icono_ejemplo"
+            app:shapeAppearanceOverlay="@style/CircleImageViewComments"/>
+
+        <TextView
+            android:id="@+id/tvUsuarioComentario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Usuario" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTextoComentario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_marginTop="12dp"
+        android:text="Comentario" />
+
+    <TextView
+        android:id="@+id/tvFechaComentario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/hint_text"
+        android:textSize="12sp"
+        android:layout_marginTop="8dp"
+        android:text="Fecha" />
+</LinearLayout>

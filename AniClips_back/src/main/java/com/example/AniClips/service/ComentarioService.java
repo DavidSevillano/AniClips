@@ -31,10 +31,10 @@ public class ComentarioService {
     private final ClipRepository clipRepository;
 
     @Transactional(readOnly = true)
-    public Page<Comentario> findAll(Pageable pageable) {
-        Page<Comentario> result = comentarioRepository.findAll(pageable);
+    public Page<Comentario> findAll(Long clipId, Pageable pageable) {
+        Page<Comentario> result = comentarioRepository.findByClipId(clipId, pageable);
         if (result.isEmpty()) {
-            throw new EntityNotFoundException("No se han encontrado comentarios");
+            throw new EntityNotFoundException("No se han encontrado comentarios para el clip");
         }
         return result;
     }

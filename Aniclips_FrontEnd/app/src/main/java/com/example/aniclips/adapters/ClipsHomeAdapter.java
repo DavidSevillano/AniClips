@@ -10,17 +10,25 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.RatingBar;
+import android.widget.PopupWindow;
+import android.widget.LinearLayout;
+import android.content.res.ColorStateList;
+import android.view.Gravity;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
+import com.example.aniclips.controllers.CommentsController;
 import com.example.aniclips.controllers.DeleteClipController;
 import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.dto.ComentarioDto;
 import com.example.aniclips.interfaces.DeleteCallback;
 import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
@@ -31,6 +39,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
@@ -80,6 +89,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ImageButton ibRating;
         ImageButton ibRatingFilled;
         ImageButton ibDelete;
+        ImageButton ibComment;
         ImageView ivMiniatura;
         PlayerView playerView;
         ExoPlayer exoPlayer;
@@ -106,6 +116,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvDate = itemView.findViewById(R.id.tvDate);
             ibDelete = itemView.findViewById(R.id.ibDelete);
+            ibComment = itemView.findViewById(R.id.ibComment);
         }
     }
 
@@ -130,6 +141,30 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         } else {
             holder.ibDelete.setVisibility(View.GONE);
         }
+
+        holder.ibComment.setOnClickListener(v -> {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View sheetView = inflater.inflate(R.layout.bottom_sheet_comentarios, null);
+
+            RecyclerView rv = sheetView.findViewById(R.id.rvComentarios);
+            rv.setLayoutManager(new LinearLayoutManager(context));
+            CommentsAdapter adapter = new CommentsAdapter();
+            rv.setAdapter(adapter);
+
+            BottomSheetDialog dialog = new BottomSheetDialog(context);
+            dialog.setContentView(sheetView);
+            dialog.show();
+
+            new CommentsController(context, clip.getId(), new CommentsController.CommentsCallback() {
+                @Override
+                public void onCommentsSuccess(List<ComentarioDto> comentarios) {
+                    adapter.setComentarios(comentarios);
+                }
+                @Override
+                public void onError(String errorMsg) {
+                }
+            }).execute();
+        });
 
         holder.textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
 
@@ -287,11 +322,70 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         }
 
         View.OnClickListener ratingClickListener = v -> {
+            View popupView = LayoutInflater.from(context).inflate(R.layout.popup_rating, null);
+            RatingBar ratingBar = popupView.findViewById(R.id.ratingBar);
+
+            Integer prevRating = ratingsMap.get(clipIdObj);
+            ratingBar.setRating(prevRating != null ? prevRating : 0);
+            ratingBar.setProgressTintList(android.content.res.ColorStateList.valueOf(context.getColor(R.color.btn_focused)));
+
+            popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int popupHeight = popupView.getMeasuredHeight();
+
+            PopupWindow popupWindow = new android.widget.PopupWindow(
+                    popupView,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    true
+            );
+            popupWindow.setElevation(8f);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setFocusable(true);
+
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+            popupWindow.showAtLocation(v, android.view.Gravity.NO_GRAVITY, location[0], location[1] - popupHeight);
+
+            ratingBar.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
+                if (fromUser) {
+                    ratingsMap.put(clipIdObj, (int) rating);
+
+                    int cantidadValoraciones = clip.getCantidadValoraciones();
+                    double mediaActual = clip.getMediaValoraciones();
+                    double sumaTotal = mediaActual * cantidadValoraciones;
+                    sumaTotal += rating;
+                    int nuevoTotal = cantidadValoraciones + 1;
+                    double nuevaMedia = sumaTotal / nuevoTotal;
+
+                    clip.setMediaValoraciones(nuevaMedia);
+                    clip.setCantidadValoraciones(nuevoTotal);
+                    clip.setLoRateo(true);
+                    holder.tvRatingCount.setText(String.format(java.util.Locale.US, "%.2f", nuevaMedia));
+
+                    if (rating > 0) {
+                        holder.ibRating.setVisibility(View.GONE);
+                        holder.ibRatingFilled.setVisibility(View.VISIBLE);
+                        holder.ibRatingFilled.setColorFilter(context.getColor(R.color.btn_focused));
+                    } else {
+                        holder.ibRating.setVisibility(View.VISIBLE);
+                        holder.ibRatingFilled.setVisibility(View.GONE);
+                        holder.ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
+                    }
+
+                    new RateController(context, clipIdObj, (int) rating, new RateCallback() {
+                        @Override
+                        public void onRateSuccess(org.json.JSONObject response) { }
+                        @Override
+                        public void onError(String errorMsg) { }
+                    }).execute();
+
+                    popupWindow.dismiss();
+                }
+            });
         };
         holder.ibRating.setOnClickListener(ratingClickListener);
         holder.ibRatingFilled.setOnClickListener(ratingClickListener);
     }
-
     private void setupFollow(ClipViewHolder holder, ClipDto clip, Context context) {
         SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);

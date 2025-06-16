@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,9 +83,9 @@ public class ComentarioController {
                     content = @Content),
     })
     @GetMapping
-    public Page<GetComentarioDto> getAll(@RequestParam(defaultValue = "0") int page) {
-        Pageable pageRequest = PageRequest.of(page, 8);
-        return comentarioService.findAll(pageRequest)
+    public Page<GetComentarioDto> getAll(@RequestParam Long clipId, @RequestParam(defaultValue = "0") int page) {
+        Pageable pageRequest = PageRequest.of(page, 8, Sort.by(Sort.Direction.DESC, "fecha"));
+        return comentarioService.findAll(clipId, pageRequest)
                 .map(GetComentarioDto::of);
     }
 
