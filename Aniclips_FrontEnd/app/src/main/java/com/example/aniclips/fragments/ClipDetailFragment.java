@@ -24,6 +24,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
@@ -76,6 +78,7 @@ public class ClipDetailFragment extends Fragment {
     private ImageButton ibRating;
     private ImageButton ibRatingFilled;
     private ImageButton ibDelete;
+    private ImageButton ibComment;
     private ImageView ivMiniatura;
     private PlayerView playerView;
     private ExoPlayer exoPlayer;
@@ -126,6 +129,7 @@ public class ClipDetailFragment extends Fragment {
         tvDate = view.findViewById(R.id.tvDate);
         ibDelete = view.findViewById(R.id.ibDelete);
         progressBar = view.findViewById(R.id.progressBar);
+        ibComment = view.findViewById(R.id.ibComment);
 
         view.setVisibility(View.VISIBLE);
         view.setAlpha(0f);
@@ -234,6 +238,30 @@ public class ClipDetailFragment extends Fragment {
                             exoPlayer.pause();
                             ibPlayVideo.setVisibility(View.VISIBLE);
                         }
+                    });
+
+                    ibComment.setOnClickListener(v -> {
+                        LayoutInflater inflater = LayoutInflater.from(requireContext());
+                        View sheetView = inflater.inflate(R.layout.bottom_sheet_comentarios, null);
+
+                        RecyclerView rv = sheetView.findViewById(R.id.rvComentarios);
+                        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+                        com.example.aniclips.adapters.CommentsAdapter adapter = new com.example.aniclips.adapters.CommentsAdapter();
+                        rv.setAdapter(adapter);
+
+                        com.google.android.material.bottomsheet.BottomSheetDialog dialog = new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext());
+                        dialog.setContentView(sheetView);
+                        dialog.show();
+
+                        new com.example.aniclips.controllers.CommentsController(requireContext(), clipId, new com.example.aniclips.controllers.CommentsController.CommentsCallback() {
+                            @Override
+                            public void onCommentsSuccess(java.util.List<com.example.aniclips.dto.ComentarioDto> comentarios) {
+                                adapter.setComentarios(comentarios);
+                            }
+                            @Override
+                            public void onError(String errorMsg) {
+                            }
+                        }).execute();
                     });
 
                     String fechaStr = clip.getFecha();

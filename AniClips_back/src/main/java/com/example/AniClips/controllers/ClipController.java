@@ -317,7 +317,7 @@ public class ClipController {
     public Page<GetClipMiniaturaDto> buscar(@RequestParam(value = "search", required = true) String search,
                                             @RequestParam(defaultValue = "0") int page) {
 
-        Pageable pageRequest = PageRequest.of(page, 18, Sort.Direction.DESC);
+        Pageable pageRequest = PageRequest.of(page, 18, Sort.by(Sort.Direction.DESC, "fecha"));
 
         List<SearchCriteria> params = new ArrayList<>();
         if (search != null) {
