@@ -17,7 +17,7 @@ import okhttp3.Response;
 
 public class OkHttpTools {
 
-    private static final String BASE_URL = Constantes.API_BASE_URL_PORTATIL;
+    private static final String BASE_URL = Constantes.API_BASE_URL;
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -234,7 +234,7 @@ public class OkHttpTools {
                 .build();
 
         Request request = new Request.Builder()
-                .url(Constantes.API_BASE_URL_PORTATIL + endpoint)
+                .url(Constantes.API_BASE_URL + endpoint)
                 .addHeader("Authorization", "Bearer " + token)
                 .put(requestBody)
                 .build();

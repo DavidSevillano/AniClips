@@ -27,6 +27,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Coment
         notifyDataSetChanged();
     }
 
+    public List<ComentarioDto> getComentarios() {
+        return new ArrayList<>(comentarios);
+    }
+
     @NonNull
     @Override
     public ComentarioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,7 +61,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Coment
                         .placeholder(R.drawable.icono_ejemplo)
                         .into(holder.ibUser);
             } else {
-                holder.ibUser.setImageResource(R.drawable.icono_ejemplo);
+                holder.ibUser.setImageResource(R.drawable.ic_profile);
             }
         } else {
             holder.tvUsuario.setText("");

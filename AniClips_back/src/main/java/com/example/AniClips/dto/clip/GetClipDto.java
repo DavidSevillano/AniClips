@@ -22,7 +22,8 @@ public record GetClipDto(
         int cantidadValoraciones,
         boolean ledioLike,
         boolean loRateo,
-        boolean loSigue
+        boolean loSigue,
+        boolean loComento
 ) {
     public static GetClipDto of(Clip clip, Usuario usuarioActual, boolean loSigue) {
         double mediaValoraciones = clip.getValoraciones().isEmpty()
@@ -32,13 +33,16 @@ public record GetClipDto(
                 .average()
                 .orElse(0.0)));
 
-        int cantidadValoraciones = clip.getValoraciones().size(); // <-- Calcula aquí
+        int cantidadValoraciones = clip.getValoraciones().size();
 
         boolean leDioLike = usuarioActual != null && clip.getMeGustas().stream()
                 .anyMatch(meGusta -> meGusta.getUsuario().getId().equals(usuarioActual.getId()));
 
         boolean loValoro = usuarioActual != null && clip.getValoraciones().stream()
                 .anyMatch(valoracion -> valoracion.getUsuario().getId().equals(usuarioActual.getId()));
+
+        boolean loComento = usuarioActual != null && clip.getComentarios().stream()
+                .anyMatch(comentario -> comentario.getUsuario().getId().equals(usuarioActual.getId()));
 
         return new GetClipDto(
                 clip.getId(),
@@ -55,7 +59,8 @@ public record GetClipDto(
                 cantidadValoraciones,
                 leDioLike,
                 loValoro,
-                loSigue
+                loSigue,
+                loComento
         );
     }
 }

@@ -105,8 +105,7 @@ public class SignInFragment extends Fragment {
 
                     SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
                     prefs.edit().putString(Constantes.PREF_USER_EMAIL, email).apply();
-                    prefs.edit().putString(Constantes.PREF_USER_USERNAME, username).apply();
-                    prefs.edit().putString(Constantes.PREF_USER_PASSWORD, password).apply();
+
                 } else {
                     Toast.makeText(requireContext(), "Error al crear usuario", Toast.LENGTH_SHORT).show();
                 }

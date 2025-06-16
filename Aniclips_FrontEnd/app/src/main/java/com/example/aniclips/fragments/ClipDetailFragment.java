@@ -1,25 +1,21 @@
 package com.example.aniclips.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.aniclips.R;
-import com.example.aniclips.activities.MainActivity;
+import com.example.aniclips.adapters.CommentsAdapter;
+import com.example.aniclips.controllers.CommentsController;
+import com.example.aniclips.controllers.CreateCommentController;
 import com.example.aniclips.controllers.DeleteClipController;
 import com.example.aniclips.controllers.FollowController;
 import com.example.aniclips.controllers.HomeFragmentController;
@@ -37,16 +35,20 @@ import com.example.aniclips.controllers.LikeController;
 import com.example.aniclips.controllers.RateController;
 import com.example.aniclips.dialogs.RegisterDialog;
 import com.example.aniclips.dto.ClipDto;
+import com.example.aniclips.dto.ComentarioDto;
+import com.example.aniclips.dto.UsuarioClipDto;
 import com.example.aniclips.interfaces.DeleteCallback;
 import com.example.aniclips.interfaces.FollowCallback;
 import com.example.aniclips.interfaces.HomeClipsCallback;
 import com.example.aniclips.interfaces.MeGustaCallback;
 import com.example.aniclips.interfaces.RateCallback;
 import com.example.aniclips.utils.Constantes;
+import com.example.aniclips.utils.HideNavigationBar;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
@@ -79,6 +81,7 @@ public class ClipDetailFragment extends Fragment {
     private ImageButton ibRatingFilled;
     private ImageButton ibDelete;
     private ImageButton ibComment;
+    private ImageButton ibCommentFilled;
     private ImageView ivMiniatura;
     private PlayerView playerView;
     private ExoPlayer exoPlayer;
@@ -128,8 +131,9 @@ public class ClipDetailFragment extends Fragment {
         tvDescription = view.findViewById(R.id.tvDescription);
         tvDate = view.findViewById(R.id.tvDate);
         ibDelete = view.findViewById(R.id.ibDelete);
-        progressBar = view.findViewById(R.id.progressBar);
         ibComment = view.findViewById(R.id.ibComment);
+        ibCommentFilled = view.findViewById(R.id.ibCommentFilled);
+        progressBar = view.findViewById(R.id.progressBar);
 
         view.setVisibility(View.VISIBLE);
         view.setAlpha(0f);
@@ -147,9 +151,26 @@ public class ClipDetailFragment extends Fragment {
 
                     if ("ADMIN".equals(userRole)) {
                         ibDelete.setVisibility(View.VISIBLE);
-                        setupDelete(clip, requireContext());
+                        ibDelete.setOnClickListener(v -> {
+                            new DeleteClipController(requireContext(), clip.getId(), new DeleteCallback() {
+                                @Override
+                                public void onDeleteSuccess(JSONObject response) {
+                                    requireActivity().onBackPressed();
+                                }
+                                @Override
+                                public void onDeleteError(JSONObject error) { }
+                            }).execute();
+                        });
                     } else {
                         ibDelete.setVisibility(View.GONE);
+                    }
+
+                    if (clip.isLoComento()) {
+                        ibComment.setVisibility(View.GONE);
+                        ibCommentFilled.setVisibility(View.VISIBLE);
+                    } else {
+                        ibComment.setVisibility(View.VISIBLE);
+                        ibCommentFilled.setVisibility(View.GONE);
                     }
 
                     textViewUsername.setText(clip.getGetUsuarioClipDto().getUsername());
@@ -169,8 +190,18 @@ public class ClipDetailFragment extends Fragment {
                             .centerCrop()
                             .into(imageViewPerfil);
 
+                    String fechaStr = clip.getFecha();
+                    try {
+                        SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        Date date = sdfInput.parse(fechaStr);
+                        SimpleDateFormat sdfOutput = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+                        String fechaFormateada = sdfOutput.format(date);
+                        tvDate.setText(fechaFormateada);
+                    } catch (Exception e) {
+                        tvDate.setText(fechaStr);
+                    }
+
                     textViewUsername.setOnClickListener(v -> {
-                        if (!checkLoginAndShowDialog(requireContext())) return;
                         ProfileFragment fragment = ProfileFragment.newInstance(clip.getGetUsuarioClipDto().getIdUser().toString());
                         requireActivity().getSupportFragmentManager()
                                 .beginTransaction()
@@ -179,7 +210,6 @@ public class ClipDetailFragment extends Fragment {
                                 .commit();
                     });
                     imageViewPerfil.setOnClickListener(v -> {
-                        if (!checkLoginAndShowDialog(requireContext())) return;
                         ProfileFragment fragment = ProfileFragment.newInstance(clip.getGetUsuarioClipDto().getIdUser().toString());
                         requireActivity().getSupportFragmentManager()
                                 .beginTransaction()
@@ -240,206 +270,263 @@ public class ClipDetailFragment extends Fragment {
                         }
                     });
 
-                    ibComment.setOnClickListener(v -> {
+                    View.OnClickListener openCommentsSheet = v -> {
                         LayoutInflater inflater = LayoutInflater.from(requireContext());
                         View sheetView = inflater.inflate(R.layout.bottom_sheet_comentarios, null);
 
+                        HideNavigationBar.hideNavigationBar(sheetView);
+
+                        int maxHeight = (int) (requireContext().getResources().getDisplayMetrics().heightPixels * 0.55);
+                        sheetView.post(() -> {
+                            ViewGroup.LayoutParams params = sheetView.getLayoutParams();
+                            if (params == null) {
+                                params = new ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.WRAP_CONTENT
+                                );
+                            }
+                            params.height = maxHeight;
+                            sheetView.setLayoutParams(params);
+                        });
+
                         RecyclerView rv = sheetView.findViewById(R.id.rvComentarios);
                         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-                        com.example.aniclips.adapters.CommentsAdapter adapter = new com.example.aniclips.adapters.CommentsAdapter();
+                        CommentsAdapter adapter = new CommentsAdapter();
                         rv.setAdapter(adapter);
 
-                        com.google.android.material.bottomsheet.BottomSheetDialog dialog = new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext());
+                        EditText etNuevoComentario = sheetView.findViewById(R.id.etNuevoComentario);
+                        ImageButton btnEnviarComentario = sheetView.findViewById(R.id.btnEnviarComentario);
+
+                        BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
                         dialog.setContentView(sheetView);
+
+                        dialog.setCancelable(true);
+                        dialog.setCanceledOnTouchOutside(true);
+
+                        dialog.setOnShowListener(d -> {
+                            View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+                            if (bottomSheet != null) {
+                                com.google.android.material.bottomsheet.BottomSheetBehavior<?> behavior =
+                                        com.google.android.material.bottomsheet.BottomSheetBehavior.from(bottomSheet);
+                                behavior.setDraggable(false);
+                                behavior.setHideable(true);
+                            }
+                        });
                         dialog.show();
 
-                        new com.example.aniclips.controllers.CommentsController(requireContext(), clipId, new com.example.aniclips.controllers.CommentsController.CommentsCallback() {
+                        new CommentsController(requireContext(), clip.getId(), new CommentsController.CommentsCallback() {
                             @Override
-                            public void onCommentsSuccess(java.util.List<com.example.aniclips.dto.ComentarioDto> comentarios) {
+                            public void onCommentsSuccess(List<ComentarioDto> comentarios) {
                                 adapter.setComentarios(comentarios);
                             }
                             @Override
-                            public void onError(String errorMsg) {
-                            }
+                            public void onError(String errorMsg) { }
                         }).execute();
-                    });
 
-                    String fechaStr = clip.getFecha();
-                    try {
-                        SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                        Date date = sdfInput.parse(fechaStr);
-                        SimpleDateFormat sdfOutput = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "ES"));
-                        String fechaFormateada = sdfOutput.format(date);
-                        tvDate.setText(fechaFormateada);
-                    } catch (Exception e) {
-                        tvDate.setText(fechaStr);
-                    }
-                    setupLike(clip, requireContext());
-                    setupRating(clip, requireContext());
-                    setupFollow(clip, requireContext());
+                        btnEnviarComentario.setOnClickListener(view1 -> {
+                            String texto = etNuevoComentario.getText().toString().trim();
+                            if (texto.isEmpty()) return;
+                            btnEnviarComentario.setEnabled(false);
+                            etNuevoComentario.setText("");
+                            etNuevoComentario.clearFocus();
+
+                            clip.setLoComento(true);
+                            ibComment.setVisibility(View.GONE);
+                            ibCommentFilled.setVisibility(View.VISIBLE);
+
+                            int currentCount = 0;
+                            try {
+                                currentCount = Integer.parseInt(tvCommentCount.getText().toString());
+                            } catch (NumberFormatException ignored) {}
+                            tvCommentCount.setText(String.valueOf(currentCount + 1));
+
+                            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.hideSoftInputFromWindow(etNuevoComentario.getWindowToken(), 0);
+                            }
+
+                            String username = prefs.getString(Constantes.PREF_USER_USERNAME, "Usuario");
+
+                            UsuarioClipDto usuario = new UsuarioClipDto();
+                            usuario.setUsername(username);
+
+                            ComentarioDto nuevoComentario = new ComentarioDto();
+                            nuevoComentario.setTexto(texto);
+                            nuevoComentario.setFecha(java.time.LocalDate.now());
+                            nuevoComentario.setGetUsuarioClipDto(usuario);
+
+                            adapter.setComentarios(
+                                    new java.util.ArrayList<ComentarioDto>() {{
+                                        add(nuevoComentario);
+                                        addAll(adapter.getComentarios());
+                                    }}
+                            );
+                            rv.scrollToPosition(0);
+
+                            new CreateCommentController(requireContext(), clip.getId(), texto, new CreateCommentController.CreateCommentCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    btnEnviarComentario.setEnabled(true);
+                                    new CommentsController(requireContext(), clip.getId(), new CommentsController.CommentsCallback() {
+                                        @Override
+                                        public void onCommentsSuccess(List<ComentarioDto> comentarios) {
+                                            adapter.setComentarios(comentarios);
+                                            rv.scrollToPosition(adapter.getItemCount() - 1);
+                                            clip.setCantidadComentarios(comentarios.size());
+                                            tvCommentCount.setText(String.valueOf(comentarios.size()));
+                                        }
+                                        @Override
+                                        public void onError(String errorMsg) { }
+                                    }).execute();
+                                }
+                                @Override
+                                public void onError(String errorMsg) {
+                                    btnEnviarComentario.setEnabled(true);
+                                }
+                            }).execute();
+                        });
+                    };
+
+                    ibComment.setOnClickListener(openCommentsSheet);
+                    ibCommentFilled.setOnClickListener(openCommentsSheet);
+
+                    setupLike(clip);
+                    setupRating(clip);
+                    setupFollow(clip);
                 }
             }
 
             @Override
             public void onNoClips() { }
-        }, 0, 0, clipId, progressBar).execute();
+        }, 0, 1, clipId, progressBar).execute();
 
         return view;
     }
 
-    private boolean isUserLoggedIn(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
-        return prefs.contains(Constantes.PREF_TOKEN_JWT);
-    }
-
-    private boolean checkLoginAndShowDialog(Context context) {
-        if (!isUserLoggedIn(context)) {
-            new RegisterDialog().show(getParentFragmentManager(), "RegisterDialog");
-            return false;
-        }
-        return true;
-    }
-
-    private void setupLike(ClipDto clip, Context context) {
+    private void setupLike(ClipDto clip) {
         Long clipIdObj = clip.getId();
 
         if (clip.isLedioLike()) {
             ibLike.setVisibility(View.GONE);
             ibLikeFilled.setVisibility(View.VISIBLE);
-            ibLikeFilled.setColorFilter(context.getColor(R.color.btn_focused));
+            ibLikeFilled.setColorFilter(requireContext().getColor(R.color.btn_focused));
         } else {
             ibLike.setVisibility(View.VISIBLE);
             ibLikeFilled.setVisibility(View.GONE);
-            ibLike.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
+            ibLike.setColorFilter(requireContext().getColor(R.color.bottom_nav_icon_color));
         }
 
         ibLike.setOnClickListener(v -> {
-            if (!checkLoginAndShowDialog(context)) return;
             clip.setLedioLike(true);
             clip.setCantidadMeGusta(clip.getCantidadMeGusta() + 1);
             tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
             ibLike.setVisibility(View.GONE);
             ibLikeFilled.setVisibility(View.VISIBLE);
-            ibLikeFilled.setColorFilter(context.getColor(R.color.btn_focused));
+            ibLikeFilled.setColorFilter(requireContext().getColor(R.color.btn_focused));
 
-            new LikeController(context, clipIdObj, "POST", new MeGustaCallback() {
+            new LikeController(requireContext(), clipIdObj, "POST", new MeGustaCallback() {
                 @Override
                 public void onMegustaSuccess(JSONObject response) { }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Megusta", "Error al enviar like: " + errorMsg);
-                }
+                public void onError(String errorMsg) { }
             }).execute();
         });
 
         ibLikeFilled.setOnClickListener(v -> {
-            if (!checkLoginAndShowDialog(context)) return;
             clip.setLedioLike(false);
             clip.setCantidadMeGusta(Math.max(0, clip.getCantidadMeGusta() - 1));
             tvLikeCount.setText(String.valueOf(clip.getCantidadMeGusta()));
             ibLike.setVisibility(View.VISIBLE);
             ibLikeFilled.setVisibility(View.GONE);
-            ibLike.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
+            ibLike.setColorFilter(requireContext().getColor(R.color.bottom_nav_icon_color));
 
-            new LikeController(context, clipIdObj, "DELETE", new MeGustaCallback() {
+            new LikeController(requireContext(), clipIdObj, "DELETE", new MeGustaCallback() {
                 @Override
                 public void onMegustaSuccess(JSONObject response) { }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Megusta", "Error al quitar like: " + errorMsg);
-                }
+                public void onError(String errorMsg) { }
             }).execute();
         });
     }
 
-    private void showRatingPopup(Context context, Long clipIdObj, View anchorView, ClipDto clip, TextView tvRatingCount) {
-        View popupView = LayoutInflater.from(context).inflate(R.layout.popup_rating, null);
-        RatingBar ratingBar = popupView.findViewById(R.id.ratingBar);
-
-        Integer prevRating = ratingsMap.get(clipIdObj);
-        ratingBar.setRating(prevRating != null ? prevRating : 0);
-        ratingBar.setProgressTintList(ColorStateList.valueOf(context.getColor(R.color.btn_focused)));
-
-        popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int popupHeight = popupView.getMeasuredHeight();
-
-        PopupWindow popupWindow = new PopupWindow(
-                popupView,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                true
-        );
-        popupWindow.setElevation(8f);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setFocusable(true);
-
-        int[] location = new int[2];
-        anchorView.getLocationOnScreen(location);
-        popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, location[0], location[1] - popupHeight);
-
-        ratingBar.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
-            if (fromUser) {
-                ratingsMap.put(clipIdObj, (int) rating);
-
-                int cantidadValoraciones = clip.getCantidadValoraciones();
-                double mediaActual = clip.getMediaValoraciones();
-                double sumaTotal = mediaActual * cantidadValoraciones;
-                sumaTotal += rating;
-                int nuevoTotal = cantidadValoraciones + 1;
-                double nuevaMedia = sumaTotal / nuevoTotal;
-
-                clip.setMediaValoraciones(nuevaMedia);
-                clip.setCantidadValoraciones(nuevoTotal);
-                clip.setLoRateo(true);
-                tvRatingCount.setText(String.format(Locale.US, "%.2f", nuevaMedia));
-
-                if (rating > 0) {
-                    ibRating.setVisibility(View.GONE);
-                    ibRatingFilled.setVisibility(View.VISIBLE);
-                    ibRatingFilled.setColorFilter(context.getColor(R.color.btn_focused));
-                } else {
-                    ibRating.setVisibility(View.VISIBLE);
-                    ibRatingFilled.setVisibility(View.GONE);
-                    ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
-                }
-
-                new RateController(context, clipIdObj, (int) rating, new RateCallback() {
-                    @Override
-                    public void onRateSuccess(JSONObject response) { }
-                    @Override
-                    public void onError(String errorMsg) {
-                        Log.e("Valoracion", "Error al enviar valoración: " + errorMsg);
-                    }
-                }).execute();
-
-                popupWindow.dismiss();
-            }
-        });
-    }
-
-    private void setupRating(ClipDto clip, Context context) {
+    private void setupRating(ClipDto clip) {
         Long clipIdObj = clip.getId();
 
         if (clip.isLoRateo()) {
             ibRating.setVisibility(View.GONE);
             ibRatingFilled.setVisibility(View.VISIBLE);
-            ibRatingFilled.setColorFilter(context.getColor(R.color.btn_focused));
+            ibRatingFilled.setColorFilter(requireContext().getColor(R.color.btn_focused));
         } else {
             ibRating.setVisibility(View.VISIBLE);
             ibRatingFilled.setVisibility(View.GONE);
-            ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
+            ibRating.setColorFilter(requireContext().getColor(R.color.bottom_nav_icon_color));
         }
 
         View.OnClickListener ratingClickListener = v -> {
-            if (!checkLoginAndShowDialog(context)) return;
-            showRatingPopup(context, clipIdObj, v, clip, tvRatingCount);
+            View popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_rating, null);
+            RatingBar ratingBar = popupView.findViewById(R.id.ratingBar);
+
+            Integer prevRating = ratingsMap.get(clipIdObj);
+            ratingBar.setRating(prevRating != null ? prevRating : 0);
+            ratingBar.setProgressTintList(ColorStateList.valueOf(requireContext().getColor(R.color.btn_focused)));
+
+            android.widget.PopupWindow popupWindow = new android.widget.PopupWindow(
+                    popupView,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    true
+            );
+            popupWindow.setElevation(8f);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setFocusable(true);
+
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+            popupWindow.showAtLocation(v, android.view.Gravity.NO_GRAVITY, location[0], location[1] - popupView.getMeasuredHeight());
+
+            ratingBar.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
+                if (fromUser) {
+                    ratingsMap.put(clipIdObj, (int) rating);
+
+                    int cantidadValoraciones = clip.getCantidadValoraciones();
+                    double mediaActual = clip.getMediaValoraciones();
+                    double sumaTotal = mediaActual * cantidadValoraciones;
+                    sumaTotal += rating;
+                    int nuevoTotal = cantidadValoraciones + 1;
+                    double nuevaMedia = sumaTotal / nuevoTotal;
+
+                    clip.setMediaValoraciones(nuevaMedia);
+                    clip.setCantidadValoraciones(nuevoTotal);
+                    clip.setLoRateo(true);
+                    tvRatingCount.setText(String.format(Locale.US, "%.2f", nuevaMedia));
+
+                    if (rating > 0) {
+                        ibRating.setVisibility(View.GONE);
+                        ibRatingFilled.setVisibility(View.VISIBLE);
+                        ibRatingFilled.setColorFilter(requireContext().getColor(R.color.btn_focused));
+                    } else {
+                        ibRating.setVisibility(View.VISIBLE);
+                        ibRatingFilled.setVisibility(View.GONE);
+                        ibRating.setColorFilter(requireContext().getColor(R.color.bottom_nav_icon_color));
+                    }
+
+                    new RateController(requireContext(), clipIdObj, (int) rating, new RateCallback() {
+                        @Override
+                        public void onRateSuccess(JSONObject response) { }
+                        @Override
+                        public void onError(String errorMsg) { }
+                    }).execute();
+
+                    popupWindow.dismiss();
+                }
+            });
         };
         ibRating.setOnClickListener(ratingClickListener);
         ibRatingFilled.setOnClickListener(ratingClickListener);
     }
 
-    private void setupFollow(ClipDto clip, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+    private void setupFollow(ClipDto clip) {
+        SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
 
         String clipUserId = clip.getGetUsuarioClipDto().getIdUser().toString();
@@ -459,82 +546,31 @@ public class ClipDetailFragment extends Fragment {
         }
 
         followButton.setOnClickListener(v -> {
-            if (!checkLoginAndShowDialog(context)) return;
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             clip.setLoSigue(true);
             followButton.setVisibility(View.GONE);
             followedButton.setVisibility(View.VISIBLE);
 
-            new FollowController(context, seguidoId, "POST", new FollowCallback() {
+            new FollowController(requireContext(), seguidoId, "POST", new FollowCallback() {
                 @Override
                 public void onFollowSuccess(JSONObject response) { }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Follow", "Error: " + errorMsg);
-                }
+                public void onError(String errorMsg) { }
             }).execute();
         });
 
         followedButton.setOnClickListener(v -> {
-            if (!checkLoginAndShowDialog(context)) return;
             UUID seguidoId = clip.getGetUsuarioClipDto().getIdUser();
             clip.setLoSigue(false);
             followButton.setVisibility(View.VISIBLE);
             followedButton.setVisibility(View.GONE);
 
-            new FollowController(context, seguidoId, "DELETE", new FollowCallback() {
+            new FollowController(requireContext(), seguidoId, "DELETE", new FollowCallback() {
                 @Override
                 public void onFollowSuccess(JSONObject response) { }
                 @Override
-                public void onError(String errorMsg) {
-                    Log.e("Follow", "Error: " + errorMsg);
-                }
+                public void onError(String errorMsg) { }
             }).execute();
         });
-    }
-
-    private void setupDelete(ClipDto clip, Context context) {
-        ibDelete.setOnClickListener(v -> {
-            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(context)
-                    .setTitle("ATENCIÓN")
-                    .setMessage("¿Estás seguro de que quieres eliminar este clip?")
-                    .setPositiveButton("Sí", (dialogInterface, which) -> {
-                        new DeleteClipController(context, clip.getId(), new DeleteCallback() {
-                            @Override
-                            public void onDeleteSuccess(JSONObject response) {
-                                Toast.makeText(context, "Clip eliminado correctamente", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(requireContext(), MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                requireActivity().finish();
-                            }
-                            @Override
-                            public void onDeleteError(JSONObject error) {
-                                Toast.makeText(context, "Error al eliminar el clip", Toast.LENGTH_SHORT).show();
-                            }
-                        }).execute();
-                    })
-                    .setNegativeButton("No", null)
-                    .create();
-
-            dialog.show();
-
-            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
-                    .setTextColor(context.getColor(android.R.color.white));
-            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
-                    .setTextColor(context.getColor(android.R.color.white));
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (exoPlayer != null) {
-            exoPlayer.release();
-            exoPlayer = null;
-        }
-        if (showMiniaturaRunnable != null) {
-            handler.removeCallbacks(showMiniaturaRunnable);
-        }
-        super.onDestroyView();
     }
 }

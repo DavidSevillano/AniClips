@@ -18,6 +18,7 @@ public class ClipDto {
     private boolean ledioLike;
     private boolean loRateo;
     private boolean loSigue;
+    private boolean loComento;
 
     // Getters y Setters
     public Long getId() {
@@ -126,5 +127,11 @@ public class ClipDto {
     }
     public void setLoSigue(boolean loSigue) {
         this.loSigue = loSigue;
+    }
+    public boolean isLoComento() {
+        return loComento;
+    }
+    public void setLoComento(boolean loComento) {
+        this.loComento = loComento;
     }
 }

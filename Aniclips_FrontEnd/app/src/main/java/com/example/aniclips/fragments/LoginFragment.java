@@ -1,6 +1,8 @@
 package com.example.aniclips.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.example.aniclips.R;
 import com.example.aniclips.activities.MainActivity;
 import com.example.aniclips.controllers.LoginController;
 import com.example.aniclips.interfaces.LoginCallback;
+import com.example.aniclips.utils.Constantes;
 
 import org.json.JSONObject;
 
@@ -80,6 +83,9 @@ public class LoginFragment extends Fragment {
     private void login(){
         if (!validarCampos()) return;
 
+        String username = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
         new LoginController(
                 requireContext(),
                 etUsername.getText().toString(),
@@ -87,6 +93,10 @@ public class LoginFragment extends Fragment {
                 new LoginCallback() {
                     @Override
                     public void onLoginSuccess(JSONObject response) {
+                        SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+                        prefs.edit().putString(Constantes.PREF_USER_USERNAME, username).apply();
+                        prefs.edit().putString(Constantes.PREF_USER_PASSWORD, password).apply();
+
                         Intent intent = new Intent(requireContext(), MainActivity.class);
                         startActivity(intent);
                     }

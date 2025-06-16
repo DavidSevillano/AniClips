@@ -109,6 +109,7 @@ public class HomeFragmentController extends AsyncTask<Void, Void, List<ClipDto>>
         clipDto.setLedioLike(clipJson.optBoolean("ledioLike"));
         clipDto.setLoRateo(clipJson.optBoolean("loRateo"));
         clipDto.setLoSigue(clipJson.optBoolean("loSigue"));
+        clipDto.setLoComento(clipJson.optBoolean("loComento"));
         clipJson.optString("fecha");
 
         JSONObject usuarioJson = clipJson.optJSONObject("getUsuarioClipDto");
