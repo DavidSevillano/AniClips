@@ -64,7 +64,7 @@ public class UploadClipController extends AsyncTask<Void, Void, JSONObject> {
             RequestBody requestBody = builder.build();
 
             Request request = new Request.Builder()
-                    .url(Constantes.API_BASE_URL + "/clip/")
+                    .url(Constantes.API_BASE_URL_PORTATIL + "/clip/")
                     .addHeader("Authorization", "Bearer " + token)
                     .post(requestBody)
                     .build();
