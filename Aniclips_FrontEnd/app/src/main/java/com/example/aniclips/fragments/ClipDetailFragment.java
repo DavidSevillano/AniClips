@@ -2,7 +2,9 @@ package com.example.aniclips.fragments;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.aniclips.R;
+import com.example.aniclips.activities.MainActivity;
 import com.example.aniclips.adapters.CommentsAdapter;
 import com.example.aniclips.controllers.CommentsController;
 import com.example.aniclips.controllers.CreateCommentController;
@@ -179,6 +182,7 @@ public class ClipDetailFragment extends Fragment {
 
         SharedPreferences prefs = getContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
         String userRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
+        String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
 
         new HomeFragmentController(requireActivity(), new HomeClipsCallback() {
             @Override
@@ -194,17 +198,39 @@ public class ClipDetailFragment extends Fragment {
                     ClipDto clip = clips.get(0);
                     currentClip = clip;
 
-                    if ("ADMIN".equals(userRole)) {
+                    String clipUserId = clip.getGetUsuarioClipDto().getIdUser().toString();
+                    boolean isAdmin = "ADMIN".equals(userRole);
+                    boolean isOwner = myUserId != null && myUserId.equals(clipUserId);
+
+                    if (isAdmin || isOwner) {
                         ibDelete.setVisibility(View.VISIBLE);
                         ibDelete.setOnClickListener(v -> {
-                            new DeleteClipController(requireContext(), clip.getId(), new DeleteCallback() {
-                                @Override
-                                public void onDeleteSuccess(JSONObject response) {
-                                    requireActivity().onBackPressed();
-                                }
-                                @Override
-                                public void onDeleteError(JSONObject error) { }
-                            }).execute();
+                            AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                                    .setTitle("ATENCIÓN")
+                                    .setMessage("¿Estás seguro de que quieres eliminar este clip?")
+                                    .setPositiveButton("Sí", (dialogInterface, which) -> {
+                                        new DeleteClipController(requireContext(), clip.getId(), new DeleteCallback() {
+                                            @Override
+                                            public void onDeleteSuccess(JSONObject response) {
+                                                Intent intent = new Intent(requireContext(), MainActivity.class);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                                requireActivity().finish();
+                                            }
+                                            @Override
+                                            public void onDeleteError(JSONObject error) { }
+                                        }, isAdmin).execute();
+                                    })
+                                    .setNegativeButton("No", null)
+                                    .create();
+
+                            dialog.setOnShowListener(dlg -> {
+                                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(requireContext().getColor(android.R.color.white));
+                                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
+                                        .setTextColor(requireContext().getColor(android.R.color.white));
+                            });
+                            dialog.show();
                         });
                     } else {
                         ibDelete.setVisibility(View.GONE);
@@ -349,9 +375,25 @@ public class ClipDetailFragment extends Fragment {
 
                         RecyclerView rv = sheetView.findViewById(R.id.rvComentarios);
                         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-                        CommentsAdapter adapter = new CommentsAdapter();
-                        rv.setAdapter(adapter);
-
+                        CommentsAdapter adapter = new CommentsAdapter(myUserId, isAdmin);                        rv.setAdapter(adapter);
+                        adapter.setOnCommentsChangedListener((newCount, comentarios) -> {
+                            tvCommentCount.setText(String.valueOf(newCount));
+                            boolean tengoComentario = false;
+                            for (ComentarioDto c : comentarios) {
+                                if (myUserId != null && c.getGetUsuarioClipDto() != null &&
+                                        myUserId.equals(String.valueOf(c.getGetUsuarioClipDto().getIdUser()))) {
+                                    tengoComentario = true;
+                                    break;
+                                }
+                            }
+                            if (tengoComentario) {
+                                ibComment.setVisibility(View.GONE);
+                                ibCommentFilled.setVisibility(View.VISIBLE);
+                            } else {
+                                ibComment.setVisibility(View.VISIBLE);
+                                ibCommentFilled.setVisibility(View.GONE);
+                            }
+                        });
                         EditText etNuevoComentario = sheetView.findViewById(R.id.etNuevoComentario);
                         ImageButton btnEnviarComentario = sheetView.findViewById(R.id.btnEnviarComentario);
 
@@ -624,7 +666,6 @@ public class ClipDetailFragment extends Fragment {
     private void setupFollow(ClipDto clip) {
         SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
-
         String clipUserId = clip.getGetUsuarioClipDto().getIdUser().toString();
 
         if (myUserId != null && myUserId.equals(clipUserId)) {
@@ -700,9 +741,29 @@ public class ClipDetailFragment extends Fragment {
 
             RecyclerView rv = sheetView.findViewById(R.id.rvComentarios);
             rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-            CommentsAdapter adapter = new CommentsAdapter();
-            rv.setAdapter(adapter);
-
+            SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+            String userRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
+            String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
+            boolean isAdmin = "ADMIN".equals(userRole);
+            CommentsAdapter adapter = new CommentsAdapter(myUserId, isAdmin);            rv.setAdapter(adapter);
+            adapter.setOnCommentsChangedListener((newCount, comentarios) -> {
+                tvCommentCount.setText(String.valueOf(newCount));
+                boolean tengoComentario = false;
+                for (ComentarioDto c : comentarios) {
+                    if (myUserId != null && c.getGetUsuarioClipDto() != null &&
+                            myUserId.equals(String.valueOf(c.getGetUsuarioClipDto().getIdUser()))) {
+                        tengoComentario = true;
+                        break;
+                    }
+                }
+                if (tengoComentario) {
+                    ibComment.setVisibility(View.GONE);
+                    ibCommentFilled.setVisibility(View.VISIBLE);
+                } else {
+                    ibComment.setVisibility(View.VISIBLE);
+                    ibCommentFilled.setVisibility(View.GONE);
+                }
+            });
             EditText etNuevoComentario = sheetView.findViewById(R.id.etNuevoComentario);
             ImageButton btnEnviarComentario = sheetView.findViewById(R.id.btnEnviarComentario);
 
@@ -756,7 +817,6 @@ public class ClipDetailFragment extends Fragment {
                     imm.hideSoftInputFromWindow(etNuevoComentario.getWindowToken(), 0);
                 }
 
-                SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
                 String username = prefs.getString(Constantes.PREF_USER_USERNAME, "Usuario");
                 String avatarUrl = prefs.getString(Constantes.PREF_USER_AVATAR, null);
 

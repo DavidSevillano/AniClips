@@ -2,6 +2,7 @@ package com.example.aniclips.adapters;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -193,8 +194,13 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
         SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
         String userRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
+        String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
+        String clipUserId = clip.getGetUsuarioClipDto().getIdUser().toString();
 
-        if ("ADMIN".equals(userRole)) {
+        boolean isAdmin = "ADMIN".equals(userRole);
+        boolean isOwner = myUserId != null && myUserId.equals(clipUserId);
+
+        if (isAdmin || isOwner) {
             holder.ibDelete.setVisibility(View.VISIBLE);
             setupDelete(holder, clip, context);
         } else {
@@ -235,10 +241,25 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
             RecyclerView rv = sheetView.findViewById(R.id.rvComentarios);
             rv.setLayoutManager(new LinearLayoutManager(context));
-            CommentsAdapter adapter = new CommentsAdapter();
-            rv.setAdapter(adapter);
-
-            EditText etNuevoComentario = sheetView.findViewById(R.id.etNuevoComentario);
+            CommentsAdapter adapter = new CommentsAdapter(myUserId, isAdmin);            rv.setAdapter(adapter);
+            adapter.setOnCommentsChangedListener((newCount, comentarios) -> {
+                holder.tvCommentCount.setText(String.valueOf(newCount));
+                boolean tengoComentario = false;
+                for (ComentarioDto c : comentarios) {
+                    if (myUserId != null && c.getGetUsuarioClipDto() != null &&
+                            myUserId.equals(String.valueOf(c.getGetUsuarioClipDto().getIdUser()))) {
+                        tengoComentario = true;
+                        break;
+                    }
+                }
+                if (tengoComentario) {
+                    holder.ibComment.setVisibility(View.GONE);
+                    holder.ibCommentFilled.setVisibility(View.VISIBLE);
+                } else {
+                    holder.ibComment.setVisibility(View.VISIBLE);
+                    holder.ibCommentFilled.setVisibility(View.GONE);
+                }
+            });            EditText etNuevoComentario = sheetView.findViewById(R.id.etNuevoComentario);
             ImageButton btnEnviarComentario = sheetView.findViewById(R.id.btnEnviarComentario);
 
             BottomSheetDialog dialog = new BottomSheetDialog(context);
@@ -653,41 +674,33 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     }
 
     private void setupDelete(ClipViewHolder holder, ClipDto clip, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+        String userRole = prefs.getString(Constantes.PREF_MY_USER_ROLE, null);
+        boolean isAdmin = "ADMIN".equals(userRole);
+
         holder.ibDelete.setOnClickListener(v -> {
-            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle("ATENCIÓN")
                     .setMessage("¿Estás seguro de que quieres eliminar este clip?")
-                    .setPositiveButton("Sí", (dialogInterface, which) -> {
+                    .setPositiveButton("Sí", (dialog, which) -> {
                         new DeleteClipController(context, clip.getId(), new DeleteCallback() {
                             @Override
-                            public void onDeleteSuccess(JSONObject response) {
-                                int position = holder.getAdapterPosition();
-                                if (position != RecyclerView.NO_POSITION) {
-                                    clipList.remove(position);
-                                    notifyItemRemoved(position);
-                                    if (clipList.isEmpty() && onClipsEmptyListener != null) {
-                                        onClipsEmptyListener.onClipsEmpty();
-                                    }
+                            public void onDeleteSuccess(org.json.JSONObject response) {
+                                int pos = holder.getAdapterPosition();
+                                if (pos != RecyclerView.NO_POSITION) {
+                                    clipList.remove(pos);
+                                    notifyItemRemoved(pos);
                                 }
                             }
-
                             @Override
-                            public void onDeleteError(JSONObject error) {
-
-                            }
-                        }).execute();
+                            public void onDeleteError(org.json.JSONObject error) { }
+                        }, isAdmin).execute();
                     })
                     .setNegativeButton("No", null)
-                    .create();
-
-            dialog.show();
-
-            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
-                    .setTextColor(context.getColor(android.R.color.white));
-            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
-                    .setTextColor(context.getColor(android.R.color.white));
+                    .show();
         });
     }
+
     public void releaseAllPlayers() {
         if (recyclerView == null) return;
         for (int i = 0; i < getItemCount(); i++) {

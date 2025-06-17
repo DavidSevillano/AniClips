@@ -13,16 +13,15 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
-public class DeleteClipController extends AsyncTask<Void, Void, JSONObject> {
+public class DeleteCommentController extends AsyncTask<Void, Void, JSONObject> {
     private final WeakReference<Context> contextRef;
-    private final long clipId;
+    private final long commentId;
     private final DeleteCallback callback;
     private final boolean isAdmin;
 
-
-    public DeleteClipController(Context context, long clipId, DeleteCallback callback, boolean isAdmin) {
+    public DeleteCommentController(Context context, long commentId, DeleteCallback callback, boolean isAdmin) {
         this.contextRef = new WeakReference<>(context);
-        this.clipId = clipId;
+        this.commentId = commentId;
         this.callback = callback;
         this.isAdmin = isAdmin;
     }
@@ -39,11 +38,11 @@ public class DeleteClipController extends AsyncTask<Void, Void, JSONObject> {
 
         String url;
         if (isAdmin) {
-            url = "/clip/admin/delete/" + clipId;
+            url = "/comentario/admin/delete/" + commentId;
         } else {
-            url = "/clip/delete/" + clipId;
+            url = "/comentario/delete/" + commentId;
         }
-        String response = OkHttpTools.deleteWithToken(url, clipId, token);
+        String response = OkHttpTools.deleteWithToken(url, commentId, token);
 
         if (response == null || response.trim().isEmpty()) {
             JSONObject json = new JSONObject();

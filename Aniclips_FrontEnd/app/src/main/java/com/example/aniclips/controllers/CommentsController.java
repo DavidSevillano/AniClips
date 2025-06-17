@@ -74,6 +74,7 @@ public class CommentsController extends AsyncTask<Void, Void, List<ComentarioDto
 
     private ComentarioDto parseComentarioDto(JSONObject comentarioJson) {
         ComentarioDto comentario = new ComentarioDto();
+        comentario.setId(comentarioJson.optLong("id", 0));
         comentario.setTexto(comentarioJson.optString("texto", ""));
         try {
             comentario.setFecha(LocalDate.parse(comentarioJson.optString("fecha", "")));

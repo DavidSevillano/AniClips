@@ -3,10 +3,26 @@ package com.example.aniclips.dto;
 import java.time.LocalDate;
 
 public class ComentarioDto {
+    private Long id;
     private String texto;
     private LocalDate fecha;
     private UsuarioClipDto getUsuarioClipDto;
 
+    public ComentarioDto() {
+        // Constructor por defecto
+    }
+    public ComentarioDto(Long id, String texto, LocalDate fecha, UsuarioClipDto getUsuarioClipDto) {
+        this.id = id;
+        this.texto = texto;
+        this.fecha = fecha;
+        this.getUsuarioClipDto = getUsuarioClipDto;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
     public String getTexto() {
         return texto;
     }

@@ -53,24 +53,6 @@ VALUES
   ('http://10.128.5.182:8080/iconos/icono_ejemplo14.jpg', 'Soy usuario09, fan del anime.', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a'),
   ('http://10.128.5.182:8080/iconos/icono_ejemplo15.jpg', 'Soy usuario10, fan del anime.', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879');
 
---INSERT INTO perfil (avatar, descripcion, usuario_id)
---VALUES
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo1.jpg', 'Soy Naruto Uzumaki, futuro Hokage!', '11111111-1111-1111-1111-111111111111'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo2.jpg', '¡El más fuerte del universo!', '22222222-2222-2222-2222-222222222222'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo3.jpg', 'Por la libertad de la humanidad.', '33333333-3333-3333-3333-333333333333'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo4.jpg', 'Soy Monkey D. Luffy, ¡quiero ser el Rey de los Piratas!', '44444444-4444-4444-4444-444444444444'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo5.jpg', 'Soy Roronoa Zoro, el espadachín más fuerte.', '55555555-5555-5555-5555-555555555555'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo6.jpg', 'Soy usuario01, fan del anime.', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo7.jpg', 'Soy usuario02, fan del anime.', '67ce3096-3848-4d10-801f-62a41e72c0cb'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo8.jpg', 'Soy usuario03, fan del anime.', 'e69316d5-9003-4d3b-8322-30d8b28245ab'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo9.jpg', 'Soy usuario04, fan del anime.', 'fd46e5c2-c7a9-4196-84d0-5e2ed0c0a56d'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo10.jpg', 'Soy usuario05, fan del anime.', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo11.jpg', 'Soy usuario06, fan del anime.', 'b2b8f4fc-b1f6-4a4e-8baf-11333cd6b5f4'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo12.jpg', 'Soy usuario07, fan del anime.', 'cfb3f7e5-3620-4bd2-85c1-f7589d137c72'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo13.jpg', 'Soy usuario08, fan del anime.', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo14.jpg', 'Soy usuario09, fan del anime.', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a'),
---  ('http://10.128.5.182:8080/iconos/icono_ejemplo15.jpg', 'Soy usuario10, fan del anime.', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879');
-
 INSERT INTO clip (nombre_anime, descripcion, url_video, fecha, visitas, duracion, miniatura, usuario_id, genero)
 VALUES
   ('Bleach', 'Naruto vs Pain', 'http://10.128.5.182:8080/videos/Bleach_1.mp4', '2023-01-15', 5000, 120, 'http://10.128.5.182:8080/miniaturas/Bleach_1.jpg', '11111111-1111-1111-1111-111111111111', 'Shonen'),
@@ -106,22 +88,59 @@ VALUES
   ('Sword Art Online', 'Gon se transforma en adulto', 'http://10.128.5.182:8080/videos/Sao_2.mp4', '2024-06-12', 11500, 125, 'http://10.128.5.182:8080/miniaturas/Sao_2.jpg', '11111111-1111-1111-1111-111111111111', 'Shonen'),
   ('Sword Art Online', 'Asta desbloquea el poder antimagia', 'http://10.128.5.182:8080/videos/Sao_3.mp4', '2024-06-13', 8800, 100, 'http://10.128.5.182:8080/miniaturas/Sao_3.jpg', '44444444-4444-4444-4444-444444444444', 'Magia');
 
+
+--INSERT INTO perfil (avatar, descripcion, usuario_id)
+--VALUES
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo1.jpg', 'Soy Naruto Uzumaki, futuro Hokage!', '11111111-1111-1111-1111-111111111111'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo2.jpg', '¡El más fuerte del universo!', '22222222-2222-2222-2222-222222222222'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo3.jpg', 'Por la libertad de la humanidad.', '33333333-3333-3333-3333-333333333333'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo4.jpg', 'Soy Monkey D. Luffy, ¡quiero ser el Rey de los Piratas!', '44444444-4444-4444-4444-444444444444'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo5.jpg', 'Soy Roronoa Zoro, el espadachín más fuerte.', '55555555-5555-5555-5555-555555555555'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo6.jpg', 'Soy usuario01, fan del anime.', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo7.jpg', 'Soy usuario02, fan del anime.', '67ce3096-3848-4d10-801f-62a41e72c0cb'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo8.jpg', 'Soy usuario03, fan del anime.', 'e69316d5-9003-4d3b-8322-30d8b28245ab'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo9.jpg', 'Soy usuario04, fan del anime.', 'fd46e5c2-c7a9-4196-84d0-5e2ed0c0a56d'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo10.jpg', 'Soy usuario05, fan del anime.', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo11.jpg', 'Soy usuario06, fan del anime.', 'b2b8f4fc-b1f6-4a4e-8baf-11333cd6b5f4'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo12.jpg', 'Soy usuario07, fan del anime.', 'cfb3f7e5-3620-4bd2-85c1-f7589d137c72'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo13.jpg', 'Soy usuario08, fan del anime.', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo14.jpg', 'Soy usuario09, fan del anime.', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a'),
+--  ('http://192.168.189.234:8080/iconos/icono_ejemplo15.jpg', 'Soy usuario10, fan del anime.', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879');
+--
 --INSERT INTO clip (nombre_anime, descripcion, url_video, fecha, visitas, duracion, miniatura, usuario_id, genero)
 --VALUES
---  ('Naruto Shippuden', 'Naruto vs Pain', 'http://10.128.5.182:8080/videos/Ejemplo1.mp4', '2023-01-15', 5000, 120, 'http://10.128.5.182:8080/miniaturas/miniatura1.jpg', '11111111-1111-1111-1111-111111111111', 'Shonen'),
---  ('Dragon Ball Z', 'Goku se transforma en Super Saiyan', 'http://10.128.5.182:8080/videos/Ejemplo2.mp4', '2023-02-20', 10000, 150, 'http://10.128.5.182:8080/miniaturas/miniatura2.jpg', '22222222-2222-2222-2222-222222222222', 'Shonen'),
---  ('One Piece', 'Luffy vs Crocodile', 'http://10.128.5.182:8080/videos/Ejemplo3.mp4', '2023-03-10', 8000, 130, 'http://10.128.5.182:8080/miniaturas/miniatura3.jpg', '44444444-4444-4444-4444-444444444444', 'Shonen'),
---  ('One Piece', 'Zoro vs Mihawk', 'http://10.128.5.182:8080/videos/Ejemplo4.mp4', '2023-04-12', 15000, 180, 'http://10.128.5.182:8080/miniaturas/miniatura4.jpg', '55555555-5555-5555-5555-555555555555', 'Shonen'),
---  ('Naruto Shippuden', 'Batalla final entre ninjas legendarios', 'http://10.128.5.182:8080/videos/Ejemplo5.mp4', '2024-01-01', 1000, 85, 'http://10.128.5.182:8080/miniaturas/miniatura5.jpg', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5', 'Acción'),
---  ('One Piece', 'La aventura en el Grand Line continúa', 'http://10.128.5.182:8080/videos/Ejemplo6.mp4', '2024-01-02', 1000, 90, 'http://10.128.5.182:8080/miniaturas/miniatura6.jpg', '67ce3096-3848-4d10-801f-62a41e72c0cb', 'Acción'),
---  ('My Hero Academia', 'El despertar de un nuevo héroe', 'http://10.128.5.182:8080/videos/Ejemplo7.mp4', '2024-01-03', 1000, 70, 'http://10.128.5.182:8080/miniaturas/miniatura7.jpg', 'e69316d5-9003-4d3b-8322-30d8b28245ab', 'Acción'),
---  ('Demon Slayer', 'Una lucha contra demonios para salvar a la familia', 'http://10.128.5.182:8080/videos/Ejemplo8.mp4', '2024-01-04', 1000, 80, 'http://10.128.5.182:8080/miniaturas/miniatura8.jpg', 'fd46e5c2-c7a9-4196-84d0-5e2ed0c0a56d', 'Acción'),
---  ('Fullmetal Alchemist', 'Hermandad y alquimia en un mundo oscuro', 'http://10.128.5.182:8080/videos/Ejemplo9.mp4', '2024-01-05', 1000, 75, 'http://10.128.5.182:8080/miniaturas/miniatura9.jpg', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204', 'Acción'),
---  ('Death Note', 'El juego mortal de la justicia', 'http://10.128.5.182:8080/videos/Ejemplo10.mp4', '2024-01-06', 1000, 65, 'http://10.128.5.182:8080/miniaturas/miniatura10.jpg', 'b2b8f4fc-b1f6-4a4e-8baf-11333cd6b5f4', 'Acción'),
---  ('Sword Art Online', 'Atrapados en un mundo virtual', 'http://10.128.5.182:8080/videos/Ejemplo11.mp4', '2024-01-07', 1000, 88, 'http://10.128.5.182:8080/miniaturas/miniatura11.jpg', 'cfb3f7e5-3620-4bd2-85c1-f7589d137c72', 'Acción'),
---  ('Tokyo Ghoul', 'La dualidad entre humano y monstruo', 'http://10.128.5.182:8080/videos/Ejemplo12.mp4', '2024-01-08', 1000, 85, 'http://10.128.5.182:8080/miniaturas/miniatura12.jpg', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc', 'Acción'),
---  ('Bleach', 'El destino de los shinigami en batalla', 'http://10.128.5.182:8080/videos/Ejemplo13.mp4', '2024-01-09', 1000, 80, 'http://10.128.5.182:8080/miniaturas/miniatura13.jpg', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a', 'Acción'),
---  ('Hunter x Hunter', 'La búsqueda de un cazador legendario', 'http://10.128.5.182:8080/videos/Ejemplo14.mp4', '2024-01-10', 1000, 90, 'http://10.128.5.182:8080/miniaturas/miniatura14.jpg', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879', 'Acción');
+--  ('Bleach', 'Naruto vs Pain', 'http://192.168.189.234:8080/videos/Bleach_1.mp4', '2023-01-15', 5000, 120, 'http://192.168.189.234:8080/miniaturas/Bleach_1.jpg', '11111111-1111-1111-1111-111111111111', 'Shonen'),
+--  ('Bleach', 'Goku se transforma en Super Saiyan', 'http://192.168.189.234:8080/videos/Bleach_2.mp4', '2023-02-20', 10000, 150, 'http://192.168.189.234:8080/miniaturas/Bleach_2.jpg', '22222222-2222-2222-2222-222222222222', 'Shonen'),
+--  ('Bleach', 'Luffy vs Crocodile', 'http://192.168.189.234:8080/videos/Bleach_3.mp4', '2023-03-10', 8000, 130, 'http://192.168.189.234:8080/miniaturas/Bleach_3.jpg', '44444444-4444-4444-4444-444444444444', 'Josei'),
+--  ('Bleach', 'Zoro vs Mihawk', 'http://192.168.189.234:8080/videos/Bleach_4.mp4', '2023-04-12', 15000, 180, 'http://192.168.189.234:8080/miniaturas/Bleach_4.jpg', '55555555-5555-5555-5555-555555555555', 'Seinen'),
+--  ('Demon Slayer', 'Batalla final entre ninjas legendarios', 'http://192.168.189.234:8080/videos/Demon_Slayer_1.mp4', '2024-01-01', 1000, 85, 'http://192.168.189.234:8080/miniaturas/Demon_Slayer_1.jpg', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5', 'Horror'),
+--  ('Demon Slayer', 'La aventura en el Grand Line continúa', 'http://192.168.189.234:8080/videos/Demon_Slayer_2.mp4', '2024-01-02', 1000, 90, 'http://192.168.189.234:8080/miniaturas/Demon_Slayer_2.jpg', '67ce3096-3848-4d10-801f-62a41e72c0cb', 'Shoujo'),
+--  ('Demon Slayer', 'El despertar de un nuevo héroe', 'http://192.168.189.234:8080/videos/Demon_Slayer_3.mp4', '2024-01-03', 1000, 70, 'http://192.168.189.234:8080/miniaturas/Demon_Slayer_3.jpg', 'e69316d5-9003-4d3b-8322-30d8b28245ab', 'Seinen'),
+--  ('Jujutsu Kaisen', 'Una lucha contra demonios para salvar a la familia', 'http://192.168.189.234:8080/videos/Jujutsu_1.mp4', '2024-01-04', 1000, 80, 'http://192.168.189.234:8080/miniaturas/Jujutsu_1.jpg', 'fd46e5c2-c7a9-4196-84d0-5e2ed0c0a56d', 'Josei'),
+--  ('Jujutsu Kaisen', 'Hermandad y alquimia en un mundo oscuro', 'http://192.168.189.234:8080/videos/Jujutsu_2.mp4', '2024-01-05', 1000, 75, 'http://192.168.189.234:8080/miniaturas/Jujutsu_2.jpg', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204', 'Mecha'),
+--  ('Jujutsu Kaisen', 'El juego mortal de la justicia', 'http://192.168.189.234:8080/videos/Jujutsu_3.mp4', '2024-01-06', 1000, 65, 'http://192.168.189.234:8080/miniaturas/Jujutsu_3.jpg', 'b2b8f4fc-b1f6-4a4e-8baf-11333cd6b5f4', 'Slice of Life'),
+--  ('Jujutsu Kaisen', 'Atrapados en un mundo virtual', 'http://192.168.189.234:8080/videos/Jujutsu_4.mp4', '2024-01-07', 1000, 88, 'http://192.168.189.234:8080/miniaturas/Jujutsu_4.jpg', 'cfb3f7e5-3620-4bd2-85c1-f7589d137c72', 'Isekai'),
+--  ('One Piece', 'La dualidad entre humano y monstruo', 'http://192.168.189.234:8080/videos/One_piece_1.mp4', '2024-01-08', 1000, 85, 'http://192.168.189.234:8080/miniaturas/One_piece_1.jpg', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc', 'Slice of Life'),
+--  ('One Piece', 'El destino de los shinigami en batalla', 'http://192.168.189.234:8080/videos/One_piece_2.mp4', '2024-01-09', 1000, 80, 'http://192.168.189.234:8080/miniaturas/One_piece_2.jpg', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a', 'Isekai'),
+--  ('One Piece', 'La búsqueda de un cazador legendario', 'http://192.168.189.234:8080/videos/One_piece_3.mp4', '2024-01-10', 1000, 90, 'http://192.168.189.234:8080/miniaturas/One_piece_3.jpg', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879', 'Horror'),
+--  ('Chainsaw Man', 'Eren se transforma en Titán', 'http://192.168.189.234:8080/videos/Chainsaw_man_1.mp4', '2024-02-01', 12000, 145, 'http://192.168.189.234:8080/miniaturas/Chainsaw_man_1.jpg', '33333333-3333-3333-3333-333333333333', 'Shonen'),
+--  ('Chainsaw Man', 'La caída de Shiganshina', 'http://192.168.189.234:8080/videos/Chainsaw_man_2.mp4', '2024-02-02', 11000, 135, 'http://192.168.189.234:8080/miniaturas/Chainsaw_man_2.jpg', '33333333-3333-3333-3333-333333333333', 'Otros'),
+--  ('Chainsaw Man', 'Batalla en el distrito de Trost', 'http://192.168.189.234:8080/videos/Chainsaw_man_3.mp4', '2024-02-03', 10500, 140, 'http://192.168.189.234:8080/miniaturas/Chainsaw_man_3.jpg', '33333333-3333-3333-3333-333333333333', 'Comedia'),
+--  ('Death Note', 'Deku usa One for All al máximo', 'http://192.168.189.234:8080/videos/Death_Note_1.mp4', '2024-03-01', 9800, 110, 'http://192.168.189.234:8080/miniaturas/Death_Note_1.jpg', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204', 'Otros'),
+--  ('Death Note', 'Bakugo vs Todoroki', 'http://192.168.189.234:8080/videos/Death_Note_2.mp4', '2024-03-02', 8700, 100, 'http://192.168.189.234:8080/miniaturas/Death_Note_2.jpg', 'fd46e5c2-c7a9-4196-84d0-5e2ed0c0a56d', 'Comedia'),
+--  ('Death Note', 'La batalla del festival deportivo', 'http://192.168.189.234:8080/videos/Death_Note_3.mp4', '2024-03-03', 9100, 120, 'http://192.168.189.234:8080/miniaturas/Death_Note_3.jpg', 'cfb3f7e5-3620-4bd2-85c1-f7589d137c72', 'Shonen'),
+--  ('Jojos', 'Kaneki despierta su ghoul interior', 'http://192.168.189.234:8080/videos/Jojos_1.mp4', '2024-04-01', 7200, 100, 'http://192.168.189.234:8080/miniaturas/Jojos_1.jpg', '2e0ef9b2-56a0-4bd1-b94f-30e1a01fc879', 'Seinen'),
+--  ('Jojos', 'La pelea en el Antiguo Distrito 20', 'http://192.168.189.234:8080/videos/Jojos_2.mp4', '2024-04-02', 6800, 105, 'http://192.168.189.234:8080/miniaturas/Jojos_2.jpg', 'b2b8f4fc-b1f6-4a4e-8baf-11333cd6b5f4', 'Seinen'),
+--  ('Jojos', 'La tortura de Jason a Kaneki', 'http://192.168.189.234:8080/videos/Jojos_3.mp4', '2024-04-03', 7600, 95, 'http://192.168.189.234:8080/miniaturas/Jojos_3.jpg', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204', 'Seinen'),
+--  ('Seven Deadly Sins', 'Denji vs Katana Man', 'http://192.168.189.234:8080/videos/Nanatsu_1.mp4', '2024-05-01', 8700, 112, 'http://192.168.189.234:8080/miniaturas/Nanatsu_1.jpg', '7db9261f-f6b5-42a6-a5c0-b6234a39ffb5', 'Acción'),
+--  ('Seven Deadly Sins', 'Makima muestra su verdadero poder', 'http://192.168.189.234:8080/videos/Nanatsu_2.mp4', '2024-05-02', 9200, 118, 'http://192.168.189.234:8080/miniaturas/Nanatsu_2.jpg', 'e69316d5-9003-4d3b-8322-30d8b28245ab', 'Josei'),
+--  ('Seven Deadly Sins', 'El contrato con el demonio zorro', 'http://192.168.189.234:8080/videos/Nanatsu_3.mp4', '2024-05-03', 8900, 108, 'http://192.168.189.234:8080/miniaturas/Nanatsu_3.jpg', '67ce3096-3848-4d10-801f-62a41e72c0cb', 'Slice of Life'),
+--  ('Pokemon', 'Mob desata todo su poder', 'http://192.168.189.234:8080/videos/Pokemon_1.mp4', '2024-06-01', 6000, 95, 'http://192.168.189.234:8080/miniaturas/Pokemon_1.jpg', 'b300b6b6-155e-4c0a-a9e3-6506a5b4fffc', 'Otros'),
+--  ('Pokemon', 'La pelea contra Claw', 'http://192.168.189.234:8080/videos/Pokemon_2.mp4', '2024-06-02', 6400, 98, 'http://192.168.189.234:8080/miniaturas/Pokemon_2.jpg', 'f4b0fc53-348e-4e3d-9ff7-6e50e0a2480a', 'Otros'),
+--  ('Pokemon', 'Gohan alcanza el Super Saiyan 2', 'http://192.168.189.234:8080/videos/Pokemon_3.mp4', '2024-06-10', 13000, 110, 'http://192.168.189.234:8080/miniaturas/Pokemon_3.jpg', '22222222-2222-2222-2222-222222222222', 'Shoujo'),
+--  ('Sword Art Online', 'Edward sacrifica su brazo', 'http://192.168.189.234:8080/videos/Sao_1.mp4', '2024-06-11', 9700, 105, 'http://192.168.189.234:8080/miniaturas/Sao_1.jpg', 'fa49b90d-f100-4b69-8bc6-d7cde9a27204', 'Horror'),
+--  ('Sword Art Online', 'Gon se transforma en adulto', 'http://192.168.189.234:8080/videos/Sao_2.mp4', '2024-06-12', 11500, 125, 'http://192.168.189.234:8080/miniaturas/Sao_2.jpg', '11111111-1111-1111-1111-111111111111', 'Comedia'),
+--  ('Sword Art Online', 'Asta desbloquea el poder antimagia', 'http://192.168.189.234:8080/videos/Sao_3.mp4', '2024-06-13', 8800, 100, 'http://192.168.189.234:8080/miniaturas/Sao_3.jpg', '44444444-4444-4444-4444-444444444444', 'Shonen');
 
 INSERT INTO comentario (fecha, texto, usuario_id, clip_id)
 VALUES
