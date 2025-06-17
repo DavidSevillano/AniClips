@@ -51,6 +51,7 @@ public class PerfilController extends AsyncTask<Void, Void, JSONObject> {
                 responseJSON = OkHttpTools.postWithToken("/auth/login", "", token);
             } else {
                 responseJSON = OkHttpTools.getWithToken("/perfil/", token);
+                Log.i("perfil:", responseJSON);
             }
             return new JSONObject(responseJSON);
         } catch (Exception e) {

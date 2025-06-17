@@ -12,6 +12,7 @@ public class Constantes {
     public static String PREF_TOKEN_JWT = "token_jwt";
     public static String PREF_MY_USER_ID = "my_user_id";
     public static String PREF_MY_USER_ROLE = "my_user_role";
+    public static String PREF_USER_AVATAR = "user_avatar";
 
     public static String BUNDLE_USER_USERNAME = "bundle_user_username";
 }

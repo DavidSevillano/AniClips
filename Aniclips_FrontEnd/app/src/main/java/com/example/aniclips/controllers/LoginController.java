@@ -75,11 +75,14 @@ public class LoginController extends AsyncTask<Void, Void, JSONObject> {
             try {
                 String token = response.getString("token");
                 String id = response.getString("id");
+                String avatar = response.getString("avatar");
+
                 String rol = response.getJSONArray("roles").getString(0);
 
                 SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
                 prefs.edit().putString(Constantes.PREF_TOKEN_JWT, token).apply();
                 prefs.edit().putString(Constantes.PREF_MY_USER_ID, id).apply();
+                prefs.edit().putString(Constantes.PREF_USER_AVATAR, avatar).apply();
                 prefs.edit().putString(Constantes.PREF_MY_USER_ROLE, rol).apply();
 
             } catch (JSONException e) {

@@ -11,6 +11,7 @@ public record UserResponse(
         UUID id,
         String username,
         @JsonInclude(JsonInclude.Include.NON_NULL)
+        String avatar,
         Set<String> roles,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String token,
@@ -22,9 +23,21 @@ public record UserResponse(
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
+                null,
                 user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()),
                 null,
                 null
+        );
+    }
+
+    public static UserResponse of(Usuario user, String avatar, String token, String refreshToken) {
+        return new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                avatar,
+                user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()),
+                token,
+                refreshToken
         );
     }
 
@@ -32,9 +45,11 @@ public record UserResponse(
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
+                null,
                 user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()),
                 token,
                 refreshToken
         );
     }
+
 }

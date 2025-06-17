@@ -70,11 +70,7 @@ public abstract class GenericSpecificationBuilder<U> {
             } else if (operation.equals(":")) {
                 if (root.get(key).getJavaType() == String.class) {
                     String valor = value.toString().trim();
-                    if (valor.contains(" ")) {
-                        predicate = builder.equal(root.get(key), valor);
-                    } else {
-                        predicate = builder.like(builder.lower(root.get(key)), "%" + valor.toLowerCase() + "%");
-                    }
+                    predicate = builder.like(builder.lower(root.get(key)), "%" + valor.toLowerCase() + "%");
                 } else {
                     predicate = builder.equal(root.get(key), value);
                 }

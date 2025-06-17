@@ -102,6 +102,7 @@ public class UsuarioController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Usuario user = (Usuario) authentication.getPrincipal();
+        String avatar = user.getPerfil().getAvatar();
 
         String accessToken = jwtService.generateAccessToken(user);
 
@@ -109,7 +110,7 @@ public class UsuarioController {
         RefreshToken refreshToken = refreshTokenService.create(user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(UserResponse.of(user, accessToken, refreshToken.getToken()));
+                .body(UserResponse.of(user, avatar, accessToken, refreshToken.getToken()));
 
     }
 

@@ -49,13 +49,15 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
 
         adapter = new ClipsHomeAdapter(new ArrayList<>());
 
+
+
         adapter.setOnClipsEmptyListener(() -> {
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.mainContainer, new NoClipsFragment())
                     .commit();
         });
-
+        adapter.setRecyclerView(recyclerViewClips);
         recyclerViewClips.setAdapter(adapter);
 
         adapter.setOnUserClickListener(userId -> {
@@ -129,5 +131,13 @@ public class HomeFragment extends Fragment implements HomeClipsCallback {
                 .beginTransaction()
                 .replace(R.id.mainContainer, new NoClipsFragment())
                 .commit();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adapter != null) {
+            adapter.releaseAllPlayers();
+        }
     }
 }

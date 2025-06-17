@@ -56,7 +56,7 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
-    private List<Clip> clips = new ArrayList<>();
+    private Set<Clip> clips = new HashSet<>();
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default

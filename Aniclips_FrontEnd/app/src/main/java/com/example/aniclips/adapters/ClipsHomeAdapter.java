@@ -1,9 +1,12 @@
 package com.example.aniclips.adapters;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.aniclips.R;
 import com.example.aniclips.controllers.CommentsController;
 import com.example.aniclips.controllers.CreateCommentController;
@@ -62,6 +66,7 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     private List<ClipDto> clipList;
     private final Map<Long, Integer> ratingsMap = new HashMap<>();
     private OnUserClickListener userClickListener;
+    private RecyclerView recyclerView;
 
     public ClipsHomeAdapter(List<ClipDto> clipList) {
         this.clipList = clipList;
@@ -85,6 +90,9 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
     public void setOnCommentSheetListener(OnCommentSheetListener listener) {
         this.commentSheetListener = listener;
     }
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
 
     public static class ClipViewHolder extends RecyclerView.ViewHolder {
         ImageView imageViewPerfil;
@@ -106,10 +114,14 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         ImageButton ibCommentFilled;
         ImageButton ibSendComment;
         ImageButton ibUser;
+        ImageButton ibSoundOn;
+        ImageButton ibSoundOff;
         EditText etNuevoComentario;
         ImageView ivMiniatura;
         PlayerView playerView;
         ExoPlayer exoPlayer;
+
+        boolean isMuted = false;
 
         Handler handler = new Handler(Looper.getMainLooper());
         Runnable showMiniaturaRunnable;
@@ -138,7 +150,33 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             ibSendComment = itemView.findViewById(R.id.btnEnviarComentario);
             etNuevoComentario = itemView.findViewById(R.id.etNuevoComentario);
             ibUser = itemView.findViewById(R.id.ibUser);
+            ibSoundOn = itemView.findViewById(R.id.ibSoundOn);
+            ibSoundOff = itemView.findViewById(R.id.ibSoundOff);
         }
+    }
+
+    private void showSoundButtons(View soundOn, View soundOff, boolean isMuted) {
+        ObjectAnimator alphaOn = ObjectAnimator.ofFloat(soundOn, "alpha", isMuted ? 0f : 1f);
+        ObjectAnimator alphaOff = ObjectAnimator.ofFloat(soundOff, "alpha", isMuted ? 1f : 0f);
+        ObjectAnimator translateOn = ObjectAnimator.ofFloat(soundOn, "translationY", 20f, 0f);
+        ObjectAnimator translateOff = ObjectAnimator.ofFloat(soundOff, "translationY", 20f, 0f);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(alphaOn, alphaOff, translateOn, translateOff);
+        animatorSet.setDuration(250);
+        animatorSet.start();
+    }
+
+    private void hideSoundButtons(View soundOn, View soundOff) {
+        ObjectAnimator alphaOn = ObjectAnimator.ofFloat(soundOn, "alpha", 0f);
+        ObjectAnimator alphaOff = ObjectAnimator.ofFloat(soundOff, "alpha", 0f);
+        ObjectAnimator translateOn = ObjectAnimator.ofFloat(soundOn, "translationY", 0f, 20f);
+        ObjectAnimator translateOff = ObjectAnimator.ofFloat(soundOff, "translationY", 0f, 20f);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(alphaOn, alphaOff, translateOn, translateOff);
+        animatorSet.setDuration(250);
+        animatorSet.start();
     }
 
     @NonNull
@@ -253,9 +291,15 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                 }
 
                 String username = prefs.getString(Constantes.PREF_USER_USERNAME, "Usuario");
+                String avatarUrl = prefs.getString(Constantes.PREF_USER_AVATAR, null);
+                Log.i("avatar:", avatarUrl);
 
                 UsuarioClipDto usuario = new UsuarioClipDto();
                 usuario.setUsername(username);
+                if (usuario.getGetPerfilAvatarDto() == null) {
+                    usuario.setGetPerfilAvatarDto(new com.example.aniclips.dto.PerfilAvatarDto());
+                }
+                usuario.getGetPerfilAvatarDto().setAvatar(avatarUrl);
 
                 ComentarioDto nuevoComentario = new ComentarioDto();
                 nuevoComentario.setTexto(texto);
@@ -278,9 +322,6 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                             @Override
                             public void onCommentsSuccess(List<ComentarioDto> comentarios) {
                                 adapter.setComentarios(comentarios);
-                                rv.scrollToPosition(adapter.getItemCount() - 1);
-                                clip.setCantidadComentarios(comentarios.size());
-                                notifyItemChanged(holder.getAdapterPosition());
                             }
                             @Override
                             public void onError(String errorMsg) { }
@@ -319,10 +360,20 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         holder.tvRatingCount.setText(String.format(Locale.US, "%.2f", clip.getMediaValoraciones()));
         holder.tvDescription.setText(clip.getDescripcion());
 
-        Glide.with(context)
-                .load(clip.getGetUsuarioClipDto().getGetPerfilAvatarDto().getAvatar())
-                .centerCrop()
-                .into(holder.imageViewPerfil);
+        String imagePerfilUrl = clip.getGetUsuarioClipDto().getGetPerfilAvatarDto().getAvatar();
+
+        Log.i("avatarVideo", imagePerfilUrl);
+        if (imagePerfilUrl != null && !imagePerfilUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(imagePerfilUrl)
+                    .placeholder(R.drawable.ic_profile)
+                    .circleCrop()
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(holder.imageViewPerfil);
+        } else {
+            holder.imageViewPerfil.setImageResource(R.drawable.ic_profile);
+        }
 
         String fechaStr = clip.getFecha();
         try {
@@ -339,6 +390,26 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
         setupRating(holder, clip, context);
         setupFollow(holder, clip, context);
 
+        holder.isMuted = false;
+        holder.ibSoundOn.setAlpha(0f);
+        holder.ibSoundOff.setAlpha(0f);
+        holder.ibSoundOn.setTranslationY(20f);
+        holder.ibSoundOff.setTranslationY(20f);
+
+        Runnable hideSoundButtons = () -> hideSoundButtons(holder.ibSoundOn, holder.ibSoundOff);
+
+        View.OnClickListener soundToggleListener = v -> {
+            if (holder.exoPlayer != null) {
+                holder.isMuted = !holder.isMuted;
+                holder.exoPlayer.setVolume(holder.isMuted ? 0f : 1f);
+                showSoundButtons(holder.ibSoundOn, holder.ibSoundOff, holder.isMuted);
+                holder.handler.removeCallbacks(hideSoundButtons);
+                holder.handler.postDelayed(hideSoundButtons, 2000);
+            }
+        };
+        holder.ibSoundOn.setOnClickListener(soundToggleListener);
+        holder.ibSoundOff.setOnClickListener(soundToggleListener);
+
         holder.ibPlayVideo.setOnClickListener(v -> {
             if (holder.showMiniaturaRunnable != null) {
                 holder.handler.removeCallbacks(holder.showMiniaturaRunnable);
@@ -349,31 +420,27 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
 
             if (holder.exoPlayer == null) {
                 holder.exoPlayer = new ExoPlayer.Builder(context).build();
-                holder.exoPlayer.setVolume(1f);
+                holder.exoPlayer.setVolume(holder.isMuted ? 0f : 1f);
                 holder.playerView.setPlayer(holder.exoPlayer);
                 MediaItem mediaItem = MediaItem.fromUri(clip.getUrlVideo());
                 holder.exoPlayer.setMediaItem(mediaItem);
                 holder.exoPlayer.prepare();
                 holder.exoPlayer.addListener(new Player.Listener() {
                     @Override
+                    public void onIsPlayingChanged(boolean isPlaying) {
+                        if (isPlaying) {
+                            showSoundButtons(holder.ibSoundOn, holder.ibSoundOff, holder.isMuted);
+                            holder.handler.removeCallbacks(hideSoundButtons);
+                            holder.handler.postDelayed(hideSoundButtons, 2000);
+                        }
+                    }
+                    @Override
                     public void onPlaybackStateChanged(int state) {
                         if (state == Player.STATE_ENDED) {
                             holder.ibPlayVideo.setVisibility(View.VISIBLE);
-                            holder.playerView.setVisibility(View.VISIBLE);
-                            holder.ivMiniatura.setVisibility(View.GONE);
-
-                            if (holder.showMiniaturaRunnable != null) {
-                                holder.handler.removeCallbacks(holder.showMiniaturaRunnable);
-                            }
-                            holder.showMiniaturaRunnable = () -> {
-                                holder.ivMiniatura.setAlpha(0f);
-                                holder.ivMiniatura.setVisibility(View.VISIBLE);
-                                holder.ivMiniatura.animate()
-                                        .alpha(1f)
-                                        .setDuration(600)
-                                        .start();
-                            };
-                            holder.handler.postDelayed(holder.showMiniaturaRunnable, 2000);
+                            holder.ivMiniatura.setVisibility(View.VISIBLE);
+                            holder.playerView.setVisibility(View.GONE);
+                            hideSoundButtons(holder.ibSoundOn, holder.ibSoundOff);
                         }
                     }
                 });
@@ -381,13 +448,18 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
             if (holder.exoPlayer.getPlaybackState() == Player.STATE_ENDED) {
                 holder.exoPlayer.seekTo(0);
             }
+            holder.exoPlayer.setVolume(holder.isMuted ? 0f : 1f);
             holder.exoPlayer.setPlayWhenReady(true);
+            showSoundButtons(holder.ibSoundOn, holder.ibSoundOff, holder.isMuted);
+            holder.handler.removeCallbacks(hideSoundButtons);
+            holder.handler.postDelayed(hideSoundButtons, 2000);
         });
 
         holder.playerView.setOnClickListener(v -> {
             if (holder.exoPlayer != null && holder.exoPlayer.isPlaying()) {
                 holder.exoPlayer.pause();
                 holder.ibPlayVideo.setVisibility(View.VISIBLE);
+                hideSoundButtons(holder.ibSoundOn, holder.ibSoundOff);
             }
         });
     }
@@ -497,10 +569,6 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     holder.ibRating.setVisibility(View.GONE);
                     holder.ibRatingFilled.setVisibility(View.VISIBLE);
                     holder.ibRatingFilled.setColorFilter(context.getColor(R.color.btn_focused));
-                } else {
-                    holder.ibRating.setVisibility(View.VISIBLE);
-                    holder.ibRatingFilled.setVisibility(View.GONE);
-                    holder.ibRating.setColorFilter(context.getColor(R.color.bottom_nav_icon_color));
                 }
 
                 new RateController(context, clipIdObj, (int) rating, new RateCallback() {
@@ -593,14 +661,20 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                         new DeleteClipController(context, clip.getId(), new DeleteCallback() {
                             @Override
                             public void onDeleteSuccess(JSONObject response) {
-                                clipList.remove(holder.getAdapterPosition());
-                                notifyItemRemoved(holder.getAdapterPosition());
-                                if (clipList.isEmpty() && onClipsEmptyListener != null) {
-                                    onClipsEmptyListener.onClipsEmpty();
+                                int position = holder.getAdapterPosition();
+                                if (position != RecyclerView.NO_POSITION) {
+                                    clipList.remove(position);
+                                    notifyItemRemoved(position);
+                                    if (clipList.isEmpty() && onClipsEmptyListener != null) {
+                                        onClipsEmptyListener.onClipsEmpty();
+                                    }
                                 }
                             }
+
                             @Override
-                            public void onDeleteError(JSONObject error) { }
+                            public void onDeleteError(JSONObject error) {
+
+                            }
                         }).execute();
                     })
                     .setNegativeButton("No", null)
@@ -614,4 +688,19 @@ public class ClipsHomeAdapter extends RecyclerView.Adapter<ClipsHomeAdapter.Clip
                     .setTextColor(context.getColor(android.R.color.white));
         });
     }
+    public void releaseAllPlayers() {
+        if (recyclerView == null) return;
+        for (int i = 0; i < getItemCount(); i++) {
+            RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(i);
+            if (vh instanceof ClipViewHolder) {
+                ClipViewHolder holder = (ClipViewHolder) vh;
+                if (holder.exoPlayer != null) {
+                    holder.exoPlayer.release();
+                    holder.exoPlayer = null;
+                }
+            }
+        }
+    }
+
+
 }

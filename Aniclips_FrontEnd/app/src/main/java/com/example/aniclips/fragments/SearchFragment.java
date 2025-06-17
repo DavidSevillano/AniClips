@@ -216,11 +216,18 @@ public class SearchFragment extends Fragment implements SearchThumbnailCallback 
 
         for (Button btn : botonesGenero) {
             btn.setOnClickListener(v -> {
-                for (Button b : botonesGenero) {
-                    b.setBackgroundTintList(getResources().getColorStateList(R.color.tv_profile));
+                String textoBtn = btn.getText().toString();
+                if (textoBtn.equals(generoSeleccionado)) {
+
+                    btn.setBackgroundTintList(getResources().getColorStateList(R.color.tv_profile));
+                    generoSeleccionado = null;
+                } else {
+                    for (Button b : botonesGenero) {
+                        b.setBackgroundTintList(getResources().getColorStateList(R.color.tv_profile));
+                    }
+                    btn.setBackgroundTintList(getResources().getColorStateList(R.color.btn_focused));
+                    generoSeleccionado = textoBtn;
                 }
-                btn.setBackgroundTintList(getResources().getColorStateList(R.color.btn_focused));
-                generoSeleccionado = btn.getText().toString();
             });
         }
 

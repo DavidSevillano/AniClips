@@ -17,11 +17,15 @@ import com.example.aniclips.R;
 import com.example.aniclips.fragments.ClipDetailFragment;
 import com.example.aniclips.models.Miniatura;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
 
 public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSearchAdapter.ThumbnailViewHolder> {
 
     private List<Miniatura> miniaturaList;
+    private final Set<Long> miniaturaIds = new HashSet<>();
 
     public ThumbnailsSearchAdapter(List<Miniatura> miniaturaList) {
         this.miniaturaList = miniaturaList;
@@ -75,13 +79,21 @@ public class ThumbnailsSearchAdapter extends RecyclerView.Adapter<ThumbnailsSear
     }
 
     public void addThumbnail(List<Miniatura> nuevasThubnails) {
+        List<Miniatura> miniaturasFiltradas = new ArrayList<>();
+        for (Miniatura m : nuevasThubnails) {
+            if (!miniaturaIds.contains(m.getId())) {
+                miniaturasFiltradas.add(m);
+                miniaturaIds.add(m.getId());
+            }
+        }
         int startPos = miniaturaList.size();
-        miniaturaList.addAll(nuevasThubnails);
-        notifyItemRangeInserted(startPos, nuevasThubnails.size());
+        miniaturaList.addAll(miniaturasFiltradas);
+        notifyItemRangeInserted(startPos, miniaturasFiltradas.size());
     }
 
     public void clearThumbnails() {
         miniaturaList.clear();
+        miniaturaIds.clear();
         notifyDataSetChanged();
     }
 }

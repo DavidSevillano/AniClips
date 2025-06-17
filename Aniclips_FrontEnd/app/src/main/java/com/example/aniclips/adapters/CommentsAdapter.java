@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.aniclips.R;
 import com.example.aniclips.dto.ComentarioDto;
 import com.example.aniclips.dto.UsuarioClipDto;
@@ -57,8 +58,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Coment
             if (perfil != null && perfil.getAvatar() != null && !perfil.getAvatar().isEmpty()) {
                 Glide.with(holder.ibUser.getContext())
                         .load(perfil.getAvatar())
-                        .centerCrop()
-                        .placeholder(R.drawable.icono_ejemplo)
+                        .placeholder(R.drawable.ic_profile)
+                        .circleCrop()
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(holder.ibUser);
             } else {
                 holder.ibUser.setImageResource(R.drawable.ic_profile);

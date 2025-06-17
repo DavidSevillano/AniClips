@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
@@ -171,9 +172,6 @@ public class MainActivity extends AppCompatActivity {
             miniaturaPickerLauncher.launch(intent);
         });
 
-
-
-
         String[] generos = {"Shonen", "Shojo", "Seinen", "Josei", "Mecha", "Isekai", "Slice of Life", "Horror", "Comedia", "Otros"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, generos);
         etGenero.setAdapter(adapter);
@@ -211,5 +209,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bottomSheetDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Salir de la app")
+                .setMessage("¿Estás seguro de que quieres salir de AniClips?")
+                .setPositiveButton("Sí", (dialogInterface, which) -> finishAffinity())
+                .setNegativeButton("No", null)
+                .create();
+
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(getResources().getColor(android.R.color.white));
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(getResources().getColor(android.R.color.white));
     }
 }

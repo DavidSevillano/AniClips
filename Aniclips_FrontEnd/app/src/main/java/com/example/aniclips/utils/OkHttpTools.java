@@ -234,7 +234,7 @@ public class OkHttpTools {
                 .build();
 
         Request request = new Request.Builder()
-                .url(Constantes.API_BASE_URL + endpoint)
+                .url(Constantes.API_BASE_URL_PORTATIL + endpoint)
                 .addHeader("Authorization", "Bearer " + token)
                 .put(requestBody)
                 .build();

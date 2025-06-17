@@ -44,6 +44,14 @@ public class ProfilePictureController extends AsyncTask<Void, Void, JSONObject> 
     @Override
     protected void onPostExecute(JSONObject perfil) {
         if (perfil != null) {
+            String avatar = perfil.optString("avatar", null);
+            if (avatar != null) {
+                Context context = activity.getApplicationContext();
+                SharedPreferences prefs = context.getSharedPreferences("My_prefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(Constantes.PREF_USER_AVATAR, avatar);
+                editor.apply();
+            }
             callback.onPerfilSuccess(perfil);
         } else {
             callback.onPerfilError("Error al subir la foto");

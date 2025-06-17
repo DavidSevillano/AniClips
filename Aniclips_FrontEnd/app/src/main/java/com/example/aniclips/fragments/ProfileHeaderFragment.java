@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,8 +106,21 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
         });
     }
 
+    private ProgressBar getSafeProgressBar() {
+        Fragment parent = getParentFragment();
+        if (parent != null && parent.getView() != null) {
+            return parent.getView().findViewById(R.id.progressBar);
+        }
+        Activity activity = getActivity();
+        if (activity != null) {
+            return activity.findViewById(R.id.progressBar);
+        }
+        return null;
+    }
+    private String descripcionOriginal = "";
+
     private void cargarPerfil() {
-        ProgressBar progressBar = requireParentFragment().getView().findViewById(R.id.progressBar);
+        ProgressBar progressBar = getSafeProgressBar();
         String userId = getArguments() != null ? getArguments().getString("user_id") : null;
         SharedPreferences prefs = requireContext().getSharedPreferences("My_prefs", android.content.Context.MODE_PRIVATE);
         String myUserId = prefs.getString(Constantes.PREF_MY_USER_ID, null);
@@ -175,6 +189,7 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
                 String username = perfil.optString("username", "");
                 String description = perfil.optString("descripcion", "");
+                descripcionOriginal = description != null ? description : "";
                 int clipsNumber = perfil.optInt("numeroClips", 0);
                 int followersNumber = perfil.optInt("numeroSeguidores", 0);
                 int followingNumber = perfil.optInt("numeroSeguidos", 0);
@@ -187,13 +202,17 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
                 if (description == null || description.isEmpty()) {
                     tvDescriptionEmpty.setVisibility(VISIBLE);
                     tvDescriptionFilled.setVisibility(GONE);
+                    tvDescriptionEmpty.setText("");
                 } else {
                     tvDescriptionEmpty.setVisibility(GONE);
                     tvDescriptionFilled.setVisibility(VISIBLE);
                     tvDescriptionFilled.setText(description);
+                    tvDescriptionEmpty.setText(description);
                 }
 
                 String avatarUrl = perfil.optString("foto", null);
+
+                Log.i("AvatarVideo", "Perfil: " + avatarUrl);
                 if (avatarUrl != null && !avatarUrl.isEmpty()) {
                     Glide.with(requireContext())
                             .load(avatarUrl)
@@ -310,10 +329,11 @@ public class ProfileHeaderFragment extends Fragment implements SalirDialogListen
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 0) {
-                    tvGuardarDescription.setVisibility(GONE);
+                String textoActual = s.toString();
+                if (textoActual.isEmpty() || textoActual.equals(descripcionOriginal)) {
+                    tvGuardarDescription.setVisibility(View.GONE);
                 } else {
-                    tvGuardarDescription.setVisibility(VISIBLE);
+                    tvGuardarDescription.setVisibility(View.VISIBLE);
                 }
             }
 

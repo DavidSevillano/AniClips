@@ -1,5 +1,6 @@
 package com.example.aniclips.activities;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -36,5 +37,21 @@ public class LoginSiginActivity extends AppCompatActivity {
                     .replace(R.id.loginSignin_container, new LoginFragment())
                     .commit();
         }
+    }
+    @Override
+    public void onBackPressed() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Salir de la app")
+                .setMessage("¿Estás seguro de que quieres salir de AniClips?")
+                .setPositiveButton("Sí", (dialogInterface, which) -> finishAffinity())
+                .setNegativeButton("No", null)
+                .create();
+
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(getResources().getColor(android.R.color.white));
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(getResources().getColor(android.R.color.white));
     }
 }

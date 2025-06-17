@@ -39,9 +39,6 @@ public class ClipService {
     @Transactional(readOnly = true)
     public Page<Clip> findAll(org.springframework.data.domain.Pageable pageRequest) {
         Page<Clip> result = clipRepository.findAllDetalles(pageRequest);
-        if (result.isEmpty()) {
-            throw new EntityNotFoundException("No se han encontrado clips");
-        }
         return result;
     }
 

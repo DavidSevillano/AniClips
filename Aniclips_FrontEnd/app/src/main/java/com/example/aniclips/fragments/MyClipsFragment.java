@@ -23,7 +23,9 @@ import com.example.aniclips.interfaces.PerfilCallback;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MyClipsFragment extends Fragment {
     private RecyclerView rvClips;
@@ -54,13 +56,18 @@ public class MyClipsFragment extends Fragment {
                 try {
                     JSONArray clipsArray = perfil.getJSONArray("clips");
                     List<ClipDtoMiniatura> clips = new ArrayList<>();
+                    Set<Long> idsUnicos = new HashSet<>();
                     for (int i = 0; i < clipsArray.length(); i++) {
                         JSONObject obj = clipsArray.getJSONObject(i);
-                        ClipDtoMiniatura clip = new ClipDtoMiniatura();
-                        clip.setId(obj.getLong("id"));
-                        clip.setMiniatura(obj.getString("miniatura"));
-                        clip.setNombreAnime(obj.getString("nombreAnime"));
-                        clips.add(clip);
+                        long id = obj.getLong("id");
+                        if (!idsUnicos.contains(id)) {
+                            idsUnicos.add(id);
+                            ClipDtoMiniatura clip = new ClipDtoMiniatura();
+                            clip.setId(id);
+                            clip.setMiniatura(obj.getString("miniatura"));
+                            clip.setNombreAnime(obj.getString("nombreAnime"));
+                            clips.add(clip);
+                        }
                     }
                     if (clips.isEmpty()) {
                         tvNoClips.setVisibility(View.VISIBLE);
