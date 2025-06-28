@@ -20,7 +20,6 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
    🖥️ Backend
    
    - **Java**: Lenguaje de programación principal.
-   - **XML**:
    - **Spring Boot**: Framework para construir la aplicación.
    - **PostgreSQL**: Base de datos utilizada para almacenar datos.
    - **Docker**: Contenerización de la aplicación.
@@ -63,20 +62,27 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
    mvn clean install
    ```
 
-3. **Configurar Docker:**
+3. **Ajustar rutas de imágenes y videos:**
+   Asegúrate de modificar las URLs de imágenes y videos en el archivo import.sql, ya que apuntan a una IP de desarrollo, reemplazala por tu ip local (ej: 192.168.x.x:8080).
+   ```
+   'http://192.168.x.x:8080/iconos/icono_ejemplo1.jpg', 'Soy Naruto Uzumaki, futuro Hokage!'
+   'Bleach', 'Naruto vs Pain', 'http://192.168.x.x:8080/videos/Bleach_1.mp4'
+   ```
+
+4. **Configurar Docker:**
    Asegúrate de que Docker y Docker Compose estén instalados y en funcionamiento. Puedes verificarlo con:
    ```
    docker --version
    docker-compose --version
    ```
 
-4. **Levantar el contenedor:**
+5. **Levantar el contenedor:**
    Utiliza Docker Compose para levantar el contenedor de la aplicación. Asegúrate de estar en el directorio raíz del proyecto y ejecuta:
    ```bash
    docker-compose up
    ```
 
-5. **Registrarse en la aplicación:**
+6. **Registrarse en la aplicación:**
    Puedes registrarte en la aplicación introduciendo tus datos a través de la siguiente petición en Postman:
    ```
    POST http://localhost:8081/auth/register
@@ -92,7 +98,7 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
    }
    ```
 
-6. **Activar tu cuenta:**
+7. **Activar tu cuenta:**
    Después de registrarte, recibirás un correo con un código de activación. Debes introducir el código de activación con la siguiente petición:
    ```
    POST http://localhost:8081/activate/account/
@@ -105,7 +111,7 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
    }
    ```
 
-7. **Iniciar sesión:**
+8. **Iniciar sesión:**
    Ahora solo queda iniciar sesión introduciendo tu nombre de usuario y contraseña a través de esta petición:
    ```
    POST http://localhost:8081/auth/login
@@ -119,10 +125,10 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
    }
    ```
 
-8. **Uso de la colección de Postman:**
+9. **Uso de la colección de Postman:**
    Puedes importar la colección de Postman que se encuentra en el archivo `Aniclips.postman_collection.json` para facilitar las pruebas de la API. Asegúrate de configurar la variable `BASEURL` en Postman a `http://localhost:8081`.
 
-9. **Ejemplos de peticiones:**
+10. **Ejemplos de peticiones:**
     - **Obtener todos los clips:**
       ```
       GET http://localhost:8081/clip/?page=0
