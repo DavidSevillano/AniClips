@@ -47,8 +47,18 @@ AniClips es una plataforma para compartir y descubrir clips de anime. Permite a 
    - **JDK 11 o 17** configurado en Android Studio
    - **SDK** de Android API 26+
    - **Emulador o dispositivo físico** para pruebas
+     
+## 🖼️ Pantallas de ejemplo
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f6653326-f123-4e50-99b9-db4c336bc8c6" width="300" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/76527f5c-415b-4ba8-9f34-194e5102dc27" width="300" />
+</p>
 
 ## Configuración del entorno
+
+
 
 1. **Clonar el repositorio:**
    ```
